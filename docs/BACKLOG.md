@@ -68,3 +68,11 @@ Findings in `src/core` and `src/state`. Items 1 to 4 were applied with your appr
 | 8 | No `to_dict`/`from_dict`; RNG state is not saved | state classes (later) | open, for M4 |
 | 9 | `assert` for map validation is removed in exported builds | `world.gd` | fixed in step 7 |
 | 10 | Some untyped dictionaries, state handed out mutable | `authority.gd` | open |
+
+## Step 8 review notes (Opus, 2026-10-25)
+
+Verdict: fine to merge. Fixed right away: a prop's `kind` is now validated. Left for later:
+
+- Text box keeps its language if the language is switched while it is open. Handle with the live language switch in M4.
+- Android Back button while a text box is open should close the box, not leave the game. M4, with menus.
+- The way to a sign is chosen by fewest steps, not by exact distance, so a diagonal detour can win a tie. Not noticeable now; revisit only if it looks odd.
