@@ -18,10 +18,10 @@ Dofus shapes, proportions and readability, with a gothic, threatening mood carri
 4. **Ground:** calm and readable. Walkable cells are clearly lighter or warmer than their surroundings. Detail (mushrooms, roots, stones) belongs on edges and obstacles, not in the middle of fighting space.
 5. **Palette:** moss green, ochre and earth for the world, cold teal-grey for shadows and fog, warm orange for fire and magic light. Each region gets its own 8-12 color swatch, written into this file.
 6. **Light:** key light from the top-left. Mood comes from light shafts, fog at the map edges, torch pools and vignette, never from making the whole screen dark.
-7. **Characters:** big head, readable silhouette, 2-3 main colors and **one saturated accent** (cloak, scarf, hat) that contrasts with the region palette, so the player finds their character instantly on a phone in daylight.
+7. **Characters:** big head, readable silhouette, 2-3 main colors. The player must find their character instantly on a phone in daylight; the M2 phone test checks this. If it fails, the first fix is one saturated accent (cloak, scarf, hat) that contrasts with the region palette.
 8. **Projection:** strict 2:1 isometric for every asset that sits on the grid (128 x 64 cell). A full scene image from an AI tool is a mood target only, never a game asset.
 
-Lessons from the first sample of direction A: the character was lost (brown on brown), the scene was not strict isometric, ground detail was busier than Dofus, and outlines were close to black. Rules 2, 4, 7 and 8 exist because of that.
+Lessons from the first sample of direction A: the scene was not strict isometric, ground detail was busier than Dofus, and outlines were close to black. Rules 2, 4 and 8 exist because of that. You judged the character readable in that sample; the phone test in daylight confirms it.
 
 ## Technical constants (decide once, never change)
 
