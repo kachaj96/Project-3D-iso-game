@@ -1,12 +1,15 @@
 class_name World
 extends Node2D
-## Exploration scene. Turns taps into MoveCommands, sends them to the Authority and plays
-## the returned events (walking, map change). It never changes game state itself.
+## Exploration scene. Turns taps into MoveCommands and sends them through the GameSession.
+## Everything it shows comes from the events the session hands back (decision D-014):
+## where the character appears, how it walks, when the map changes. It never reads or
+## changes game state itself.
 
 signal walk_finished
 signal map_shown(map_id: String)
 
-const PLAYER_ID: String = "player:1"
+## In solo play this device is always seat 1. In co-op the host will assign seats.
+const LOCAL_PLAYER_ID: String = "player:1"
 const START_MAP_ID: String = "map.start.01"
 const RNG_SEED: int = 20261024
 ## Height of one block in pixels. Obstacles are drawn one block higher than the ground.
@@ -28,12 +31,13 @@ const MAP_FILES: Dictionary = {
 
 var _grid: GridMath = GridMath.new()
 var _maps: Dictionary = {}
-var _authority: Authority
+var _session: GameSession
 var _map_root: Node2D
 var _ground: TileMapLayer
 var _player: PlayerActor
 var _marker: TapMarker
 var _current_map_id: String = ""
+var _last_tapped_cell: Vector2i = Vector2i.ZERO
 var _busy: bool = false
 
 @onready var _camera: CameraRig = $Camera
@@ -48,28 +52,33 @@ func _ready() -> void:
 		# An assert would be removed from exported builds, so report the error ourselves.
 		push_error("Map data is invalid, exploration will not start: " + "; ".join(problems))
 		return
-	_authority = Authority.new(_maps, RNG_SEED)
-	var character: CharacterState = _authority.add_character(PLAYER_ID, START_MAP_ID)
-
-	_gestures.tapped.connect(_on_screen_tapped)
-	_gestures.pinched.connect(_camera.zoom_by)
 
 	_player = PLAYER_SCENE.instantiate()
 	_player.speed = walk_speed
 	_marker = MARKER_SCENE.instantiate()
 	_camera.target = _player
-	_show_map(character.map_id, character.cell)
+	_gestures.tapped.connect(_on_screen_tapped)
+	_gestures.pinched.connect(_camera.zoom_by)
+
+	# Solo play: the Authority runs on this device. A co-op guest would get a network
+	# session here instead, and nothing else in this scene would change.
+	var local: LocalSession = LocalSession.new(Authority.new(_maps, RNG_SEED), LOCAL_PLAYER_ID)
+	_session = local
+	_session.events_emitted.connect(_on_events)
+	# Until saves exist (M4) every start creates a new character.
+	local.start(CharacterState.generate_character_id(), START_MAP_ID)
 
 
-## A tap at a world (not screen) position. Returns the events the Authority produced.
-## While the character is walking, taps are ignored.
-func tap_at(world_position: Vector2) -> Array[GameEvent]:
-	if _authority == null or _busy:
-		return []
-	var cell: Vector2i = _grid.pixel_to_cell(_ground.to_local(world_position))
-	var events: Array[GameEvent] = _authority.submit(MoveCommand.create(PLAYER_ID, cell))
-	_play(events, cell)
-	return events
+## A tap at a world (not screen) position. While the character walks, taps are ignored.
+func tap_at(world_position: Vector2) -> void:
+	if _session == null or _ground == null or _busy:
+		return
+	_last_tapped_cell = _grid.pixel_to_cell(_ground.to_local(world_position))
+	_session.send(MoveCommand.create(_session.local_player_id, _last_tapped_cell))
+
+
+func session() -> GameSession:
+	return _session
 
 
 func current_map_id() -> String:
@@ -96,28 +105,37 @@ func _on_screen_tapped(screen_position: Vector2) -> void:
 	tap_at(world_position)
 
 
-func _play(events: Array[GameEvent], tapped_cell: Vector2i) -> void:
-	var moved: MovedEvent = null
-	var changed: MapChangedEvent = null
+## The single entry point for everything that happened. Plays events in order; a map change
+## that follows a walk is shown when the walk ends.
+func _on_events(events: Array[GameEvent]) -> void:
+	var walked: bool = false
 	for event: GameEvent in events:
-		if event is MovedEvent:
-			moved = event as MovedEvent
+		if event.player_id != _session.local_player_id:
+			continue  # Other players' characters are shown from M3.5 on.
+		if event is CharacterSpawnedEvent:
+			var spawned: CharacterSpawnedEvent = event as CharacterSpawnedEvent
+			_show_map(spawned.map_id, spawned.cell)
+		elif event is MovedEvent:
+			var moved: MovedEvent = event as MovedEvent
+			_marker.show_at(_grid.cell_to_pixel(moved.path.back()), true)
+			_busy = true
+			walked = true
+			var points: Array[Vector2] = []
+			for cell: Vector2i in moved.path:
+				points.append(_grid.cell_to_pixel(cell))
+			_player.walk_along(points)
+			await _player.walk_finished
 		elif event is MapChangedEvent:
-			changed = event as MapChangedEvent
-	_marker.show_at(_grid.cell_to_pixel(tapped_cell), moved != null)
-	if moved == null:
-		return
-
-	_busy = true
-	var points: Array[Vector2] = []
-	for cell: Vector2i in moved.path:
-		points.append(_grid.cell_to_pixel(cell))
-	_player.walk_along(points)
-	await _player.walk_finished
-	if changed != null:
-		_show_map(changed.map_id, changed.cell)
-	_busy = false
-	walk_finished.emit()
+			var changed: MapChangedEvent = event as MapChangedEvent
+			_show_map(changed.map_id, changed.cell)
+		elif event is CommandRejectedEvent:
+			if _current_map_id.is_empty():
+				push_error("Could not place the character: " + (event as CommandRejectedEvent).reason)
+			else:
+				_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), false)
+	if walked:
+		_busy = false
+		walk_finished.emit()
 
 
 func _show_map(map_id: String, cell: Vector2i) -> void:

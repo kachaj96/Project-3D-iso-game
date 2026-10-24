@@ -54,14 +54,14 @@ Explicitly **not** in First Playable:
 
 ## M1 review follow-ups (Opus review of src/core, 2026-10-24)
 
-Findings that need your decision because they touch `src/core` or `src/state`. Not applied yet.
+Findings in `src/core` and `src/state`. Items 1 to 4 were applied with your approval on 2026-10-24; the open ones wait for the milestone named.
 
 | # | Finding | Where | Status |
 |---|---|---|---|
-| 1 | Authority trusts the `player_id` inside a command (add `sender_id` to `submit`) | `authority.gd` | open |
-| 2 | `submit(null)` crashes | `authority.gd` | open |
-| 3 | No stable `character_id`; `PLAYER_ID` is hard-coded | `character_state.gd`, `world.gd` | open |
-| 4 | Presentation reads live state and treats every `MovedEvent` as the local player's | `world.gd` | open |
+| 1 | Authority trusts the `player_id` inside a command (add `sender_id` to `submit`) | `authority.gd` | fixed: `submit(sender_id, command)`, `wrong_player` |
+| 2 | `submit(null)` crashes | `authority.gd` | fixed: `invalid_command` |
+| 3 | No stable `character_id`; `PLAYER_ID` is hard-coded | `character_state.gd`, `world.gd` | fixed: D-013 |
+| 4 | Presentation reads live state and treats every `MovedEvent` as the local player's | `world.gd` | fixed: D-014, GameSession |
 | 5 | `MapDef` is shared by reference; pathfinder caches forever (make MapDef read-only at runtime, document in ARCHITECTURE) | `authority.gd` | open |
 | 6 | Input could lock if a walk is cut short | `player_actor.gd`, `world.gd` | fixed in step 7, with a test |
 | 7 | A loaded save with a blocked cell or missing map leaves the character stuck | save loader (later) | open, for M4 |

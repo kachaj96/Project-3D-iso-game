@@ -30,6 +30,8 @@ Why this matters:
 
 Do not overdo it: menus, camera, settings and pure visual effects do not need commands.
 
+Scenes never call the Authority directly. They talk to a `GameSession` (`send(command)`, signal `events_emitted`). `LocalSession` runs the Authority on the same device; a network session will do the same over Wi-Fi. The Authority receives the sender id from the session or transport, never from the command. See D-013 and D-014.
+
 ## 2. Rules that are expensive to change later
 
 These are the decisions that would force a rewrite if skipped. Each one is cheap now.

@@ -51,8 +51,8 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 ## D-008 Isometric grid: 2:1 diamond, 128x64 px cell, four-direction movement (2026-10-24)
 
 - **Context:** Milestone 1 grid and pathfinding.
-- **Decision:** same convention as Godot's isometric "diamond down" TileMapLayer (verified by a test): the top vertex of cell (0,0) is at pixel (0,0), so its centre is at (64,32). x grows down-right, y grows down-left. Tile size is a parameter of `GridMath` with 128x64 as default. Movement and pathfinding use the four grid directions only (no diagonal steps), like Dofus, so one step is one movement point in combat later.
-- **Alternatives:** eight-direction movement (smoother paths, but breaks the MP-per-step model).
+- **Decision:** same convention as Godot's isometric "diamond down" TileMapLayer (verified by a test): the top vertex of cell (0,0) is at pixel (0,0), so its centre is at (64,32). x grows down-right, y grows down-left. Tile size is a parameter of `GridMath` with 128x64 as default. Exploration movement uses eight directions (grid steps and diagonals), like Dofus outside fights, and a diagonal step is never allowed across the corner of an obstacle (amended 2026-10-24 at your request). The pathfinder keeps a four-direction mode for combat, where one step should be one movement point; how combat movement works is decided in M3.
+- **Alternatives:** four directions everywhere (simplest, but stiff when exploring); diagonals in combat too (shorter routes, but harder to read ranges and MP costs).
 - **Consequences:** Kenney "Isometric Blocks" tiles are 111x128 px, so they must be scaled or the grid tile size set to match when the TileSet is built.
 - **Revisit if:** movement feels stiff on the phone.
 
@@ -79,3 +79,16 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Decision:** the project turns off "emulate mouse from touch" and turns on "emulate touch from mouse", so phone touches and PC clicks arrive as the same touch events and one code path serves both. A tap is a press that is released within 350 ms and moves at most 24 px, with no second finger involved. Two fingers zoom (factor = new finger distance / old distance). The mouse wheel zooms in steps of 10 percent on PC. D-009 stays true: a tap walks at once, with no confirm, but it is registered on release, not on press.
 - **Camera:** follows the character with a short glide, stays inside the map rectangle plus a 64 px margin for block height. Zoom is limited to max 2.0 and to a minimum that always fills the screen with map.
 - **Revisit if:** taps feel late on the phone (shorten or drop the release rule), or a long press is wanted for something.
+
+## D-013 Two ids per character: character_id and player_id (2026-10-24)
+
+- **Context:** Opus review of M1. Every device called its player "player:1", which collides as soon as a guest joins or saves exist.
+- **Decision:** `character_id` (format `char.` + 16 hex characters, from the system's secure random source, not the game RNG) is created once with the character, never changes and names the save file `characters/<character_id>.json`. `player_id` (`player:1`, `player:2`) is the seat in the current session, assigned by the host each game; commands and combat controllers use it. The Authority refuses a taken seat, a character that is already present and an unknown map.
+- **Consequences:** the save format in M4 stores `character_id`, not `player_id`. Until saves exist, each start creates a new character.
+
+## D-014 The screen talks to a GameSession, never to the Authority (2026-10-24)
+
+- **Context:** Opus review of M1. On a co-op guest there is no local Authority, and events arrive later over the network.
+- **Decision:** `GameSession` (`src/core`) has `send(command)` and one signal `events_emitted(events)`. `LocalSession` runs the Authority on this device (solo, later the co-op host); a future `NetworkSession` will forward commands to the host and emit the events it receives. The Authority's `submit(sender_id, command)` takes the sender from the session or transport and rejects a command whose `player_id` differs (`wrong_player`). Scenes place and move characters only from events (`CharacterSpawnedEvent`, `MovedEvent`, `MapChangedEvent`) and never read `CharacterState`.
+- **Consequences:** until M3.5 the exploration scene ignores events of other players; from M3.5 it routes them to those players' characters.
+- **Revisit if:** the network spike in M3.5 shows events need ordering numbers or acknowledgements.
