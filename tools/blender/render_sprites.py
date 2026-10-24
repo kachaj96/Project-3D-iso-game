@@ -12,6 +12,7 @@ Options (all after the "--"):
   --directions N      8 (default) or 4
   --frames N          frames to render per direction, spread over the animation (default 1)
   --action NAME       animation (action) to play; default is the first one found, if any
+  --procedural KIND   walk or idle: a simple test animation on a Mixamo-named skeleton
   --outline UNITS     outline thickness in world units (default 0.015)
   --outline-color R,G,B   outline color, 0-1 (default 0.12,0.09,0.07: dark warm brown, not black)
 
@@ -49,7 +50,7 @@ def parse_args():
     argv = argv[argv.index("--") + 1:] if "--" in argv else []
     opts = {
         "input": "demo", "out": "build/sprites", "name": "sprite", "size": 256,
-        "height": 1.5, "directions": 8, "frames": 1, "action": "",
+        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "",
         "outline": 0.015, "outline_color": (0.12, 0.09, 0.07),
     }
     i = 0
@@ -113,11 +114,46 @@ def build_demo_figure():
     return root
 
 
+def skeleton_is_valid(objects):
+    """False if a skeleton in the imported objects is damaged: NaN bone positions, or every
+    bone sitting on the same spot (the file carries no usable bind pose)."""
+    for obj in objects:
+        if obj.type != "ARMATURE":
+            continue
+        heads = []
+        for bone in obj.data.bones:
+            head = tuple(bone.head_local)
+            if any(math.isnan(v) or math.isinf(v) for v in head):
+                return False
+            heads.append(tuple(round(v, 4) for v in head))
+        if len(heads) > 3 and len(set(heads)) == 1:
+            return False
+    return True
+
+
+def import_gltf_checked(path):
+    """Imports a glTF file. If its skeleton comes out damaged with the default settings, it
+    tries once without 'guess original bind pose'. If it is still damaged it stops with a
+    clear message instead of rendering empty or exploded frames."""
+    for guess in (True, False):
+        before = set(bpy.data.objects)
+        bpy.ops.import_scene.gltf(filepath=path, guess_original_bind_pose=guess)
+        added = [o for o in bpy.data.objects if o not in before]
+        if skeleton_is_valid(added):
+            return
+        for obj in added:
+            bpy.data.objects.remove(obj, do_unlink=True)
+    raise SystemExit(
+        "The skeleton in this file is damaged (bones have no usable positions). "
+        "Export the rigged model again, for example as FBX, or rig the static model another way."
+    )
+
+
 def import_model(path):
     ext = os.path.splitext(path)[1].lower()
     before = set(bpy.data.objects)
     if ext in (".glb", ".gltf"):
-        bpy.ops.import_scene.gltf(filepath=path)
+        import_gltf_checked(path)
     elif ext == ".fbx":
         bpy.ops.import_scene.fbx(filepath=path)
     elif ext == ".blend":
@@ -129,6 +165,16 @@ def import_model(path):
     else:
         raise SystemExit("Unsupported file type: " + ext)
     new_objects = [o for o in bpy.data.objects if o not in before]
+    # A rigged export can carry helper meshes (a preview sphere). With a skeleton present,
+    # only meshes that are skinned to it belong to the character.
+    has_rig = any(o.type == "ARMATURE" for o in new_objects)
+    kept = []
+    for obj in new_objects:
+        if has_rig and obj.type == "MESH" and not any(m.type == "ARMATURE" for m in obj.modifiers):
+            bpy.data.objects.remove(obj, do_unlink=True)
+        else:
+            kept.append(obj)
+    new_objects = kept
     # One parent for everything, so the whole model can be turned and scaled together.
     root = bpy.data.objects.new("ModelRoot", None)
     bpy.context.collection.objects.link(root)
@@ -278,6 +324,59 @@ def setup_camera_and_light(size):
     bpy.context.collection.objects.link(sun)
 
 
+def build_procedural(root, kind):
+    """A simple test animation on a skeleton with Mixamo bone names: "walk" or "idle".
+    It only exists to check how the mesh bends (cape, legs) before real animations are bought
+    or downloaded. 8 frames loop on frames 1..9 (frame 9 equals frame 1)."""
+    from mathutils import Quaternion
+    arm_obj = next((o for o in bpy.data.objects if o.type == "ARMATURE"), None)
+    if arm_obj is None:
+        raise SystemExit("--procedural needs a model with a skeleton")
+    bpy.context.view_layer.update()
+    to_arm = arm_obj.matrix_world.to_3x3().inverted()
+    x_axis = (to_arm @ Vector((1.0, 0.0, 0.0))).normalized()  # the character's left-right axis
+    z_axis = (to_arm @ Vector((0.0, 0.0, 1.0))).normalized()
+    pose = arm_obj.pose.bones
+    arm_obj.animation_data_create()
+    arm_obj.animation_data.action = bpy.data.actions.new("procedural_" + kind)
+
+    def swing(name, axis_arm, angle):
+        if name not in pose:
+            return
+        rest = arm_obj.data.bones[name].matrix_local.to_3x3()
+        local_axis = (rest.inverted() @ axis_arm).normalized()
+        pose[name].rotation_mode = "QUATERNION"
+        pose[name].rotation_quaternion = Quaternion(local_axis, angle)
+        pose[name].keyframe_insert("rotation_quaternion", frame=current_frame)
+
+    def lift(name, amount):
+        if name not in pose:
+            return
+        rest = arm_obj.data.bones[name].matrix_local.to_3x3()
+        pose[name].location = rest.inverted() @ (z_axis * amount)
+        pose[name].keyframe_insert("location", frame=current_frame)
+
+    scene = bpy.context.scene
+    scene.frame_start, scene.frame_end = 1, 9
+    for current_frame in range(1, 10):
+        phase = (current_frame - 1) / 8.0 * 2.0 * math.pi
+        if kind == "walk":
+            thigh = math.radians(28.0) * math.sin(phase)
+            swing("mixamorig:LeftUpLeg", x_axis, thigh)
+            swing("mixamorig:RightUpLeg", x_axis, -thigh)
+            swing("mixamorig:LeftLeg", x_axis, math.radians(35.0) * max(0.0, -math.cos(phase)))
+            swing("mixamorig:RightLeg", x_axis, math.radians(35.0) * max(0.0, math.cos(phase)))
+            swing("mixamorig:LeftArm", x_axis, -math.radians(18.0) * math.sin(phase))
+            swing("mixamorig:RightArm", x_axis, math.radians(18.0) * math.sin(phase))
+            lift("mixamorig:Hips", 0.03 * abs(math.sin(phase)))
+        else:
+            breathe = math.sin(phase)
+            swing("mixamorig:Spine1", x_axis, math.radians(2.0) * breathe)
+            swing("mixamorig:LeftArm", x_axis, math.radians(3.0) * breathe)
+            swing("mixamorig:RightArm", x_axis, math.radians(3.0) * breathe)
+            lift("mixamorig:Hips", 0.006 * breathe)
+
+
 def pick_action(root, wanted):
     actions = list(bpy.data.actions)
     if not actions:
@@ -324,7 +423,10 @@ def main():
         root = build_demo_figure()
     else:
         root = import_model(os.path.abspath(opts["input"]))
-    pick_action(root, opts["action"])
+    if opts["procedural"]:
+        build_procedural(root, opts["procedural"])
+    else:
+        pick_action(root, opts["action"])
     normalize_model(root, opts["height"])
     apply_toon(root, opts["outline"], opts["outline_color"])
     setup_camera_and_light(opts["size"])

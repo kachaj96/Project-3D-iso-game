@@ -114,7 +114,7 @@ Same concept (hooded ranger, A-pose) tried in two tools on free plans. Measured 
 | Mesh reduction | only to 10k, free | set before generating |
 | Export | **blocked on the free plan** | blocked for the first model; **worked after regenerating on engine version H2.5** |
 | Look | chunky, toy-like, bigger gloves and boots | slimmer, flatter colors, closer to an illustration |
-| Rig and animation | not tried (needs a paid plan to download) | not tried yet |
+| Rig and animation | not tried (needs a paid plan to download) | Auto Rig, humanoid, Mixamo bone names: 20 credits, about 180 s. **The exported GLB has a damaged skeleton**: bones sit on one spot and the mesh blows up when the skeleton is applied, in Blender with either import setting. Animations exist in the tool, their cost was not visible |
 
 Render step (Blender, this PC): 8 directions of a 20k triangle model in about 12 seconds including startup, no cost.
 
@@ -123,3 +123,9 @@ Findings:
 - Tripo's texture has projection flaws: the face is painted a little onto the hood sides and the edges of gloves and boots show light speckles. At sprite size they are barely visible; check on the phone.
 - At a 120 px sprite height the face is about 10 px wide, so eyes are lost. If faces should read, the model needs bigger eyes than this concept has.
 - The model has no skeleton yet. A rig is the next step.
+
+Rig results (2026-10-25):
+- Tripo's auto-rigged GLB (free plan, H2.5 export) cannot be used: every bone has the same position, so skinning explodes the mesh. `render_sprites.py` now detects this and stops with a clear message instead of rendering empty frames.
+- Possible fixes, cheapest first: export the same rig as FBX from Tripo (one more of the 15 free exports); rig the static model in Mixamo (free, Adobe account); a paid plan only if neither works.
+- `tools/blender/export_static_fbx.py` turns the static GLB into an FBX for Mixamo: scaled to 1.8 m, feet on the ground, texture embedded.
+- `render_sprites.py --procedural walk|idle` plays a simple test animation on any skeleton with Mixamo bone names, to check how the mesh bends before real animations are used.
