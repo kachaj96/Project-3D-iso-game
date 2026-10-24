@@ -76,3 +76,28 @@ Record actual time per asset in Milestone 2:
 | Animation set, 8 directions | 2-4 h | - |
 | Monster | 3-6 h | - |
 | Icon | 5-15 min | - |
+
+## Tools and their terms (checked 2026-10-25)
+
+Prices and terms change. Re-check on the vendor's own page before paying. Nothing is bought yet.
+
+| Tool | What for | Price seen on its own page | Commercial use |
+|---|---|---|---|
+| **Tripo** (tripo3d.ai) | Image to 3D, texture, auto rig, also image generation inside the plan | Free: 200 credits a month. **Pro: $20 a month**, 3000 credits (about 200 models) | Free: models are public and non-commercial, and Tripo keeps the rights. Paid: terms say paid users have all rights to their inputs and outputs, and Tripo does not train on them. Outputs are not exclusive: other users can receive similar ones |
+| **Meshy** (meshy.ai) | Same, as an alternative | Free 100 credits; Starter about zł 36, **Pro about zł 73 (roughly $20)** a month | Free: CC BY 4.0, commercial use with credit to Meshy. Paid: assets are "private and customer owned" |
+| **Mixamo** (Adobe) | Free auto rig and animation library for humanoids | Free with an Adobe account | An Adobe employee states on the official forum that characters and animations are royalty-free for commercial games, but the raw files may not be redistributed. The official FAQ page did not load for me, so read Adobe's current terms before release |
+| **Blender** | Rendering the 8 directions | Free (installed: 4.5.10 LTS) | Free software, output is yours |
+
+Notes:
+- Third-party image generators used inside a plan (for example the ones listed in Tripo's image generation) are governed by their own terms, according to Tripo's terms. Check them before shipping any asset made that way.
+- For the bake-off the free plans are enough to judge quality. Do not put free-plan output into the shipped game: it is public and the vendor keeps the rights.
+- Budget: one paid plan at a time, about $20 a month, only after the bake-off shows the tool is worth it.
+
+## Developer tools in the repo
+
+| Tool | What it does |
+|---|---|
+| `tools/blender/render_sprites.py` | Renders a 3D model into isometric sprite frames: orthographic camera at 30 degrees, light fixed top-left, 3-tone cel shading, outline, 4 or 8 facings, optional animation frames. Run with Blender in background mode. Tested on a built-in demo figure |
+| `tools/art/make_contact_sheet.gd` | Puts all frames of a folder on one sheet with a 128 x 64 diamond under each anchor point |
+| `tools/art/cleanup_image.gd` | Removes the plain background of an AI image, trims, scales to a target width. Tested |
+| `scenes/lab/style_lab.tscn` | Map and character with a "Daylight" switch that imitates a phone screen in sunlight |
