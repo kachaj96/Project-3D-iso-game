@@ -43,6 +43,18 @@ func test_negative_cells_round_trip() -> void:
 	assert_vector(_grid.pixel_to_cell(_grid.cell_to_pixel(Vector2i(-7, 3)))).is_equal(Vector2i(-7, 3))
 
 
+func test_map_bounds_hold_every_cell_of_the_map() -> void:
+	var size := Vector2i(12, 12)
+	var bounds: Rect2 = _grid.map_pixel_bounds(size)
+	assert_vector(bounds.position).is_equal(Vector2(-704, 0))
+	assert_vector(bounds.size).is_equal(Vector2(1536, 768))
+	for x: int in [0, 11]:
+		for y: int in [0, 11]:
+			var centre: Vector2 = _grid.cell_to_pixel(Vector2i(x, y))
+			assert_bool(bounds.has_point(centre)).is_true()
+			assert_bool(bounds.has_point(centre + Vector2(60, 0))).is_true() if x == 11 and y == 0 else null
+
+
 func test_custom_tile_size_is_respected() -> void:
 	var small := GridMath.new(64, 32)
 	assert_vector(small.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(64, 32))

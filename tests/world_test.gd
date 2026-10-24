@@ -57,3 +57,60 @@ func test_walking_onto_an_exit_shows_the_next_map() -> void:
 	assert_bool(events[0] is MovedEvent).is_true()
 	assert_str((events[0] as MovedEvent).map_id).is_equal("map.start.02")
 	await world.walk_finished
+
+
+func test_camera_view_stays_inside_the_map_in_a_corner() -> void:
+	var world: World = _make_world()
+	world.place_player_visual_at(Vector2i(0, 0))
+	await get_tree().process_frame
+	var camera: CameraRig = world.camera()
+	var half_view: Vector2 = camera.get_viewport_rect().size / camera.zoom.x / 2.0
+	var view: Rect2 = Rect2(camera.get_screen_center_position() - half_view, half_view * 2.0)
+	var bounds: Rect2 = _grid.map_pixel_bounds(Vector2i(12, 12)).grow_individual(0.0, camera.vertical_margin, 0.0, camera.vertical_margin)
+	assert_bool(bounds.grow(1.0).encloses(view)).is_true()
+
+
+func test_zoom_is_limited_at_both_ends() -> void:
+	var world: World = _make_world()
+	var camera: CameraRig = world.camera()
+	camera.zoom_by(1000.0)
+	assert_float(camera.zoom.x).is_equal_approx(camera.max_zoom, 0.0001)
+	camera.zoom_by(0.0001)
+	assert_float(camera.zoom.x).is_equal_approx(camera.min_zoom(), 0.0001)
+	var view: Vector2 = camera.get_viewport_rect().size
+	var bounds: Rect2 = _grid.map_pixel_bounds(Vector2i(12, 12))
+	assert_float(camera.min_zoom()).is_greater_equal(view.x / (bounds.size.x + 1.0))
+
+
+func test_camera_jumps_to_the_new_map_spawn_after_a_map_change() -> void:
+	var world: World = _make_world()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(11, 5)))
+	await world.walk_finished
+	var camera: CameraRig = world.camera()
+	await get_tree().process_frame
+	assert_float(camera.global_position.distance_to(world.player_position() + camera.look_offset)).is_less(1.0)
+
+
+func test_a_tap_on_the_screen_goes_to_the_cell_under_the_finger() -> void:
+	var world: World = _make_world()
+	await get_tree().process_frame
+	var camera: CameraRig = world.camera()
+	var gestures: TouchGestures = world.get_node("Gestures")
+	var screen_point: Vector2 = camera.get_viewport_rect().size / 2.0 + Vector2(0, 100)
+	var expected_cell: Vector2i = _grid.pixel_to_cell(camera.get_screen_center_position() + Vector2(0, 100) / camera.zoom.x)
+	gestures.handle_touch(0, screen_point, true, 0)
+	gestures.handle_touch(0, screen_point, false, 100)
+	await world.walk_finished
+	assert_vector(world.player_position()).is_equal(_grid.cell_to_pixel(expected_cell))
+
+
+func test_taps_work_again_if_a_walk_is_cut_short() -> void:
+	var world: World = _make_world()
+	world.walk_speed = 1.0
+	world.tap_at(_grid.cell_to_pixel(Vector2i(2, 9)))
+	assert_array(world.tap_at(_grid.cell_to_pixel(Vector2i(4, 9)))).is_empty()
+	world.place_player_visual_at(Vector2i(2, 5))
+	world.walk_speed = 1000000.0
+	var events: Array[GameEvent] = world.tap_at(_grid.cell_to_pixel(Vector2i(3, 5)))
+	assert_array(events).is_not_empty()
+	await world.walk_finished

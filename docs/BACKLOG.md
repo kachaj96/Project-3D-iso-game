@@ -51,3 +51,20 @@ Explicitly **not** in First Playable:
 - Companions as AI-controlled fighters
 - Housing
 - Mounts
+
+## M1 review follow-ups (Opus review of src/core, 2026-10-24)
+
+Findings that need your decision because they touch `src/core` or `src/state`. Not applied yet.
+
+| # | Finding | Where | Status |
+|---|---|---|---|
+| 1 | Authority trusts the `player_id` inside a command (add `sender_id` to `submit`) | `authority.gd` | open |
+| 2 | `submit(null)` crashes | `authority.gd` | open |
+| 3 | No stable `character_id`; `PLAYER_ID` is hard-coded | `character_state.gd`, `world.gd` | open |
+| 4 | Presentation reads live state and treats every `MovedEvent` as the local player's | `world.gd` | open |
+| 5 | `MapDef` is shared by reference; pathfinder caches forever (make MapDef read-only at runtime, document in ARCHITECTURE) | `authority.gd` | open |
+| 6 | Input could lock if a walk is cut short | `player_actor.gd`, `world.gd` | fixed in step 7, with a test |
+| 7 | A loaded save with a blocked cell or missing map leaves the character stuck | save loader (later) | open, for M4 |
+| 8 | No `to_dict`/`from_dict`; RNG state is not saved | state classes (later) | open, for M4 |
+| 9 | `assert` for map validation is removed in exported builds | `world.gd` | fixed in step 7 |
+| 10 | Some untyped dictionaries, state handed out mutable | `authority.gd` | open |

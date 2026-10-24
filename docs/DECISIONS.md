@@ -72,3 +72,10 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 
 - **Decision:** `assets/art/placeholder/kenney_isometric_blocks/` (kenney.nl, license CC0, 2.7 MB of PNGs) is used for Milestone 1 only.
 - **Consequences:** replaced by final art after Milestone 2. No attribution required, license file kept next to the files.
+
+## D-012 Touch input: tap registers on release, pinch zooms, camera stays inside the map (2026-10-24)
+
+- **Context:** M1 step 7. A press that becomes a pinch must not send the character walking.
+- **Decision:** the project turns off "emulate mouse from touch" and turns on "emulate touch from mouse", so phone touches and PC clicks arrive as the same touch events and one code path serves both. A tap is a press that is released within 350 ms and moves at most 24 px, with no second finger involved. Two fingers zoom (factor = new finger distance / old distance). The mouse wheel zooms in steps of 10 percent on PC. D-009 stays true: a tap walks at once, with no confirm, but it is registered on release, not on press.
+- **Camera:** follows the character with a short glide, stays inside the map rectangle plus a 64 px margin for block height. Zoom is limited to max 2.0 and to a minimum that always fills the screen with map.
+- **Revisit if:** taps feel late on the phone (shorten or drop the release rule), or a long press is wanted for something.

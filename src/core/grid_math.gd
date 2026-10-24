@@ -28,6 +28,17 @@ func cell_to_pixel(cell: Vector2i) -> Vector2:
 	)
 
 
+## The rectangle in pixels that holds the whole diamond-shaped map of the given size in
+## cells: from the top vertex of cell (0, 0) to the bottom vertex of the last cell.
+func map_pixel_bounds(map_size: Vector2i) -> Rect2:
+	return Rect2(
+		-(map_size.y - 1) * tile_width / 2.0,
+		0.0,
+		(map_size.x + map_size.y) * tile_width / 2.0,
+		(map_size.x + map_size.y) * tile_height / 2.0
+	)
+
+
 ## The cell that contains a pixel position. Points exactly on a border belong to the
 ## cell with the higher coordinates.
 func pixel_to_cell(pixel: Vector2) -> Vector2i:

@@ -27,6 +27,7 @@ const MAP_FILES: Dictionary = {
 			_player.speed = value
 
 var _grid: GridMath = GridMath.new()
+var _maps: Dictionary = {}
 var _authority: Authority
 var _map_root: Node2D
 var _ground: TileMapLayer
@@ -35,31 +36,35 @@ var _marker: TapMarker
 var _current_map_id: String = ""
 var _busy: bool = false
 
+@onready var _camera: CameraRig = $Camera
+@onready var _gestures: TouchGestures = $Gestures
+
 
 func _ready() -> void:
-	var maps: Dictionary = {}
 	for map_id: String in MAP_FILES:
-		maps[map_id] = load(MAP_FILES[map_id]["def"])
-	assert(MapDef.validate_set(maps).is_empty(), "map data is invalid")
-	_authority = Authority.new(maps, RNG_SEED)
+		_maps[map_id] = load(MAP_FILES[map_id]["def"])
+	var problems: Array[String] = MapDef.validate_set(_maps)
+	if not problems.is_empty():
+		# An assert would be removed from exported builds, so report the error ourselves.
+		push_error("Map data is invalid, exploration will not start: " + "; ".join(problems))
+		return
+	_authority = Authority.new(_maps, RNG_SEED)
 	var character: CharacterState = _authority.add_character(PLAYER_ID, START_MAP_ID)
+
+	_gestures.tapped.connect(_on_screen_tapped)
+	_gestures.pinched.connect(_camera.zoom_by)
 
 	_player = PLAYER_SCENE.instantiate()
 	_player.speed = walk_speed
 	_marker = MARKER_SCENE.instantiate()
+	_camera.target = _player
 	_show_map(character.map_id, character.cell)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	var button: InputEventMouseButton = event as InputEventMouseButton
-	if button != null and button.pressed and button.button_index == MOUSE_BUTTON_LEFT:
-		tap_at(get_global_mouse_position())
 
 
 ## A tap at a world (not screen) position. Returns the events the Authority produced.
 ## While the character is walking, taps are ignored.
 func tap_at(world_position: Vector2) -> Array[GameEvent]:
-	if _busy:
+	if _authority == null or _busy:
 		return []
 	var cell: Vector2i = _grid.pixel_to_cell(_ground.to_local(world_position))
 	var events: Array[GameEvent] = _authority.submit(MoveCommand.create(PLAYER_ID, cell))
@@ -75,10 +80,20 @@ func player_position() -> Vector2:
 	return _player.position
 
 
+func camera() -> CameraRig:
+	return _camera
+
+
 ## Presentation only: puts the character picture on a cell without telling the Authority.
 ## For screenshots and tests of drawing order.
 func place_player_visual_at(cell: Vector2i) -> void:
 	_player.place_at(_grid.cell_to_pixel(cell))
+	_camera.snap_to_target()
+
+
+func _on_screen_tapped(screen_position: Vector2) -> void:
+	var world_position: Vector2 = get_viewport().get_canvas_transform().affine_inverse() * screen_position
+	tap_at(world_position)
 
 
 func _play(events: Array[GameEvent], tapped_cell: Vector2i) -> void:
@@ -129,5 +144,7 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 	_map_root.add_child(_player)
 	_map_root.add_child(_marker)
 	_player.place_at(_grid.cell_to_pixel(cell))
+	_camera.set_map_bounds(_grid.map_pixel_bounds((_maps[map_id] as MapDef).size))
+	_camera.snap_to_target()
 	_current_map_id = map_id
 	map_shown.emit(map_id)

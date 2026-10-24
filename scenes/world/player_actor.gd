@@ -17,8 +17,7 @@ func is_walking() -> bool:
 
 ## Walks through the given pixel positions in order, starting from the current position.
 func walk_along(points: Array[Vector2]) -> void:
-	if _tween != null:
-		_tween.kill()
+	_stop_walking()
 	_tween = create_tween()
 	var from: Vector2 = position
 	for point: Vector2 in points:
@@ -28,9 +27,20 @@ func walk_along(points: Array[Vector2]) -> void:
 
 
 func place_at(point: Vector2) -> void:
-	if _tween != null:
-		_tween.kill()
+	_stop_walking()
 	position = point
+
+
+## Cancels a walk in progress. walk_finished is still emitted, so whoever waits for it
+## (the World, which ignores taps while walking) is never left waiting forever.
+func _stop_walking() -> void:
+	if _tween == null:
+		return
+	var was_walking: bool = is_walking()
+	_tween.kill()
+	_tween = null
+	if was_walking:
+		walk_finished.emit()
 
 
 func _on_tween_finished() -> void:
