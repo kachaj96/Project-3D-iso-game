@@ -22,7 +22,7 @@ jobs:
           lfs: true
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -84,7 +84,7 @@ jobs:
       - name: Parse-check every GDScript file
         env:
           GODOT_BIN: godot
-        run: tools/check_scripts.sh
+        run: bash tools/check_scripts.sh
 
       - name: Run unit tests (gdUnit4)
         run: |
