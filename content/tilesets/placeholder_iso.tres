@@ -1,0 +1,30 @@
+[gd_resource type="TileSet" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/placeholder/placeholder_atlas.png" id="1_flu4x"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_usk1d"]
+texture = ExtResource("1_flu4x")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, -32)
+0:0/0/custom_data_0 = "ground"
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(0, -32)
+1:0/0/custom_data_0 = "ground"
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, -32)
+2:0/0/custom_data_0 = "exit"
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(0, -32)
+3:0/0/custom_data_0 = "obstacle"
+4:0/0 = 0
+4:0/0/texture_origin = Vector2i(0, -32)
+4:0/0/custom_data_0 = "obstacle"
+
+[resource]
+tile_shape = 1
+tile_layout = 5
+tile_size = Vector2i(128, 64)
+custom_data_layer_0/name = "kind"
+custom_data_layer_0/type = 4
+sources/0 = SubResource("TileSetAtlasSource_usk1d")

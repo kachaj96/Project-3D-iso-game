@@ -8,14 +8,14 @@ func before_test() -> void:
 	_grid = GridMath.new()
 
 
-func test_origin_cell_is_at_pixel_zero() -> void:
-	assert_vector(_grid.cell_to_pixel(Vector2i(0, 0))).is_equal(Vector2(0, 0))
+func test_origin_cell_centre_is_half_a_tile_from_the_origin() -> void:
+	assert_vector(_grid.cell_to_pixel(Vector2i(0, 0))).is_equal(Vector2(64, 32))
 
 
 func test_neighbour_cells_move_along_the_diamond_axes() -> void:
-	assert_vector(_grid.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(64, 32))
-	assert_vector(_grid.cell_to_pixel(Vector2i(0, 1))).is_equal(Vector2(-64, 32))
-	assert_vector(_grid.cell_to_pixel(Vector2i(1, 1))).is_equal(Vector2(0, 64))
+	assert_vector(_grid.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(128, 64))
+	assert_vector(_grid.cell_to_pixel(Vector2i(0, 1))).is_equal(Vector2(0, 64))
+	assert_vector(_grid.cell_to_pixel(Vector2i(1, 1))).is_equal(Vector2(64, 96))
 
 
 func test_round_trip_cell_pixel_cell_for_many_cells() -> void:
@@ -45,5 +45,5 @@ func test_negative_cells_round_trip() -> void:
 
 func test_custom_tile_size_is_respected() -> void:
 	var small := GridMath.new(64, 32)
-	assert_vector(small.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(32, 16))
-	assert_vector(small.pixel_to_cell(Vector2(32, 16))).is_equal(Vector2i(1, 0))
+	assert_vector(small.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(64, 32))
+	assert_vector(small.pixel_to_cell(Vector2(64, 32))).is_equal(Vector2i(1, 0))

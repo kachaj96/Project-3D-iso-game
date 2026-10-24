@@ -51,7 +51,7 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 ## D-008 Isometric grid: 2:1 diamond, 128x64 px cell, four-direction movement (2026-10-24)
 
 - **Context:** Milestone 1 grid and pathfinding.
-- **Decision:** cell (0,0) has its centre at pixel (0,0), x grows down-right, y grows down-left. Tile size is a parameter of `GridMath` with 128x64 as default. Movement and pathfinding use the four grid directions only (no diagonal steps), like Dofus, so one step is one movement point in combat later.
+- **Decision:** same convention as Godot's isometric "diamond down" TileMapLayer (verified by a test): the top vertex of cell (0,0) is at pixel (0,0), so its centre is at (64,32). x grows down-right, y grows down-left. Tile size is a parameter of `GridMath` with 128x64 as default. Movement and pathfinding use the four grid directions only (no diagonal steps), like Dofus, so one step is one movement point in combat later.
 - **Alternatives:** eight-direction movement (smoother paths, but breaks the MP-per-step model).
 - **Consequences:** Kenney "Isometric Blocks" tiles are 111x128 px, so they must be scaled or the grid tile size set to match when the TileSet is built.
 - **Revisit if:** movement feels stiff on the phone.
