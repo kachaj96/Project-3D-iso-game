@@ -70,6 +70,8 @@ func validate() -> Array[String]:
 			problems.append("%s: prop %s must stand on a blocked cell inside the map" % [id, prop.id])
 		if find_exit_at(prop.cell) != null:
 			problems.append("%s: prop %s stands on an exit cell" % [id, prop.id])
+		if not MapProp.KINDS.has(prop.kind):
+			problems.append("%s: prop %s has unknown kind '%s'" % [id, prop.id, prop.kind])
 		if prop.text_key.is_empty():
 			problems.append("%s: prop %s has no text key" % [id, prop.id])
 	return problems

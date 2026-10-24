@@ -88,3 +88,12 @@ func test_bad_props_are_reported() -> void:
 		no_key,
 	]
 	assert_int(map.validate().size()).is_equal(4)
+
+
+func test_a_prop_of_unknown_kind_is_reported() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.blocked_cells = [Vector2i(3, 3)]
+	var typo: MapProp = _make_prop("prop.test.sign", Vector2i(3, 3))
+	typo.kind = "sing"
+	map.props = [typo]
+	assert_int(map.validate().size()).is_equal(1)
