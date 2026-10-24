@@ -129,3 +129,5 @@ Rig results (2026-10-25):
 - Possible fixes, cheapest first: export the same rig as FBX from Tripo (one more of the 15 free exports); rig the static model in Mixamo (free, Adobe account); a paid plan only if neither works.
 - `tools/blender/export_static_fbx.py` turns the static GLB into an FBX for Mixamo: scaled to 1.8 m, feet on the ground, texture embedded.
 - `render_sprites.py --procedural walk|idle` plays a simple test animation on any skeleton with Mixamo bone names, to check how the mesh bends before real animations are used.
+
+Tripo FBX exports (2026-10-25): both the "Blender" and the "Mixamo" export modes (zip with FBX and texture) contain only the mesh: no skeleton, no skin weights, no animation (checked in Blender and by searching the raw FBX for skeleton data). The Mixamo mode file is the model in centimetres, Y up, with a PNG texture, meant for uploading to Mixamo. So on the free plan Tripo's rig could only be exported as the damaged GLB. Rigging goes through Mixamo instead.
