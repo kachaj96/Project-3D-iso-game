@@ -101,3 +101,25 @@ Notes:
 | `tools/art/make_contact_sheet.gd` | Puts all frames of a folder on one sheet with a 128 x 64 diamond under each anchor point |
 | `tools/art/cleanup_image.gd` | Removes the plain background of an AI image, trims, scales to a target width. Tested |
 | `scenes/lab/style_lab.tscn` | Map and character with a "Daylight" switch that imitates a phone screen in sunlight |
+
+## Bake-off log: character from an AI image to 8 render directions (2026-10-25)
+
+Same concept (hooded ranger, A-pose) tried in two tools on free plans. Measured by you and by Claude.
+
+| Step | Meshy (free) | Tripo (free) |
+|---|---|---|
+| Concept image, 4 variants | 36 credits, fast | 40 credits |
+| 3D model from the chosen image | 15 credits | 25 credits with texture, about 60 s (20k triangles, 2K texture, no PBR, lighting removed) |
+| Texture | 10 credits, about 60 s | included above |
+| Mesh reduction | only to 10k, free | set before generating |
+| Export | **blocked on the free plan** | blocked for the first model; **worked after regenerating on engine version H2.5** |
+| Look | chunky, toy-like, bigger gloves and boots | slimmer, flatter colors, closer to an illustration |
+| Rig and animation | not tried (needs a paid plan to download) | not tried yet |
+
+Render step (Blender, this PC): 8 directions of a 20k triangle model in about 12 seconds including startup, no cost.
+
+Findings:
+- Free plans can be used to judge quality but not to get usable files without tricks. For production a paid plan is needed.
+- Tripo's texture has projection flaws: the face is painted a little onto the hood sides and the edges of gloves and boots show light speckles. At sprite size they are barely visible; check on the phone.
+- At a 120 px sprite height the face is about 10 px wide, so eyes are lost. If faces should read, the model needs bigger eyes than this concept has.
+- The model has no skeleton yet. A rig is the next step.

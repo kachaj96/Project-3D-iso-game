@@ -21,8 +21,8 @@ Conventions (they match docs/ART_PIPELINE.md and the Godot grid):
   - The key light is fixed on the screen's top-left. The model turns, the light never does.
   - Facing order is clockwise on the screen, starting toward the camera:
     S, SW, W, NW, N, NE, E, SE  (with 4 directions: S, W, N, E).
-  - The model's own front must point along +Y in Blender before it is imported
-    (for glTF files the importer already converts this).
+  - The model must face -Y (Blender's own "front"), which is what glTF, FBX and .blend
+    importers produce for a normally authored character.
   - The point on the ground under the character is at 50% of the frame width and 75% of
     its height. Use that as the sprite's anchor in Godot.
 """
@@ -40,6 +40,8 @@ CAMERA_ELEVATION_DEG = 30.0
 ANCHOR_FROM_TOP = 0.75
 DIRECTION_NAMES_8 = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"]
 DIRECTION_NAMES_4 = ["S", "W", "N", "E"]
+# Models face -Y. With the camera at (+1, +1) the turn that makes a model face the camera ("S") is 135 degrees.
+FACING_S_DEG = 135.0
 
 
 def parse_args():
@@ -98,10 +100,10 @@ def build_demo_figure():
     hat = make_material("Hat", (0.15, 0.30, 0.35))
     add(bpy.ops.mesh.primitive_cone_add, "Body", cloak, radius1=0.3, radius2=0.18, depth=0.7, location=(0, 0, 0.55))
     add(bpy.ops.mesh.primitive_uv_sphere_add, "Head", skin, radius=0.26, location=(0, 0, 1.15))
-    add(bpy.ops.mesh.primitive_cone_add, "Nose", skin, radius1=0.06, radius2=0.0, depth=0.16, location=(0, 0.3, 1.13), rotation=(-math.pi / 2, 0, 0))
+    add(bpy.ops.mesh.primitive_cone_add, "Nose", skin, radius1=0.06, radius2=0.0, depth=0.16, location=(0, -0.3, 1.13), rotation=(math.pi / 2, 0, 0))
     add(bpy.ops.mesh.primitive_cone_add, "Hat", hat, radius1=0.3, radius2=0.04, depth=0.35, location=(0, 0, 1.45))
-    add(bpy.ops.mesh.primitive_cylinder_add, "FootL", boots, radius=0.09, depth=0.14, location=(-0.12, 0.04, 0.07))
-    add(bpy.ops.mesh.primitive_cylinder_add, "FootR", boots, radius=0.09, depth=0.14, location=(0.12, 0.04, 0.07))
+    add(bpy.ops.mesh.primitive_cylinder_add, "FootL", boots, radius=0.09, depth=0.14, location=(-0.12, -0.04, 0.07))
+    add(bpy.ops.mesh.primitive_cylinder_add, "FootR", boots, radius=0.09, depth=0.14, location=(0.12, -0.04, 0.07))
     # A short "walk" animation: the figure bobs up and down.
     scene = bpy.context.scene
     scene.frame_start, scene.frame_end = 1, 9
@@ -194,11 +196,11 @@ def apply_toon(root, outline_width, outline_color):
             ramp = tree.nodes.new("ShaderNodeValToRGB")
             ramp.color_ramp.interpolation = "CONSTANT"
             ramp.color_ramp.elements[0].position = 0.0
-            ramp.color_ramp.elements[0].color = (0.45, 0.45, 0.55, 1)  # shadow tone, slightly cool
-            ramp.color_ramp.elements[1].position = 0.35
-            ramp.color_ramp.elements[1].color = (0.80, 0.80, 0.82, 1)  # middle tone
-            extra = ramp.color_ramp.elements.new(0.70)
-            extra.color = (1.0, 0.97, 0.90, 1)  # lit tone, slightly warm
+            ramp.color_ramp.elements[0].color = (0.76, 0.78, 0.88, 1)  # shadow tone, slightly cool
+            ramp.color_ramp.elements[1].position = 0.28
+            ramp.color_ramp.elements[1].color = (0.92, 0.93, 0.96, 1)  # middle tone
+            extra = ramp.color_ramp.elements.new(0.55)
+            extra.color = (1.05, 1.0, 0.92, 1)  # lit tone, slightly warm
             mix = tree.nodes.new("ShaderNodeMix")
             mix.data_type = "RGBA"
             mix.blend_type = "MULTIPLY"
@@ -268,7 +270,7 @@ def setup_camera_and_light(size):
     # Screen top-left: left on screen is (1,-1)/sqrt2 in world, toward the camera is (1,1)/sqrt2.
     left = Vector((1.0, -1.0, 0.0)).normalized()
     toward = Vector((1.0, 1.0, 0.0)).normalized()
-    to_light = left * 0.5 + toward * 0.3 + Vector((0, 0, 0.8))
+    to_light = left * 0.5 + toward * 0.55 + Vector((0, 0, 0.7))
     sun_data = bpy.data.lights.new("Sun", "SUN")
     sun_data.energy = 3.0
     sun = bpy.data.objects.new("Sun", sun_data)
@@ -304,7 +306,7 @@ def render_all(root, opts):
     frames = max(1, opts["frames"])
     start, end = scene.frame_start, scene.frame_end
     for k, direction in enumerate(names):
-        theta = math.radians(-45.0 - step_deg * k)
+        theta = math.radians(FACING_S_DEG - step_deg * k)
         root.rotation_euler.z = base_z + theta
         for f in range(frames):
             frame = start if frames == 1 else round(start + (end - start) * f / frames)
