@@ -21,4 +21,13 @@ Ranked by impact times likelihood. Review at the end of every milestone.
 
 ## Known bugs
 
-None yet. Format: `B-001 [open/fixed] short title, steps to reproduce, device, milestone found`.
+Format: `B-001 [open/fixed] short title, steps to reproduce, device, milestone found`.
+
+- **B-001 [open] Godot reports four scripts "still in use at exit".** Found in M1 (2026-10-24) on PC and in CI.
+  - Steps: fresh clone, then `godot --headless --path . --import --quit`, or run the game and quit.
+  - Engine output: `ERROR: 4 resources still in use at exit` (in the editor also gdUnit4 scripts) for `game_command.gd`, `move_command.gd`, `map_def.gd` and `map_exit.gd`.
+  - What leaks: only GDScript script objects at shutdown. No game object leaks, and tests report 0 orphan nodes. It appeared when `world.gd` started reaching the Authority through `LocalSession`.
+  - What was ruled out by bisecting each change: the signal types, the base class, the Crypto id, the pathfinder enum, the event loop, and the session member types. It looks like a GDScript shutdown issue with script dependency order, not a bug in game logic.
+  - Impact: none during play, because the system frees the memory when the app closes.
+  - CI ignores exactly these two shutdown lines and still fails on any other error.
+  - Revisit at the next Godot 4.7.x update, or if the count grows, or if anything leaks while the game runs.
