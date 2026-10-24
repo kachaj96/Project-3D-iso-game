@@ -6,7 +6,7 @@ Ranked by impact times likelihood. Review at the end of every milestone.
 
 | # | Risk | Why it is real | Mitigation | Owner milestone |
 |---|---|---|---|---|
-| R1 | **Art production does not scale** | Illustrated iso art is the most expensive 2D style. Your last project was already art-blocked with simpler pixel art | Style spike in M2 with measured time per asset. Cutout rigs reuse animations. Region palettes reuse tiles. Fallback to pre-rendered 3D or simpler style | M2 |
+| R1 | **Art production does not scale** | Illustrated iso art is the most expensive 2D style and needs many assets per map screen | Style spike in M2 with measured time per asset. Cutout rigs reuse animations. Region palettes reuse tiles. Fallback to pre-rendered 3D or simpler style | M2 |
 | R2 | **Scope creep** | The vision is Dofus-sized and you love all of it | First Playable definition in `BACKLOG.md`, "not in" list, one milestone at a time | all |
 | R3 | **AI-generated code you cannot debug** | Large systems written fast, you read code at 0-1/3 | Small tasks, tests for rules, you explain each system back before moving on (see `WORKFLOW.md`) | all |
 | R4 | **Godot 3 vs 4 API confusion in AI output** | Models are trained on lots of Godot 3 code | Pinned version in `CLAUDE.md`, headless parse check in CI | M0 |

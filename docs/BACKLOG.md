@@ -44,9 +44,9 @@ Explicitly **not** in First Playable:
 
 ## Later ideas (P3, parked)
 
-- Echo mode for dungeons (harder replays with better loot), from Natalis
-- Codex/bestiary with discovery layers, from Natalis
-- Abilities that open old areas (climbing, diving, light), from Natalis
+- Harder replay modes for cleared dungeons, with better loot
+- Codex/bestiary with discovery layers
+- Abilities that open old areas (climbing, diving, light)
 - Region-specific weather and festivals
 - Companions as AI-controlled fighters
 - Housing

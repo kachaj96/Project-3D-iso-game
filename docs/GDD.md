@@ -48,7 +48,7 @@ Each class needs one sentence that explains its tactical identity. If the senten
 
 | Class | Tactical identity |
 |---|---|
-| Lanternbearer | Controls the battlefield with light: reveals, blinds and creates zones that hurt enemies standing in darkness. |
+| Duskcaller | Controls the battlefield with shadow: blinds, hides allies and creates zones that hurt enemies standing in darkness. |
 | Gravewarden | Tank who turns damage taken into power. Pulls enemies in and locks them down. |
 | Hexweaver | Places marks on cells and enemies, then detonates them. Rewards planning two turns ahead. |
 | Thornshot | Long-range archer. Strong at distance and with line of sight, weak when cornered. Uses pushback to keep range. |
@@ -63,7 +63,7 @@ First Playable: one class finished (6 spells), a second class with 6 spells to p
 - XP from monsters far below your level drops to zero. You cannot level by stomping weak monsters, and you do not have to.
 - Spell unlocks and gear set bonuses are the main power steps, not tiny stat increments.
 - No level where XP requirements jump to absurd values. The curve stays smooth, and the cap rises with content.
-- Endgame is optional challenge: harder dungeon modes (like the Echo mode from Natalis), boss variants, collections, rare crafts. Not 200 hours of the same fight.
+- Endgame is optional challenge: harder dungeon modes (harder replays of cleared dungeons with better loot), boss variants, collections, rare crafts. Not 200 hours of the same fight.
 - Cheap respec so build experiments are encouraged.
 
 ## 9. Equipment and loot *(draft)*
@@ -84,9 +84,9 @@ First Playable: one class finished (6 spells), a second class with 6 spells to p
 ## 11. Quests and story *(draft)*
 
 - Main quest per region, with one meaningful choice per region whose consequence shows up later.
-- Side quests built around characters, not "bring 10 pelts". Natalis already had this rule: avoid fetch-quantity quests.
+- Side quests built around characters, not "bring 10 pelts".
 - Environmental storytelling: ruins, notes, statues, changed maps after story events.
-- A codex or bestiary that fills in as you discover things (another proven idea from Natalis).
+- A codex or bestiary that fills in as you discover things.
 
 ## 12. World *(draft)*
 
@@ -107,8 +107,7 @@ English and Polish from the first string. All text through translation keys. Pol
 
 ## 15. Open questions
 
-1. **Is this "Natalis 2"?** Your previous game's `CLAUDE.md` planned isometry as a separate project called Natalis 2, and Natalis already has a 7-continent world and lore. Reusing it saves world-building time. A fresh IP gives more freedom and avoids personal elements (the dedication, Natalia as heroine) if you publish. Decide before writing the main quest (Milestone 5). It does not block Milestones 0-3.
-2. Title of the game.
-3. Final proportions of story vs exploration vs sandbox. Revisit after the First Playable based on what testers enjoy most.
-4. Final class list and which class comes first. Recommended first class: one with a simple, strong identity, such as Thornshot or Gravewarden.
-5. Death penalty in later, harder content.
+1. Title of the game and the name of the world.
+2. Final proportions of story vs exploration vs sandbox. Revisit after the First Playable based on what testers enjoy most.
+3. Final class list and which class comes first. Recommended first class: one with a simple, strong identity, such as Thornshot or Gravewarden.
+4. Death penalty in later, harder content.

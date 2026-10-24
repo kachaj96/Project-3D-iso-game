@@ -130,7 +130,7 @@ Changes from the sequence you proposed, and why:
 
 **What you need to learn:** the command/event pattern (read `ARCHITECTURE.md` sections 1, 2 and 5 until you can explain them), how to read a unit test, how to use the debugger and breakpoints.
 
-**How Claude Code helps:** most of the code. Combat state, spell effects, line of sight, AI scoring, turn flow, plus thorough unit tests. A headless balance simulator that runs 1,000 fights, ported from the Natalis idea.
+**How Claude Code helps:** most of the code. Combat state, spell effects, line of sight, AI scoring, turn flow, plus thorough unit tests. A headless balance simulator that runs 1,000 fights.
 
 **What you do manually:** design the 6 spells and 2 monsters (numbers and identity), build the combat UI layout in the editor, tune the feel (animation timing, camera shake, sounds), play many fights.
 

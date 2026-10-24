@@ -19,12 +19,12 @@ This document describes the minimum architecture plus the few rules that are exp
 ```
 
 - **GameState** is plain data: typed GDScript classes extending `RefCounted`, plus Resources for static content. No nodes, no sprites, no timers.
-- **Rules** (combat, inventory, crafting, quests) are functions that take state and a command, change the state, and return a list of events. The old Natalis `dungeon.js` already works this way.
+- **Rules** (combat, inventory, crafting, quests) are functions that take state and a command, change the state, and return a list of events.
 - **Presentation** (scenes, nodes) never changes game state directly. It sends commands and plays events back as animations, numbers and sounds.
 
 Why this matters:
 
-1. **Testable.** Combat rules can be unit-tested headless, and the balance simulator idea from Natalis can be ported directly.
+1. **Testable.** Combat rules can be unit-tested headless, and a headless balance simulator can run thousands of fights.
 2. **Co-op becomes a transport problem.** In single-player the Authority runs locally. In co-op the host runs it, the client sends commands over the network and receives events. The rules code does not change.
 3. **Save/load is trivial.** Saving means serializing GameState, not walking a scene tree.
 
@@ -94,7 +94,7 @@ Data:
 
 Rules:
 - Placement phase, initiative order, turns with AP/MP, a turn timer (configurable, generous on mobile).
-- Line of sight via Bresenham-style cell tracing, same as Natalis `los()`.
+- Line of sight via Bresenham-style cell tracing.
 - Effects are small composable pieces. A new spell should usually be new data, not new code.
 - Monster AI is a simple scored decision: for each reachable cell and each castable spell, score the result (damage dealt, danger, distance to preferred range) and pick the best. Bosses get scripted phases on top.
 
@@ -135,7 +135,7 @@ Touch UI:
 ## 10. Save and load
 
 - Two files: `characters/<character_id>.json` and `worlds/<world_id>.json` in `user://`.
-- JSON with a `version` field and a migration function per version bump. Natalis already does this (`tests/unit/migrate.test.mjs`), keep that habit.
+- JSON with a `version` field and a migration function per version bump. Every migration gets a test.
 - Autosave on map change and after fights, plus a manual save. Write to a temp file and rename, so a crash mid-save cannot corrupt the save.
 - Settings (language, volume, zoom, turn timer) live in a separate `settings.cfg`.
 

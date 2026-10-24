@@ -111,8 +111,7 @@ Process: inspect first, propose the plan, wait for my OK, then implement. Do not
 ```
 Task: add a GitHub Actions workflow that checks the project and builds a debug APK.
 
-Context: read CLAUDE.md. Milestone M0. My previous project kachaj96/Game has a similar workflow in
-.github/workflows/android.yml for reference (Capacitor, not Godot).
+Context: read CLAUDE.md. Milestone M0.
 
 Acceptance criteria:
 - Runs on push and manual dispatch.
