@@ -41,3 +41,34 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 ## D-007 Landscape orientation (2026-10-24)
 
 - **Decision:** landscape only. Isometric maps are wider than tall and combat UI needs horizontal space.
+
+## D-007 Tool and project naming: game is called Overthune (2026-10-24)
+
+- **Decision:** project name `Overthune`, Android package `com.example.overthune` (placeholder prefix).
+- **Consequences:** change `package/unique_name` to a real domain-based ID before publishing, since it cannot change after release.
+- **Revisit if:** before Milestone 9.
+
+## D-008 Isometric grid: 2:1 diamond, 128x64 px cell, four-direction movement (2026-10-24)
+
+- **Context:** Milestone 1 grid and pathfinding.
+- **Decision:** cell (0,0) has its centre at pixel (0,0), x grows down-right, y grows down-left. Tile size is a parameter of `GridMath` with 128x64 as default. Movement and pathfinding use the four grid directions only (no diagonal steps), like Dofus, so one step is one movement point in combat later.
+- **Alternatives:** eight-direction movement (smoother paths, but breaks the MP-per-step model).
+- **Consequences:** Kenney "Isometric Blocks" tiles are 111x128 px, so they must be scaled or the grid tile size set to match when the TileSet is built.
+- **Revisit if:** movement feels stiff on the phone.
+
+## D-009 Input: one tap walks in exploration, two taps in combat (2026-10-24)
+
+- **Decision:** in exploration a single tap on a cell immediately sends a `MoveCommand`. In combat the first tap previews the path or spell area and the second tap confirms.
+- **Revisit if:** accidental taps while exploring turn out to be a problem on the phone.
+
+## D-010 Exploration commands and map changes (2026-10-24)
+
+- **Context:** Milestone 1 needs movement and map transitions without breaking rule 1 of `ARCHITECTURE.md`.
+- **Decision:** only `MoveCommand` exists. Arriving on an exit cell changes the map as a consequence of the move (`MapChangedEvent`), so a client can never ask to teleport. A separate `ChangeMapCommand` is not needed. `Authority` is minimal: characters, move handling, one seeded RNG. `CharacterState` holds only map id and cell, `WorldState` only flags.
+- **Consequences:** only the arrival cell of a path triggers an exit, not cells crossed on the way.
+- **Revisit if:** a design needs map changes that are not caused by walking (teleport spell, quest warp). Then add a command for it.
+
+## D-011 Placeholder art: Kenney "Isometric Blocks", CC0 (2026-10-24)
+
+- **Decision:** `assets/art/placeholder/kenney_isometric_blocks/` (kenney.nl, license CC0, 2.7 MB of PNGs) is used for Milestone 1 only.
+- **Consequences:** replaced by final art after Milestone 2. No attribution required, license file kept next to the files.
