@@ -6,3 +6,9 @@ msgstr ""
 
 msgid "ui.boot.hello"
 msgstr "Cześć, telefonie!"
+
+msgid "sign.start.welcome"
+msgstr "Witaj w Overthune. Ścieżka na wschód prowadzi na następną polanę."
+
+msgid "ui.popup.close"
+msgstr "Zamknij"

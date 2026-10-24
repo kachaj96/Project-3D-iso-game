@@ -76,7 +76,8 @@ jobs:
         run: |
           godot --version
           godot --headless --path . --import --quit 2>&1 | tee import.log
-          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" import.log; then
+          # Any error fails the job, except the engine's shutdown leak report (known bug B-001).
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" import.log | grep -vE "resources still in use at exit|Pages in use exist at exit"; then
             echo "::error::Godot reported errors while importing the project"
             exit 1
           fi
@@ -107,7 +108,7 @@ jobs:
           mkdir -p build
           godot --headless --path . --export-debug Android build/iso-game-debug.apk 2>&1 | tee export.log
           test -s build/iso-game-debug.apk
-          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" export.log; then
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" export.log | grep -vE "resources still in use at exit|Pages in use exist at exit"; then
             echo "::error::Godot reported errors during export"
             exit 1
           fi
