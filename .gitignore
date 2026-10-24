@@ -1,0 +1,32 @@
+# Godot 4
+.godot/
+*.translation
+.import/
+export.cfg
+export_credentials.cfg
+
+# Builds
+build/
+export/
+*.apk
+*.aab
+*.idsig
+
+# Secrets: never commit these
+*.keystore
+*.jks
+*.p12
+*.pem
+.env
+.env.*
+
+# gdUnit4 test output
+reports/
+addons/gdUnit4/.tmp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.tmp
+.vscode/
+.idea/

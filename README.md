@@ -31,3 +31,19 @@ Status: **Milestone 0, setup.** No game code yet.
 7. **Run the three prompts** at the end of [docs/WORKFLOW.md](docs/WORKFLOW.md) in Claude Code, one at a time, verifying each.
 
 Milestone 0 is done when the game runs on PC, runs on the phone, and CI produces an installable APK.
+
+## Running checks locally
+
+Set `GODOT_BIN` to the console build, for example `C:/Tools/Godot/Godot_v4.7.2-stable_win64_console.exe`.
+
+```bash
+# Parse-check every GDScript file (fails on any error)
+GODOT_BIN="$GODOT_BIN" tools/check_scripts.sh
+
+# Run all gdUnit4 tests headless (exit code 0 = all passed)
+"$GODOT_BIN" --headless --path . -s -d res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a res://tests --ignoreHeadlessMode
+```
+
+In the editor: open the gdUnit4 panel (bottom dock), select `tests/`, press the run button.
+
+CI (`.github/workflows/build.yml`) runs the same checks on every push, then exports a debug APK and uploads it as an artifact. The Godot version is pinned in one variable (`GODOT_VERSION`) at the top of that file.

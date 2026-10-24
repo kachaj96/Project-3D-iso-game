@@ -1,0 +1,120 @@
+name: Check and build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  # Change the version here only. Everything below uses it.
+  GODOT_VERSION: "4.7.2"
+  GODOT_RELEASE_URL: "https://github.com/godotengine/godot-builds/releases/download"
+  ANDROID_BUILD_TOOLS: "36.1.0"
+  ANDROID_PLATFORM: "android-36"
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout (with Git LFS files)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" "build-tools;${ANDROID_BUILD_TOOLS}" "platforms;${ANDROID_PLATFORM}"
+
+      - name: Cache Godot binary and export templates
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-v1
+
+      - name: Download Godot and export templates
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          BASE="${GODOT_RELEASE_URL}/${GODOT_VERSION}-stable"
+          mkdir -p ~/godot-bin /tmp/dl
+          curl -fsSL -o /tmp/dl/SHA512-SUMS.txt "$BASE/SHA512-SUMS.txt"
+          for f in "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" "Godot_v${GODOT_VERSION}-stable_export_templates.tpz"; do
+            curl -fsSL -o "/tmp/dl/$f" "$BASE/$f"
+            (cd /tmp/dl && grep " $f\$" SHA512-SUMS.txt | sha512sum -c -)
+          done
+          unzip -q "/tmp/dl/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" -d ~/godot-bin
+          mv ~/godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/godot-bin/godot
+          chmod +x ~/godot-bin/godot
+          TPL=~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          mkdir -p "$TPL" /tmp/dl/tpl
+          unzip -q "/tmp/dl/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" -d /tmp/dl/tpl
+          cp -r /tmp/dl/tpl/templates/* "$TPL/"
+
+      - name: Configure Godot editor settings for Android export
+        run: |
+          mkdir -p ~/.config/godot
+          cat > ~/.config/godot/editor_settings-4.7.tres <<SETTINGS
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "${ANDROID_HOME}"
+          export/android/java_sdk_path = "${JAVA_HOME}"
+          SETTINGS
+          echo "$HOME/godot-bin" >> "$GITHUB_PATH"
+
+      - name: Import project (scenes, resources, translations)
+        run: |
+          godot --version
+          godot --headless --path . --import --quit 2>&1 | tee import.log
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" import.log; then
+            echo "::error::Godot reported errors while importing the project"
+            exit 1
+          fi
+
+      - name: Parse-check every GDScript file
+        env:
+          GODOT_BIN: godot
+        run: tools/check_scripts.sh
+
+      - name: Run unit tests (gdUnit4)
+        run: |
+          godot --headless --path . -s -d res://addons/gdUnit4/bin/GdUnitCmdTool.gd \
+            -a res://tests --ignoreHeadlessMode
+
+      - name: Create throwaway debug keystore (no secrets)
+        run: |
+          keytool -genkeypair -keystore "$RUNNER_TEMP/debug.keystore" \
+            -alias androiddebugkey -storepass android -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Export debug APK
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.temp }}/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        run: |
+          mkdir -p build
+          godot --headless --path . --export-debug Android build/iso-game-debug.apk 2>&1 | tee export.log
+          test -s build/iso-game-debug.apk
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" export.log; then
+            echo "::error::Godot reported errors during export"
+            exit 1
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: iso-game-debug-apk
+          path: build/iso-game-debug.apk
+          if-no-files-found: error
