@@ -5,3 +5,9 @@ msgstr ""
 
 msgid "ui.boot.hello"
 msgstr "Hello, phone!"
+
+msgid "sign.start.welcome"
+msgstr "Welcome to Overthune. The path east leads to the next clearing."
+
+msgid "ui.popup.close"
+msgstr "Close"

@@ -57,3 +57,34 @@ func test_shipped_start_maps_are_valid_and_connected() -> void:
 		maps[map.id] = map
 	assert_array(MapDef.validate_set(maps)).is_empty()
 	assert_int((maps["map.start.01"] as MapDef).size.x).is_equal(12)
+
+
+func _make_prop(id: String, cell: Vector2i) -> MapProp:
+	var prop: MapProp = MapProp.new()
+	prop.id = id
+	prop.cell = cell
+	prop.text_key = "sign.test"
+	return prop
+
+
+func test_a_prop_on_a_blocked_cell_is_valid() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.blocked_cells = [Vector2i(3, 3)]
+	map.props = [_make_prop("prop.test.sign", Vector2i(3, 3))]
+	assert_array(map.validate()).is_empty()
+	assert_object(map.find_prop_at(Vector2i(3, 3))).is_not_null()
+	assert_object(map.find_prop_at(Vector2i(0, 0))).is_null()
+
+
+func test_bad_props_are_reported() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.blocked_cells = [Vector2i(3, 3), Vector2i(4, 4)]
+	var no_key: MapProp = _make_prop("prop.test.b", Vector2i(4, 4))
+	no_key.text_key = ""
+	map.props = [
+		_make_prop("prop.test.a", Vector2i(2, 2)),
+		_make_prop("Bad Id", Vector2i(3, 3)),
+		_make_prop("prop.test.a", Vector2i(3, 3)),
+		no_key,
+	]
+	assert_int(map.validate().size()).is_equal(4)

@@ -16,6 +16,7 @@ const RNG_SEED: int = 20261024
 const BLOCK_HEIGHT: int = 64
 const PLAYER_SCENE: PackedScene = preload("res://scenes/world/player_actor.tscn")
 const MARKER_SCENE: PackedScene = preload("res://scenes/world/tap_marker.tscn")
+const POPUP_SCENE: PackedScene = preload("res://scenes/ui/text_popup.tscn")
 
 ## Map id -> where its data and painted scene live.
 const MAP_FILES: Dictionary = {
@@ -36,6 +37,7 @@ var _map_root: Node2D
 var _ground: TileMapLayer
 var _player: PlayerActor
 var _marker: TapMarker
+var _popup: TextPopup
 var _current_map_id: String = ""
 var _last_tapped_cell: Vector2i = Vector2i.ZERO
 var _busy: bool = false
@@ -56,6 +58,8 @@ func _ready() -> void:
 	_player = PLAYER_SCENE.instantiate()
 	_player.speed = walk_speed
 	_marker = MARKER_SCENE.instantiate()
+	_popup = POPUP_SCENE.instantiate()
+	add_child(_popup)
 	_camera.target = _player
 	_gestures.tapped.connect(_on_screen_tapped)
 	_gestures.pinched.connect(_camera.zoom_by)
@@ -69,12 +73,16 @@ func _ready() -> void:
 	local.start(CharacterState.generate_character_id(), START_MAP_ID)
 
 
-## A tap at a world (not screen) position. While the character walks, taps are ignored.
+## A tap at a world (not screen) position. A tap on an object (a sign) uses it, any other tap
+## walks. While the character walks or a text box is open, taps are ignored.
 func tap_at(world_position: Vector2) -> void:
-	if _session == null or _ground == null or _busy:
+	if _session == null or _ground == null or _busy or _popup.is_open():
 		return
 	_last_tapped_cell = _grid.pixel_to_cell(_ground.to_local(world_position))
-	_session.send(MoveCommand.create(_session.local_player_id, _last_tapped_cell))
+	if (_maps[_current_map_id] as MapDef).find_prop_at(_last_tapped_cell) != null:
+		_session.send(InteractCommand.create(_session.local_player_id, _last_tapped_cell))
+	else:
+		_session.send(MoveCommand.create(_session.local_player_id, _last_tapped_cell))
 
 
 func session() -> GameSession:
@@ -91,6 +99,10 @@ func player_position() -> Vector2:
 
 func camera() -> CameraRig:
 	return _camera
+
+
+func popup() -> TextPopup:
+	return _popup
 
 
 ## Presentation only: puts the character picture on a cell without telling the Authority.
@@ -117,7 +129,7 @@ func _on_events(events: Array[GameEvent]) -> void:
 			_show_map(spawned.map_id, spawned.cell)
 		elif event is MovedEvent:
 			var moved: MovedEvent = event as MovedEvent
-			_marker.show_at(_grid.cell_to_pixel(moved.path.back()), true)
+			_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), true)
 			_busy = true
 			walked = true
 			var points: Array[Vector2] = []
@@ -128,6 +140,11 @@ func _on_events(events: Array[GameEvent]) -> void:
 		elif event is MapChangedEvent:
 			var changed: MapChangedEvent = event as MapChangedEvent
 			_show_map(changed.map_id, changed.cell)
+		elif event is InteractedEvent:
+			var interacted: InteractedEvent = event as InteractedEvent
+			_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), true)
+			if interacted.kind == "sign":
+				_popup.show_key(interacted.text_key)
 		elif event is CommandRejectedEvent:
 			if _current_map_id.is_empty():
 				push_error("Could not place the character: " + (event as CommandRejectedEvent).reason)

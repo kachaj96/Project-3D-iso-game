@@ -20,6 +20,9 @@ texture_region_size = Vector2i(128, 128)
 4:0/0 = 0
 4:0/0/texture_origin = Vector2i(0, -32)
 4:0/0/custom_data_0 = "obstacle"
+5:0/0 = 0
+5:0/0/texture_origin = Vector2i(0, -32)
+5:0/0/custom_data_0 = "obstacle"
 
 [resource]
 tile_shape = 1

@@ -92,3 +92,10 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Decision:** `GameSession` (`src/core`) has `send(command)` and one signal `events_emitted(events)`. `LocalSession` runs the Authority on this device (solo, later the co-op host); a future `NetworkSession` will forward commands to the host and emit the events it receives. The Authority's `submit(sender_id, command)` takes the sender from the session or transport and rejects a command whose `player_id` differs (`wrong_player`). Scenes place and move characters only from events (`CharacterSpawnedEvent`, `MovedEvent`, `MapChangedEvent`) and never read `CharacterState`.
 - **Consequences:** until M3.5 the exploration scene ignores events of other players; from M3.5 it routes them to those players' characters.
 - **Revisit if:** the network spike in M3.5 shows events need ordering numbers or acknowledgements.
+
+## D-015 Objects on maps and using them (2026-10-24)
+
+- **Context:** M1 step 8, a sign that shows text.
+- **Decision:** a map lists its objects as `MapProp` resources (stable id like `prop.start.welcome_sign`, kind, cell, `text_key`). A prop's cell is always also in `blocked_cells`, so nobody walks through it. Using a prop is an `InteractCommand`; the Authority walks the character to the nearest free cell beside it (never an exit cell) and then answers with an `InteractedEvent`. If the character already stands beside it, nothing moves. The scene shows the text only after the walk ends and only through `tr(text_key)`; a test requires every key to exist in `en.po` and `pl.po`.
+- **Consequences:** `tools/paint_props.gd` paints props onto existing map scenes without touching hand-painted tiles. The sign picture is a placeholder block. The wording of the sign is placeholder text for you to rewrite.
+- **Revisit if:** props need states (a chest that opens), then they move into `WorldState`.

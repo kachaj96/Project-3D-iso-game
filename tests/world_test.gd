@@ -134,3 +134,52 @@ func test_taps_work_again_if_a_walk_is_cut_short() -> void:
 	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 9)))
 	assert_int(_events.size()).is_greater(before)
 	await world.walk_finished
+
+
+func test_tapping_a_sign_walks_beside_it_and_opens_its_text() -> void:
+	var world: World = _make_world()
+	TranslationServer.set_locale("pl")
+	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 7)))
+	assert_bool(_events[0] is MovedEvent).is_true()
+	assert_bool(_events[1] is InteractedEvent).is_true()
+	await world.walk_finished
+	assert_bool(world.popup().is_open()).is_true()
+	var label: Label = world.popup().get_node("Panel/Margin/Content/Text")
+	assert_str(label.text).contains("Witaj w Overthune")
+	TranslationServer.set_locale("en")
+	world.popup().close()
+
+
+func test_the_popup_text_follows_the_language() -> void:
+	var world: World = _make_world()
+	TranslationServer.set_locale("en")
+	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 7)))
+	await world.walk_finished
+	var label: Label = world.popup().get_node("Panel/Margin/Content/Text")
+	assert_str(label.text).contains("Welcome to Overthune")
+	world.popup().close()
+
+
+func test_taps_are_ignored_while_the_text_is_open_and_work_after_closing() -> void:
+	var world: World = _make_world()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 7)))
+	await world.walk_finished
+	var before: int = _events.size()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(2, 2)))
+	assert_int(_events.size()).is_equal(before)
+	world.popup().close()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(2, 2)))
+	assert_int(_events.size()).is_greater(before)
+	await world.walk_finished
+
+
+func test_tapping_a_sign_you_stand_beside_opens_it_without_walking() -> void:
+	var world: World = _make_world()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 6)))
+	await world.walk_finished
+	var before: int = _events.size()
+	world.tap_at(_grid.cell_to_pixel(Vector2i(3, 7)))
+	assert_int(_events.size() - before).is_equal(1)
+	assert_bool(_events.back() is InteractedEvent).is_true()
+	assert_bool(world.popup().is_open()).is_true()
+	world.popup().close()

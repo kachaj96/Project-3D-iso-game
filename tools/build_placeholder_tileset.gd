@@ -14,7 +14,7 @@ const CELL_SIZE: Vector2i = Vector2i(128, 128)
 const DIAMOND_SIZE: Vector2i = Vector2i(128, 64)
 
 ## Atlas column -> kind. Keep in sync with build_placeholder_atlas.gd.
-const TILE_KINDS: Array[String] = ["ground", "ground", "exit", "obstacle", "obstacle"]
+const TILE_KINDS: Array[String] = ["ground", "ground", "exit", "obstacle", "obstacle", "obstacle"]
 
 
 func _init() -> void:

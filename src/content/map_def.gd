@@ -12,6 +12,7 @@ const ID_PATTERN: String = "^map(\\.[a-z0-9_]+)+$"
 @export var spawn_cell: Vector2i = Vector2i.ZERO
 @export var blocked_cells: Array[Vector2i] = []
 @export var exits: Array[MapExit] = []
+@export var props: Array[MapProp] = []
 
 
 func is_in_bounds(cell: Vector2i) -> bool:
@@ -27,6 +28,14 @@ func find_exit_at(cell: Vector2i) -> MapExit:
 	for exit: MapExit in exits:
 		if exit.cells.has(cell):
 			return exit
+	return null
+
+
+## The prop standing on this cell, or null.
+func find_prop_at(cell: Vector2i) -> MapProp:
+	for prop: MapProp in props:
+		if prop.cell == cell:
+			return prop
 	return null
 
 
@@ -49,6 +58,20 @@ func validate() -> Array[String]:
 		for cell: Vector2i in exit.cells:
 			if not is_in_bounds(cell) or is_blocked(cell):
 				problems.append("%s: exit cell %s is outside the map or blocked" % [id, cell])
+	var prop_regex: RegEx = RegEx.create_from_string(MapProp.ID_PATTERN)
+	var seen_prop_ids: Array[String] = []
+	for prop: MapProp in props:
+		if prop_regex.search(prop.id) == null:
+			problems.append("%s: invalid prop id '%s'" % [id, prop.id])
+		if seen_prop_ids.has(prop.id):
+			problems.append("%s: prop id '%s' is used twice" % [id, prop.id])
+		seen_prop_ids.append(prop.id)
+		if not is_in_bounds(prop.cell) or not is_blocked(prop.cell):
+			problems.append("%s: prop %s must stand on a blocked cell inside the map" % [id, prop.id])
+		if find_exit_at(prop.cell) != null:
+			problems.append("%s: prop %s stands on an exit cell" % [id, prop.id])
+		if prop.text_key.is_empty():
+			problems.append("%s: prop %s has no text key" % [id, prop.id])
 	return problems
 
 

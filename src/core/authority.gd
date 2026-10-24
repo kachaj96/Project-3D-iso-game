@@ -63,6 +63,8 @@ func submit(sender_id: String, command: GameCommand) -> Array[GameEvent]:
 		return [CommandRejectedEvent.create(sender_id, "wrong_player")]
 	if command is MoveCommand:
 		return _handle_move(command as MoveCommand)
+	if command is InteractCommand:
+		return _handle_interact(command as InteractCommand)
 	return [CommandRejectedEvent.create(sender_id, "unknown_command")]
 
 
@@ -95,6 +97,61 @@ func _handle_move(command: MoveCommand) -> Array[GameEvent]:
 		character.cell = exit.target_entry_cell
 		events.append(changed)
 	return events
+
+
+## Using an object: if the character is not beside it, walk to the nearest free cell beside
+## it first (never an exit cell, so using a sign cannot change the map), then report the use.
+func _handle_interact(command: InteractCommand) -> Array[GameEvent]:
+	var character: CharacterState = get_character(command.player_id)
+	if character == null:
+		return [CommandRejectedEvent.create(command.player_id, "unknown_player")]
+	var map: MapDef = _maps[character.map_id]
+	var prop: MapProp = map.find_prop_at(command.target_cell)
+	if prop == null:
+		return [CommandRejectedEvent.create(command.player_id, "nothing_there")]
+
+	var events: Array[GameEvent] = []
+	if not _is_beside(character.cell, prop.cell):
+		var path: Array[Vector2i] = _path_to_beside(character, map, prop.cell)
+		if path.is_empty():
+			return [CommandRejectedEvent.create(command.player_id, "no_path")]
+		var moved: MovedEvent = MovedEvent.new()
+		moved.player_id = command.player_id
+		moved.map_id = character.map_id
+		moved.path = path
+		character.cell = path[path.size() - 1]
+		events.append(moved)
+
+	var interacted: InteractedEvent = InteractedEvent.new()
+	interacted.player_id = command.player_id
+	interacted.prop_id = prop.id
+	interacted.kind = prop.kind
+	interacted.text_key = prop.text_key
+	events.append(interacted)
+	return events
+
+
+## True when the two cells touch, including diagonally.
+func _is_beside(a: Vector2i, b: Vector2i) -> bool:
+	return maxi(absi(a.x - b.x), absi(a.y - b.y)) == 1
+
+
+## The shortest path from the character to any free, non-exit cell beside target. Empty if
+## there is none. Ties go to the first cell in a fixed scan order, so results are repeatable.
+func _path_to_beside(character: CharacterState, map: MapDef, target: Vector2i) -> Array[Vector2i]:
+	var best: Array[Vector2i] = []
+	var finder: Pathfinder = _pathfinder_for(character.map_id)
+	for dy: int in [-1, 0, 1]:
+		for dx: int in [-1, 0, 1]:
+			var candidate: Vector2i = target + Vector2i(dx, dy)
+			if candidate == target or not map.is_in_bounds(candidate) or map.is_blocked(candidate):
+				continue
+			if map.find_exit_at(candidate) != null:
+				continue
+			var path: Array[Vector2i] = finder.find_path(character.cell, candidate)
+			if path.size() >= 2 and (best.is_empty() or path.size() < best.size()):
+				best = path
+	return best
 
 
 ## Exploration walks in eight directions (decision D-008). Combat will build its own

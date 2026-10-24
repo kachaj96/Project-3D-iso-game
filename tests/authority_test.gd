@@ -158,3 +158,74 @@ func test_generated_character_ids_have_the_agreed_format_and_differ() -> void:
 	var b: String = CharacterState.generate_character_id()
 	assert_bool(RegEx.create_from_string("^char\\.[0-9a-f]{16}$").search(a) != null).is_true()
 	assert_str(a).is_not_equal(b)
+
+
+func _interact(player: String, cell: Vector2i) -> Array[GameEvent]:
+	return _authority.submit(player, InteractCommand.create(player, cell))
+
+
+func _sign_on(cell: Vector2i) -> MapProp:
+	var prop: MapProp = MapProp.new()
+	prop.id = "prop.test.sign"
+	prop.cell = cell
+	prop.text_key = "sign.test"
+	return prop
+
+
+func test_using_a_sign_from_afar_walks_beside_it_and_reads_it() -> void:
+	var events: Array[GameEvent] = _interact(P1, Vector2i(3, 7))
+	assert_int(events.size()).is_equal(2)
+	var end: Vector2i = (events[0] as MovedEvent).path.back()
+	assert_int(maxi(absi(end.x - 3), absi(end.y - 7))).is_equal(1)
+	assert_bool((_maps["map.start.01"] as MapDef).is_blocked(end)).is_false()
+	assert_vector(_authority.get_character(P1).cell).is_equal(end)
+	var read: InteractedEvent = events[1] as InteractedEvent
+	assert_str(read.prop_id).is_equal("prop.start.welcome_sign")
+	assert_str(read.text_key).is_equal("sign.start.welcome")
+
+
+func test_using_a_sign_when_already_beside_it_does_not_move() -> void:
+	_move(P1, P1, Vector2i(3, 6))
+	var events: Array[GameEvent] = _interact(P1, Vector2i(3, 7))
+	assert_int(events.size()).is_equal(1)
+	assert_bool(events[0] is InteractedEvent).is_true()
+	assert_vector(_authority.get_character(P1).cell).is_equal(Vector2i(3, 6))
+
+
+func test_using_an_empty_cell_or_for_another_seat_is_rejected() -> void:
+	assert_str(_reason(_interact(P1, Vector2i(2, 2)))).is_equal("nothing_there")
+	assert_str(_reason(_authority.submit(P1, InteractCommand.create("player:2", Vector2i(3, 7))))).is_equal("wrong_player")
+
+
+func test_a_sign_nobody_can_get_next_to_is_rejected_without_moving() -> void:
+	var closed: MapDef = MapDef.new()
+	closed.id = "map.test.closed"
+	closed.size = Vector2i(5, 5)
+	closed.spawn_cell = Vector2i(0, 0)
+	closed.blocked_cells = [Vector2i(2, 2), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(1, 2), Vector2i(3, 2), Vector2i(1, 3), Vector2i(2, 3), Vector2i(3, 3)]
+	closed.props = [_sign_on(Vector2i(2, 2))]
+	var authority: Authority = Authority.new({"map.test.closed": closed}, 1)
+	authority.add_character(P1, "char.0000000000000001", "map.test.closed")
+	var events: Array[GameEvent] = authority.submit(P1, InteractCommand.create(P1, Vector2i(2, 2)))
+	assert_str((events[0] as CommandRejectedEvent).reason).is_equal("no_path")
+	assert_vector(authority.get_character(P1).cell).is_equal(Vector2i(0, 0))
+
+
+func test_the_cell_beside_a_sign_is_never_an_exit_cell() -> void:
+	var map: MapDef = MapDef.new()
+	map.id = "map.test.exitbeside"
+	map.size = Vector2i(4, 4)
+	map.spawn_cell = Vector2i(0, 0)
+	map.blocked_cells = [Vector2i(2, 1)]
+	var exit: MapExit = MapExit.new()
+	exit.cells = [Vector2i(1, 1)]
+	exit.target_map_id = "map.start.01"
+	exit.target_entry_cell = Vector2i(2, 5)
+	map.exits = [exit]
+	map.props = [_sign_on(Vector2i(2, 1))]
+	var authority: Authority = Authority.new({"map.test.exitbeside": map, "map.start.01": _maps["map.start.01"]}, 1)
+	authority.add_character(P1, "char.0000000000000001", "map.test.exitbeside")
+	var events: Array[GameEvent] = authority.submit(P1, InteractCommand.create(P1, Vector2i(2, 1)))
+	assert_int(events.size()).is_equal(2)
+	assert_bool(map.find_exit_at((events[0] as MovedEvent).path.back()) == null).is_true()
+	assert_str(authority.get_character(P1).map_id).is_equal("map.test.exitbeside")

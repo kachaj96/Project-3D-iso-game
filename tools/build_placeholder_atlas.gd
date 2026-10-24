@@ -17,6 +17,7 @@ const SOURCE_FILES: Array[String] = [
 	"voxelTile_53.png", # dirt (exit marker)
 	"voxelTile_09.png", # stone (obstacle)
 	"voxelTile_14.png", # log (obstacle)
+	"voxelTile_18.png", # signpost stand-in (obstacle that can be read)
 ]
 
 
