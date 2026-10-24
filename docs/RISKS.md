@@ -15,7 +15,7 @@ Ranked by impact times likelihood. Review at the end of every milestone.
 | R7 | **Co-op discovery fails on some networks or hotspots** | Some routers and hotspots block broadcast | Manual IP fallback, early spike on real phones in M3.5 | M3.5 |
 | R8 | **Grind creeps back in** | Easiest way to stretch content | Progression rules in `GDD.md`, simulator checks XP per hour | M4+ |
 | R9 | **Losing motivation before anything is playable** | Long projects die in the middle | Every milestone ends with a phone build you play | all |
-| R10 | **AI art legal and licensing issues at release** | Copyright on pure AI output is weak in the US, tool terms vary | Paint-over on everything, keep sources and prompts, check terms before paid release | M9 |
+| R10 | **AI art legal and licensing issues at release** | Copyright on pure AI output is weak in the US, tool terms vary, and you do not paint over assets (decided in M2) | Your contribution is selection, composition, 3D lighting and palette; keep prompts, outputs, 3D files and cleaned results in `art_source/`; check commercial terms before paying for any tool; legal check before release | M9 |
 | R11 | **Save corruption** | Phones kill apps at any moment | Write temp file then rename, versioned saves with migration tests | M4 |
 | R12 | **Low-end performance** | Many large painted sprites, lights and particles | Compatibility renderer, texture atlases, CPU particles, test on low-end phone from M5 | M5 |
 

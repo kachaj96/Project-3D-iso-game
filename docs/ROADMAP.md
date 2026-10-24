@@ -95,17 +95,29 @@ Changes from the sequence you proposed, and why:
 
 ## Milestone 2: Art style spike
 
-**What you build:** one finished-looking slice: a 3x3 screen patch of one region in final style (ground tiles, 6-10 props, lighting), one character in the cutout pipeline with idle, walk, attack and hit animations in 2 drawn facings, one monster, a mock-up of the combat UI. All shown in the M1 prototype on your phone.
+**What you build:** one finished-looking slice of the forest edge near a dungeon, in visual direction A ("dark fairytale", see `ART_PIPELINE.md`): ground tiles, 6-10 props, lighting, one character rendered from 3D with idle, walk, attack and hit in 8 directions, one monster, a mock-up of the combat UI. All shown in the M1 prototype on your phone.
+
+**Plan (updated 2026-10-25):**
+
+| # | Step | Who | Model |
+|---|---|---|---|
+| 1 | Visual direction chosen (A) | you | done |
+| 2 | Tool setup: Blender, check prices and terms of the AI tools, style lab scene in Godot (lighting rig, daylight preview), toon shader and outline, 8-direction render script, cleanup scripts for AI images, time log | Claude | Sonnet |
+| 3 | Bake-off: the same character and the same prop made as (A) 3D toon render and (B) AI 2D images; measure time, judge on the phone; pipeline recommendation | you + Claude | Sonnet, recommendation on Opus |
+| 4 | Slice production: tiles, props, light, character with 4 animations, monster | you choose and judge, Claude runs scripts | Sonnet |
+| 5 | Combat UI mock-up | Claude | Sonnet |
+| 6 | Phone test indoors and in daylight, shown to 2 people | you | - |
+| 7 | Style guide, measured times, decision D-006, tag m2-done | Claude | Opus |
 
 **Why it matters:** this decides whether the game's look is achievable for you, how long one asset takes, and what it costs. Every later content estimate depends on these numbers.
 
-**Tools:** Krita, an AI image service with custom style training (or local ComfyUI), Godot Skeleton2D + AnimationPlayer. Optional comparison: Blender pre-render of the same character.
+**Tools:** an AI image tool, an AI image-to-3D tool, an automatic rigging and animation library (your accounts), Blender, Godot. Budget up to about $20 per month, only when needed. No local model training: the PC has no suitable graphics card.
 
-**What you need to learn:** see `ART_PIPELINE.md`. Isometric 2:1 projection, a limited palette per region, painting over AI output, splitting a character into parts, basic bone animation.
+**What you need to learn:** see `ART_PIPELINE.md`. The style rules of direction A, judging an asset against them, writing prompts from the rules, basic Blender navigation to look at a render.
 
-**How Claude Code helps:** writes import and slicing scripts, a character rig scene template, shaders (outline, hit flash, dissolve), and the lighting setup. It cannot judge your art. You are the art director.
+**How Claude Code helps:** Blender render scripts, toon shader and outline, cleanup scripts for AI images (background, grid snap, palette, outline), Godot import, lighting setup, the style lab scene, the combat UI mock-up. It cannot judge your art. You are the art director.
 
-**What you do manually:** all painting, cleanup, rigging and animation timing. Write the style guide (palette, line weight, light direction, proportions) as you go.
+**What you do manually:** generate and choose images and models, create the tool accounts, judge every asset on the phone, approve the palette and the style guide.
 
 **Expected result:** a screenshot you would be happy to show as "this is my game". The character is readable on a phone at default zoom. The darker mood works without hiding gameplay.
 

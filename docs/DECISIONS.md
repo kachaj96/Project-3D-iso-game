@@ -33,10 +33,12 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 
 - **Decision:** all text via keys, `tr_n` for plurals, `.po` files.
 
-## D-006 Art pipeline (pending, Milestone 2)
+## D-006 Art direction and pipeline (direction decided, pipeline pending, Milestone 2)
 
-- **Proposal:** cutout rigs for characters, AI-assisted painting plus manual cleanup for environments. See `ART_PIPELINE.md`.
-- **To decide after the spike, with measured time per asset.**
+- **Context:** you do not paint and rely on AI tools; characters must work in 8 directions; budget up to about $20 per month.
+- **Decided 2026-10-25:** visual direction A, "dark fairytale": Dofus shapes and readability, gothic mood carried by light and palette. Chosen from three directions (A dark fairytale, B painterly gothic, C dark pixel art) after a generated sample. Style rules are in `ART_PIPELINE.md`.
+- **Dropped:** the cutout rig painted in Krita, because it needs painting skill and multiplies work per direction.
+- **Pending (M2 bake-off):** characters as 3D toon renders (favourite) or as AI 2D images per direction. Environment from single AI assets cleaned by scripts. Decide with measured time per asset.
 
 ## D-007 Landscape orientation (2026-10-24)
 

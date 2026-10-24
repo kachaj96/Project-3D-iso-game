@@ -1,68 +1,78 @@
 # Art pipeline
 
-Status: **proposal, to be validated in Milestone 2.** Replace this document with the real pipeline once the style spike is done.
+Status: **visual direction chosen (A, "dark fairytale"), production pipeline to be chosen in the Milestone 2 bake-off.** Update this document with measured results at the end of M2.
 
 ## Why art is the main risk
 
-An illustrated isometric game needs a lot of art per map screen, and a solo developer is the only artist. The plan is to make art production repeatable before making lots of it.
+An illustrated isometric game needs a lot of art per map screen. You do not paint, so every asset comes from AI tools and scripts, and your work is choosing, composing, lighting and judging. The plan is to make that repeatable before making lots of it.
+
+## Visual direction A: dark fairytale (chosen 2026-10-25)
+
+Dofus shapes, proportions and readability, with a gothic, threatening mood carried mainly by light and palette. References stay on your disk (`Iso game inspirations`), never in the repo.
+
+**Style rules** (every prompt and every review checks these):
+
+1. **Shapes:** chunky and exaggerated, like Dofus: thick beams, big roofs, buildings 2-4 cells tall. Gothic details (pointed arches, iron fences, spires) on top of those shapes, not realistic gothic proportions.
+2. **Outline:** thin and dark, tinted with the object's own color, never pure black. Characters, monsters and interactable objects get a slightly stronger outline than scenery.
+3. **Shading:** cel shading in 2-3 tones with soft edges. No fine noisy texture on large surfaces.
+4. **Ground:** calm and readable. Walkable cells are clearly lighter or warmer than their surroundings. Detail (mushrooms, roots, stones) belongs on edges and obstacles, not in the middle of fighting space.
+5. **Palette:** moss green, ochre and earth for the world, cold teal-grey for shadows and fog, warm orange for fire and magic light. Each region gets its own 8-12 color swatch, written into this file.
+6. **Light:** key light from the top-left. Mood comes from light shafts, fog at the map edges, torch pools and vignette, never from making the whole screen dark.
+7. **Characters:** big head, readable silhouette, 2-3 main colors and **one saturated accent** (cloak, scarf, hat) that contrasts with the region palette, so the player finds their character instantly on a phone in daylight.
+8. **Projection:** strict 2:1 isometric for every asset that sits on the grid (128 x 64 cell). A full scene image from an AI tool is a mood target only, never a game asset.
+
+Lessons from the first sample of direction A: the character was lost (brown on brown), the scene was not strict isometric, ground detail was busier than Dofus, and outlines were close to black. Rules 2, 4, 7 and 8 exist because of that.
 
 ## Technical constants (decide once, never change)
 
-| Item | Proposal | Why |
+| Item | Value | Why |
 |---|---|---|
-| Projection | 2:1 isometric (dimetric), like Dofus | Standard, tiles line up cleanly |
-| Base cell | 128 x 64 px ground diamond | Readable at phone zoom, scales down well |
-| Character height | about 1.6-2 cells (roughly 110-130 px tall at 1x) | Big enough to read gear and expression on a phone |
-| Directions | 4 diagonals, 2 drawn (front-3/4 and back-3/4) and mirrored | Halves character work. Dofus-style games mostly move diagonally anyway |
+| Projection | 2:1 isometric (dimetric) | Tiles line up cleanly. Already used by the code (`GridMath`) |
+| Base cell | 128 x 64 px ground diamond | Already used by the code and the TileSet |
+| Character height | about 1.6-2 cells (110-130 px at zoom 1) | Readable on a phone |
+| Directions | **8** (the character walks in 8 directions since M1) | Characters are rendered from 3D, so extra directions cost render time, not drawing |
 | Light direction | Top-left in all art | Consistency between assets |
-| Texture filtering | Linear, with mipmaps for zoomed-out views | Painted art, not pixel art |
-| Outline | Dark colored outline (not pure black) on characters and interactables | Separates gameplay objects from scenery in dark scenes |
+| Texture filtering | Linear, with mipmaps for zoomed-out views | Illustrated art, not pixel art |
+| Outline | Dark, tinted, never pure black | Rule 2 |
 
-## Asset types and proposed method
+## Proposed pipeline (to be confirmed by the M2 bake-off)
 
-**Ground tiles and terrain.** AI-generated textures in the region's style, cut and corrected into tiles in Krita, plus hand-painted transition tiles. Use Godot's terrain autotiling for transitions.
+**Characters and monsters: 3D rendered to 2D ("toon" render).**
+1. Concept image from an AI image tool, following the style rules, front view and side view.
+2. Turn the concept into a 3D model with an AI image-to-3D tool.
+3. Rig and animate humanoids with an automatic rigging and animation library (idle, walk, attack, hit, death). Your account, your login.
+4. In Blender: toon shader (2-3 tone cel shading), tinted outline, fixed isometric camera, top-left key light.
+5. A script renders every animation in 8 directions into sprite sheets.
+6. Godot plays the sprite sheets. Equipment swaps are separate meshes rendered the same way.
 
-**Props (trees, houses, rocks, ruins).** Generate several variations with your custom style model, pick one, paint over in Krita to fix perspective, light direction and outline, then split tall props where the player must walk behind them.
+**Ground tiles and props: AI images, cleaned by scripts.**
+1. Generate single assets (one tile, one prop), never full scenes, against a fixed style reference sheet.
+2. Scripts remove the background, snap the asset to the 128 x 64 grid, map colors to the region palette and normalize the outline.
+3. Tall props are split where the character must walk behind them.
 
-**Characters and monsters.** Cutout rigs:
-1. Concept: AI-assisted sketches, front-3/4 and back-3/4, consistent proportions.
-2. Paint the final character in Krita on separate layers: head, torso, upper and lower arms, hands, legs, feet, plus accessory layers (hat, cloak, weapon).
-3. Export parts as PNGs. Assemble in Godot with Skeleton2D and Bone2D, or simple parented Sprite2Ds.
-4. Animate idle, walk, cast, attack, hit, death with AnimationPlayer. Reuse animations across characters with the same skeleton.
-5. Equipment swaps replace part textures.
-If this feels too stiff after the spike, compare with the Blender pre-render path (3D model, toon shader, orthographic iso camera, render sprite sheets).
+**Effects and lighting:** Godot particles and shaders (CPU particles for low-end phones), `CanvasModulate` per region, `PointLight2D` for torches and spells.
 
-**Effects (spells, hits, ambient).** Godot GPUParticles2D/CPUParticles2D and shaders, with a small library of hand-painted or generated effect textures. CPU particles are safer on low-end phones.
+**UI:** one coherent kit (frames, buttons, icons). Icons are a good fit for AI generation.
 
-**UI.** One coherent UI kit: frames, buttons, icons. Icons are a good fit for AI generation with paint-over, since they are small and numerous.
-
-**Lighting and mood.** CanvasModulate for region ambience, PointLight2D for torches and spells, optional normal maps for key props later. Mood comes from lighting and palette, so base art can stay readable.
-
-## Style guide (fill in during Milestone 2)
-
-- Region palette swatches (8-12 colors each)
-- Line weight and outline color rules
-- Proportions sheet for humanoids
-- Do and don't examples with screenshots
-- The prompt template and model or LoRA used per asset type
+**Alternative in the bake-off:** characters as AI-generated 2D images per direction. Expected to drift between directions and frames, which is why 3D is the favourite.
 
 ## Rules for AI-generated art
 
-1. Never ship raw AI output. Always correct perspective, light, outline and palette.
-2. Keep the source file (`.kra`) for every shipped asset in `art_source/` (Git LFS). It is your proof of human authorship and makes later changes possible.
-3. Save the prompt and settings next to the source file.
-4. Do not prompt with the names of existing games or artists for final assets. Use your own reference sheets.
-5. Generate in small batches against a reference sheet, judge, adjust. Never generate a whole region in one go.
+1. Never ship a raw full-scene AI image. Every game asset is a single asset that passed the style rules and the cleanup scripts.
+2. Keep the source of every shipped asset in `art_source/` (Git LFS): the prompt, the tool and its settings, the AI output, the 3D file and the cleaned result. This is your record of authorship: selection, composition, lighting, palette.
+3. Do not put the names of existing games or artists into prompts for final assets. Use your own style rules and reference sheet.
+4. Generate in small batches, judge, adjust. Never a whole region in one go.
+5. Before paying for any tool, check its price and its terms for commercial use. Budget during M2: up to about $20 per month, only when needed.
 
 ## Tracking asset cost
 
-Record actual time per asset in Milestone 2 and keep updating it:
+Record actual time per asset in Milestone 2:
 
 | Asset type | Target time | Measured |
 |---|---|---|
-| Ground tile set for a region | 4-6 h | - |
-| Prop | 30-60 min | - |
-| Character (painted parts + rig) | 6-10 h | - |
-| Animation set per skeleton | 4-8 h | - |
-| Monster | 4-8 h | - |
-| Icon | 10-20 min | - |
+| Ground tile set for a region | 3-5 h | - |
+| Prop | 20-40 min | - |
+| Character (model, rig, renders) | 4-8 h | - |
+| Animation set, 8 directions | 2-4 h | - |
+| Monster | 3-6 h | - |
+| Icon | 5-15 min | - |
