@@ -111,8 +111,9 @@ static func _along(spec: MapSpec, edge: String, where: Vector2i) -> float:
 	return where.x / float(maxi(spec.rows - 1, 1))
 
 ## The layered experiment: instead of one backdrop with everything painted in, the ground and
-## the tall objects are painted as separate pictures. Objects come on a flat magenta background
-## that is removed afterwards, so they need no cutting and can be reused on other maps.
+## the tall objects are painted as separate pictures. Objects come as PNGs with a real alpha
+## channel (the image AI of the developer can do that), so they need no cutting and can be
+## reused on other maps. In the object layouts the dark blue-grey is empty space.
 ## The result is a file of ready-to-paste prompts, each with the exact pictures to attach.
 static func build_layered(spec: MapSpec) -> String:
 	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * MapBlockout.SCALE
@@ -120,7 +121,7 @@ static func build_layered(spec: MapSpec) -> String:
 	var tree: Image = MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"])
 	var tree_size: String = "%d x %d px" % [tree.get_width(), tree.get_height()]
 	var style: String = "Style: dark fairytale, strict 2:1 isometric projection exactly like the layout picture (a map cell is a 2:1 diamond, 256 x 128 px), key light from the top left, thin dark outlines tinted with each object's own colour (never pure black), cel shading in 2 to 3 tones with soft edges, chunky exaggerated shapes. No text, no characters."
-	var only_use: String = "Use the first attached picture only for exact position and size. Use the second attached picture only for style, colours and light. Do not paint any ground and do not copy the ground from the second picture."
+	var only_use: String = "In the first attached picture the dark blue-grey is empty space: it must become fully transparent. Use the first attached picture only for exact position and size. Use the second attached picture only for style, colours and light. Do not paint any ground and do not copy the ground from the second picture."
 	var lines: Array[String] = []
 	lines.append("# Layered prompts: %s" % spec.id)
 	lines.append("")
@@ -134,7 +135,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint only the ground of a forest clearing for an isometric game, size %s, filling the whole canvas to every edge." % canvas)
-	lines.append("The first attached picture is the exact layout: light green cells are grass you walk on, tan cells are a dirt path, dark green cells are forest floor (moss, roots, fallen needles, deep shadow). Keep the shapes and positions of the cells.")
+	lines.append("The first attached picture is the exact layout (the dark blue-grey around it is only the empty edge of the layout: fill the whole canvas anyway): light green cells are grass you walk on, tan cells are a dirt path, dark green cells are forest floor (moss, roots, fallen needles, deep shadow). Keep the shapes and positions of the cells.")
 	lines.append("The second attached picture is only a style reference: use its colours, light and painting style.")
 	lines.append("Do not paint trees, rocks, buildings, signs or any other object standing on the ground: they are painted separately. Calm, readable walkable ground, with more detail only at the edges.")
 	lines.append(style)
@@ -146,7 +147,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint the old stone and timber crypt building shown by the brown blocks in the first attached picture, exactly where and as large as the blocks are, size %s." % canvas)
-	lines.append("Everything that is not the building must be one flat pure magenta colour (#FF00FF), edge to edge: no ground, no grass, no shadow on the ground, no gradient. The bottom edge of the building follows the bottom edges of the blocks. A gate opening in the front wall faces the viewer.")
+	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the building must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground. The bottom edge of the building follows the bottom edges of the blocks. The whole building, including the roof and every spire, must fit inside the canvas with a margin of at least 40 px at the top. A gate opening in the front wall faces the viewer.")
 	lines.append(only_use)
 	lines.append(style)
 	lines.append("```")
@@ -157,7 +158,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint one tall conifer tree standing on the diamond at the bottom of the first attached picture, its trunk base at the centre of the diamond, size %s." % tree_size)
-	lines.append("Everything that is not the tree must be one flat pure magenta colour (#FF00FF), edge to edge: no ground, no grass, no shadow on the ground, no gradient.")
+	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the tree must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground. The whole tree must fit inside the canvas.")
 	lines.append(only_use)
 	lines.append(style)
 	lines.append("```")
@@ -168,7 +169,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint conifer trees, one tree standing on each dark green block of the first attached picture, exactly where the blocks are, size %s. Trees overlap like a dense forest edge, but each trunk stands on its own block's base. Vary the trees." % canvas)
-	lines.append("Everything that is not a tree must be one flat pure magenta colour (#FF00FF), edge to edge: no ground, no grass, no shadow on the ground, no gradient.")
+	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not a tree must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground.")
 	lines.append(only_use)
 	lines.append(style)
 	lines.append("```")

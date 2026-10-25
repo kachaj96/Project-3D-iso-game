@@ -116,17 +116,17 @@ func test_the_ground_picture_shows_forest_floor_where_things_stand() -> void:
 
 func test_the_objects_in_place_sit_on_a_key_colour_and_only_show_the_asked_symbols() -> void:
 	var image: Image = MapBlockout.render_in_place(_spec(), "#")
-	assert_bool(_same(_pixel(image, 2, 2), MapBlockout.KEY_COLOUR)).is_true()
+	assert_bool(_same(_pixel(image, 2, 2), MapBlockout.BACKGROUND)).is_true()
 	var obstacle_top: int = -MapBlockout.OBSTACLE_HEIGHT["#"] * MapBlockout.SCALE
 	assert_bool(_same(_pixel(image, 5, 1, 0, obstacle_top), MapBlockout.ROCK)).is_true()
-	assert_bool(_same(_pixel(image, 5, 2, 0, -MapBlockout.PROP_HEIGHT * MapBlockout.SCALE), MapBlockout.KEY_COLOUR)).is_true()
+	assert_bool(_same(_pixel(image, 5, 2, 0, -MapBlockout.PROP_HEIGHT * MapBlockout.SCALE), MapBlockout.BACKGROUND)).is_true()
 
 
 func test_a_single_object_stands_on_the_bottom_diamond() -> void:
 	var image: Image = MapBlockout.render_single("T", 128)
 	assert_int(image.get_width()).is_equal(256 + 128)
 	assert_int(image.get_height()).is_equal(256 + 128 + 128)
-	assert_bool(_same(image.get_pixel(0, 0), MapBlockout.KEY_COLOUR)).is_true()
+	assert_bool(_same(image.get_pixel(0, 0), MapBlockout.BACKGROUND)).is_true()
 	assert_bool(_same(image.get_pixel(image.get_width() / 2, image.get_height() - 64 - 64 - 256 + 10), MapBlockout.TREE)).is_true()
 
 
@@ -134,6 +134,6 @@ func test_the_layered_prompts_name_what_to_attach_and_are_ready_to_paste() -> vo
 	var text: String = MapPrompt.build_layered(_spec())
 	assert_str(text).contains("**Attach (in this order):** 1. `ground_blockout.png`")
 	assert_str(text).contains("`objects_B_blockout.png`").contains("`single_T_blockout.png`").contains("`objects_T_blockout.png`")
-	assert_str(text).contains("#FF00FF")
+	assert_str(text).contains("transparent")
 	assert_str(text).contains("1024 x 448 px")
 	assert_int(text.count("```")).is_equal(8)

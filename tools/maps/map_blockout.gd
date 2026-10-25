@@ -31,10 +31,8 @@ const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
 const PROP_HEIGHT: int = 64
 
-## Layered experiment: the ground picture shows this where obstacles stand, and objects are
-## drawn on this flat key colour so the background can be removed afterwards.
+## Layered experiment: the ground picture shows this where obstacles stand.
 const FOREST_FLOOR: Color = Color(0.28, 0.4, 0.25, 1.0)
-const KEY_COLOUR: Color = Color(1.0, 0.0, 1.0, 1.0)
 const LABEL_PIXEL: int = 8
 
 ## 3 x 5 pixel letters, one string of 15 characters per glyph (row by row, "#" is ink).
@@ -68,11 +66,12 @@ static func render_ground(spec: MapSpec) -> Image:
 	return image
 
 
-## Layered experiment, picture 2: the objects of one kind in place, on a flat key colour.
+## Layered experiment, picture 2: the objects of one kind in place, on the empty background colour
+## (the image AI turns it into transparency).
 ## `symbols` are the grid symbols to draw, for example "B" for buildings. The picture has the
 ## same size as the ground picture, so what the image AI paints lines up with the map.
 static func render_in_place(spec: MapSpec, symbols: String) -> Image:
-	var image: Image = _canvas(spec, KEY_COLOUR)
+	var image: Image = _canvas(spec, BACKGROUND)
 	for entry: Vector3i in _back_to_front(spec):
 		var symbol: String = spec.symbol_at(entry.x, entry.y)
 		if symbols.contains(symbol):
@@ -82,14 +81,14 @@ static func render_in_place(spec: MapSpec, symbols: String) -> Image:
 	return image
 
 
-## Layered experiment, picture 3: one object alone on a flat key colour, standing on one cell,
+## Layered experiment, picture 3: one object alone on the empty background colour, standing on one cell,
 ## for a tree or a rock that is placed many times. `height` is in project pixels.
 static func render_single(symbol: String, height: int) -> Image:
 	var tile_width: int = GridMath.DEFAULT_TILE_WIDTH * SCALE
 	var tile_height: int = GridMath.DEFAULT_TILE_HEIGHT * SCALE
 	var margin: int = 64
 	var image: Image = Image.create(tile_width + 2 * margin, height * SCALE + tile_height + 2 * margin, false, Image.FORMAT_RGBA8)
-	image.fill(KEY_COLOUR)
+	image.fill(BACKGROUND)
 	var base: Vector2 = Vector2(image.get_width() / 2.0, image.get_height() - margin - tile_height / 2.0)
 	var colour: Color = TREE if symbol == "T" else (BUILDING if symbol == "B" else ROCK)
 	_draw_block(image, base, height * SCALE, colour)
