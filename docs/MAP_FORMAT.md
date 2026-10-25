@@ -165,3 +165,15 @@ The original questions:
 2. **Default size 10 x 20** (fits one screen)? Bigger maps allowed when needed?
 3. **One height level = 32 px**, levels 0 to 3?
 4. **Interiors and floors as separate maps** (`.in01`, `.up01`, `.dn01`)?
+
+## 4. Implementation status: step 2 (2026-10-25, branch `feature/map-format`)
+
+Done, with tests:
+
+- `LevelRules` (`src/content/level_rules.gd`) is the one place for the level rules: same level always passes; stairs lead up 1 level, a ladder up to 4; a diagonal step never changes level; every step is allowed exactly when the step back is. A stairs or ladder cell has the level of its lower end. Ladders weigh 3, everything else 1.
+- `MapDef` has a `shape` (`DIAMOND` for the two M1 maps, `SCREEN` for new maps), sparse `heights` (cell to level, default 0) and `cell_kinds` (cell to "stairs" or "ladder"), `height_at`, `kind_at`, `all_cells` and `can_step`. `validate` checks levels 0 to 7, exit kinds, and that each stairs or ladder cell leads up to exactly one of its four neighbours. `MapExit` has a `kind` (edge, door, stairs, ladder).
+- `Pathfinder` is an `AStar2D` graph built from `MapDef.can_step`. `find_path(start, goal)` and both movement modes are unchanged.
+- `GridMath` knows the level height (32 px) and picks a tapped cell from the highest level down. The character picture is drawn raised by its level while the character node stays on the ground position, so drawing order still uses the feet on the ground. The camera follows the raised picture.
+- The Authority's "beside" rule for using objects also requires a level difference of at most 1.
+
+Still open: the generator (data, catalog, scene stub, blockout picture, prompt), warnings for walkable cells hidden behind high platforms, rewriting the two M1 maps as text files (this removes `DIAMOND`), and the test map.

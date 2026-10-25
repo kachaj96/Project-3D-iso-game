@@ -146,3 +146,17 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Alternatives:** diamond maps (what M1 has: wasted picture corners, diagonal exits); a separate map for every upper level (simpler code, but you want to climb inside one map).
 - **Consequences:** the two M1 maps are rewritten as text files with coordinate ids. `MapDef`, the pathfinder and `GridMath` change, so an Opus review comes before merging.
 - **Revisit if:** the 10 x 20 cell size is too small to tap on the phone, or high platforms hide too much of the map.
+
+## D-021 How levels are implemented (2026-10-25)
+
+- **Context:** first implementation of D-020 (map format step 2).
+- **Decision:**
+  - The level rules live in one class, `LevelRules`, used by both map validation and the pathfinder. A stairs or ladder cell has the level of its lower end and leads up from there; the step back down is allowed because every step is symmetric.
+  - `heights` and `cell_kinds` are sparse dictionaries (only cells that differ from level 0 and from a plain cell are stored), so flat maps cost nothing.
+  - `MapDef.shape` keeps the two M1 diamond maps working next to screen-shaped maps until they are rewritten as text files; then `DIAMOND` is deleted.
+  - Ladders weigh 3 in the path search, so a route prefers stairs unless a ladder is much shorter or the only way.
+  - The character node stays on the ground position and only its picture is raised, so Y-sorting is unchanged. Taps try the highest level first.
+  - Using an object (a sign) needs a level difference of at most 1.
+- **Alternatives:** raise the whole character node (breaks the drawing order behind obstacles); a height number on every cell in `MapDef` (large files, no benefit).
+- **Consequences:** nothing visual changes on the two M1 maps. New behaviour appears only on maps that use heights.
+- **Revisit if:** tall platforms hide walkable cells (the generator will warn), or ladders need a different cost.
