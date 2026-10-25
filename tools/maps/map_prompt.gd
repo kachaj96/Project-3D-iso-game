@@ -135,7 +135,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint only the ground of a forest clearing for an isometric game, size %s, filling the whole canvas to every edge." % canvas)
-	lines.append("The first attached picture is the exact layout (the dark blue-grey around it is only the empty edge of the layout: fill the whole canvas anyway): light green cells are grass you walk on, tan cells are a dirt path, dark green cells are forest floor (moss, roots, fallen needles, deep shadow). Keep the shapes and positions of the cells.")
+	lines.append("The first attached picture is the exact layout: light green cells are grass you walk on, tan cells are a dirt path, dark green cells are forest floor (moss, roots, fallen needles, deep shadow). Keep the shapes and positions of the cells. The dark green also continues to every edge of the canvas: there must be no empty or dark-blue corners.")
 	lines.append("The second attached picture is only a style reference: use its colours, light and painting style.")
 	lines.append("Do not paint trees, rocks, buildings, signs or any other object standing on the ground: they are painted separately. Calm, readable walkable ground, with more detail only at the edges.")
 	lines.append(style)

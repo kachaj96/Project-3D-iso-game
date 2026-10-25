@@ -56,7 +56,8 @@ static func render(spec: MapSpec) -> Image:
 ## trees, buildings, props) show forest floor, because the objects come as separate pictures.
 ## Levels still raise their cells.
 static func render_ground(spec: MapSpec) -> Image:
-	var image: Image = _canvas(spec, BACKGROUND)
+	# The edge of the canvas outside the cells is forest floor too, so the picture has no empty corners.
+	var image: Image = _canvas(spec, FOREST_FLOOR)
 	for entry: Vector3i in _back_to_front(spec):
 		var symbol: String = spec.symbol_at(entry.x, entry.y)
 		var solid: bool = OBSTACLE_HEIGHT.has(symbol) or _is_prop(spec, symbol)
