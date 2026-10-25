@@ -99,7 +99,7 @@ project.godot in the repo root from the Godot editor.
 Acceptance criteria:
 - .gitignore covers Godot 4 (.godot/, export output, *.apk, *.aab, keystores) and keeps project.godot.
 - .gitattributes sends art_source/** and large binary source formats (.kra, .psd, .blend) to Git LFS
-  and keeps exported PNGs in normal git.
+  and, since 2026-10-25, also the cleaned map pictures assets/art/**/*.png (big, and every new version would stay in the history for good). Small assets elsewhere stay in normal git.
 - The folder skeleton from ARCHITECTURE.md section 3 exists (with .gitkeep where empty).
 - project.godot uses the Compatibility renderer, landscape orientation, and has static typing warnings
   enabled (untyped declarations as warnings).
