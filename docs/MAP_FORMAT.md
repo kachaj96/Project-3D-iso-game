@@ -1,6 +1,6 @@
 # Map format: review and proposal
 
-Status: **proposal for your decision** (review done 2026-10-25, Opus). Nothing here is implemented yet. Decisions that are already agreed are in `DECISIONS.md` (D-016 to D-019).
+Status: **decided 2026-10-25** (D-020 in `DECISIONS.md`), not implemented yet. Your answers are in section 3.
 
 ## 1. What the M1 format is today
 
@@ -89,22 +89,23 @@ D1 door map.hollow.04_07.in01 entry E1
 | `D` | door or entrance to another map (crypt, house) | yes |
 | `P` | prop that can be used (sign, chest), listed under `props` | no |
 
-**Heights** are optional (missing means 0). One level is 32 px on screen, the height of one row. Allowed levels 0 to 3.
+**Heights** are optional (missing means 0). One level is 32 px on screen, the height of one row. Allowed levels 0 to 7; a full storey (a gallery, a loft) is about 4 levels, 128 px, the height of the hero.
 
 ### 2.3 Movement rules with heights
 
 1. A step between two walkable neighbours is allowed when both have the same height.
 2. A stairs cell connects its own level with the level above in the one direction where the neighbour is exactly one level higher. The generator finds that direction and rejects stairs that touch zero or more than one higher neighbour.
-3. A ladder cell connects to a neighbour up to 3 levels higher. Moving over it plays a climb animation and costs more time.
+3. A ladder cell connects to a neighbour up to 4 levels higher (one storey). Moving over it plays a climb animation and costs more time.
 4. Diagonal steps never change height, and never cut the corner of an obstacle (as today).
 5. Combat keeps the four-direction mode (D-008); the same height rules apply.
+6. A higher platform can hide walkable cells behind it on screen. The generator warns about every hidden walkable cell; such a place needs a fade of the platform or an occluder.
 
 **Pathfinder change:** `AStarGrid2D` becomes `AStar2D`, a graph with one point per cell and an explicit connection per allowed step. The public method `find_path(start, goal)` stays the same, so the Authority does not change. Points use the cell coordinates as position, so diagonal steps cost 1.41 and straight steps 1, as today. Ladders get a higher weight.
 
 ### 2.4 Exits and links between maps
 
 - **Edge exits:** `>` cells on a screen edge. The neighbour map comes from the coordinates (left edge goes to column - 1, top edge to row - 1, and so on). The entry cell is the matching `>` cell on the opposite edge of the neighbour, one step inward. The generator **checks both maps** and fails if the pins do not line up.
-- **Doors, stairs and ladders to another map:** a `links:` line names the symbol (`D1`), the target map id and the entry marker in the target map. Interiors and floors are separate maps (`.in01`, `.up01`, `.dn01`, see D-019).
+- **Doors, stairs and ladders to another map:** a `links:` line names the symbol (`D1`), the target map id and the entry marker in the target map. **Separate rooms** (a house, a crypt, another room upstairs) are separate maps (`.in01`, `.up01`, `.dn01`, see D-019). **Galleries, lofts and platforms** reached by stairs or a ladder stay on the same map as higher levels, and a door or exit can sit on any level, so the hero can climb up and then leave to the next room or come back down.
 
 ### 2.5 What the generator produces (one command per map, or all maps at once)
 
@@ -154,7 +155,11 @@ The two M1 maps are rewritten as text files and get coordinate ids (`map.start.0
 | 5 | Rewrite the two start maps as text files, game runs on them | Sonnet |
 | 6 | Test map through your image AI, alignment check with the cell overlay | you and Sonnet |
 
-## 3. Questions for you
+## 3. Answers (2026-10-25)
+
+1. Screen-shaped maps: **yes**. 2. Default 10 x 20, bigger when needed: **yes**. 3. One level = 32 px: **yes**, with levels 0 to 7 so a full storey fits (your answer 4). 4. Interiors as separate maps: **yes**. Upper levels inside one room stay on the same map with stairs or ladders.
+
+The original questions:
 
 1. **Screen-shaped maps (2.1) instead of diamonds?** Recommended: yes.
 2. **Default size 10 x 20** (fits one screen)? Bigger maps allowed when needed?

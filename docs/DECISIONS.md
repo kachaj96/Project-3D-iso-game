@@ -134,3 +134,15 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Decision:** surface maps are `map.<region>.<cc>_<rr>`: `cc` is the column (grows to the east, the right of the screen), `rr` the row (grows to the south, the bottom of the screen), both counted inside the region from 00 at its north-west corner. Interiors `.in01`, floors above `.up01`, below ground `.dn01`, for example `map.hollow.04_07.dn01`. Neighbours follow from the coordinates.
 - **Consequences:** the two M1 maps get coordinate ids when the new map format lands. There are no saves yet, so this needs no migration.
 - **Open:** the shape of a map and the map file format are a proposal in `MAP_FORMAT.md`, waiting for your answers.
+
+## D-020 Map shape, map files and levels (2026-10-25)
+
+- **Context:** review of the M1 map format in `MAP_FORMAT.md` (findings F1 to F8).
+- **Decision:**
+  - A map is a **screen-shaped rectangle** of the same 128 x 64 isometric cells, by default **10 x 20** (190 cells, 1280 x 672 px, one landscape screen at zoom 1). Bigger maps are allowed when needed and the camera follows the hero there. Exits sit on the left, right, top and bottom screen edges.
+  - **One text file per map** is the only source. A generator writes the game data, a map catalog, a Godot scene stub (written once, then yours to edit), a blockout picture and a prompt for the image AI, and checks the map (reachability, matching exits with neighbours, stairs and ladders, translation keys).
+  - **Levels 0 to 7**, 32 px each. Stairs climb one level per cell; a ladder climbs up to 4 levels (one storey). Galleries, lofts and platforms stay on the same map; separate rooms are separate maps. A door or exit can sit on any level.
+  - The pathfinder becomes an `AStar2D` graph that knows these rules; its public method stays the same.
+- **Alternatives:** diamond maps (what M1 has: wasted picture corners, diagonal exits); a separate map for every upper level (simpler code, but you want to climb inside one map).
+- **Consequences:** the two M1 maps are rewritten as text files with coordinate ids. `MapDef`, the pathfinder and `GridMath` change, so an Opus review comes before merging.
+- **Revisit if:** the 10 x 20 cell size is too small to tap on the phone, or high platforms hide too much of the map.
