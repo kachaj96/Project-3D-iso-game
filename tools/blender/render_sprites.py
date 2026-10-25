@@ -17,6 +17,10 @@ Options (all after the "--"):
   --frame-end N       last frame to sample (default: the action's own end). Frames are taken evenly from
                       start up to, but not including, end, so a looping clip does not repeat its first pose
   --in-place 1        cancel the sideways travel of the hips (Mixamo "root motion"): the character stays on one ground point
+  --scale N           pixel density multiplier (2 = body 240 px high for a 1.5 unit character), default 1
+  --saturation N      color saturation of the whole character (default 1, try 1.3)
+  --value N           brightness of the whole character (default 1)
+  --shadow N          brightness of the shadow tone, 0.5 strong shadow to 1 none (default 0.76)
   --only S,E          render only these facings, for quick checks
   --outline UNITS     outline thickness in world units (default 0.015)
   --outline-color R,G,B   outline color, 0-1 (default 0.12,0.09,0.07: dark warm brown, not black)
@@ -55,7 +59,7 @@ def parse_args():
     argv = argv[argv.index("--") + 1:] if "--" in argv else []
     opts = {
         "input": "demo", "out": "build/sprites", "name": "sprite", "size": 256,
-        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "", "frame_start": 0, "frame_end": 0, "only": "", "in_place": "",
+        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "", "frame_start": 0, "frame_end": 0, "only": "", "in_place": "", "scale": 1.0, "saturation": 1.0, "value": 1.0, "shadow": 0.76,
         "outline": 0.015, "outline_color": (0.12, 0.09, 0.07),
     }
     i = 0
@@ -64,7 +68,7 @@ def parse_args():
         value = argv[i + 1]
         if key in ("size", "directions", "frames", "frame_start", "frame_end"):
             opts[key] = int(value)
-        elif key in ("height", "outline"):
+        elif key in ("height", "outline", "scale", "saturation", "value", "shadow"):
             opts[key] = float(value)
         elif key == "outline_color":
             opts[key] = tuple(float(v) for v in value.split(","))
@@ -219,7 +223,7 @@ def normalize_model(root, target_height):
     root.location.z -= low.z
 
 
-def apply_toon(root, outline_width, outline_color):
+def apply_toon(root, outline_width, outline_color, saturation=1.0, value=1.0, shadow=0.76):
     """Cel shading in three tones plus an outline made from a flipped, slightly larger shell."""
     outline = bpy.data.materials.new("Outline")
     outline.use_nodes = True
@@ -247,9 +251,10 @@ def apply_toon(root, outline_width, outline_color):
             ramp = tree.nodes.new("ShaderNodeValToRGB")
             ramp.color_ramp.interpolation = "CONSTANT"
             ramp.color_ramp.elements[0].position = 0.0
-            ramp.color_ramp.elements[0].color = (0.76, 0.78, 0.88, 1)  # shadow tone, slightly cool
+            ramp.color_ramp.elements[0].color = (shadow, shadow * 1.02, min(1.0, shadow * 1.16), 1)  # shadow tone, slightly cool
             ramp.color_ramp.elements[1].position = 0.28
-            ramp.color_ramp.elements[1].color = (0.92, 0.93, 0.96, 1)  # middle tone
+            mid = (1.0 + shadow) / 2.0
+            ramp.color_ramp.elements[1].color = (mid, mid * 1.01, min(1.0, mid * 1.05), 1)  # middle tone
             extra = ramp.color_ramp.elements.new(0.55)
             extra.color = (1.05, 1.0, 0.92, 1)  # lit tone, slightly warm
             mix = tree.nodes.new("ShaderNodeMix")
@@ -257,6 +262,9 @@ def apply_toon(root, outline_width, outline_color):
             mix.blend_type = "MULTIPLY"
             mix.inputs["Factor"].default_value = 1.0
             emit = tree.nodes.new("ShaderNodeEmission")
+            tint = tree.nodes.new("ShaderNodeHueSaturation")
+            tint.inputs["Saturation"].default_value = saturation
+            tint.inputs["Value"].default_value = value
             tree.links.new(diffuse.outputs["BSDF"], to_rgb.inputs["Shader"])
             tree.links.new(to_rgb.outputs["Color"], ramp.inputs["Fac"])
             tree.links.new(ramp.outputs["Color"], mix.inputs["A"])
@@ -264,7 +272,8 @@ def apply_toon(root, outline_width, outline_color):
                 tree.links.new(base_input.links[0].from_socket, mix.inputs["B"])
             else:
                 mix.inputs["B"].default_value = base_input.default_value
-            tree.links.new(mix.outputs["Result"], emit.inputs["Color"])
+            tree.links.new(mix.outputs["Result"], tint.inputs["Color"])
+            tree.links.new(tint.outputs["Color"], emit.inputs["Color"])
             tree.links.new(emit.outputs["Emission"], output.inputs["Surface"])
 
         obj.data.materials.append(outline)
@@ -296,14 +305,14 @@ def setup_render(size):
     scene.world = world
 
 
-def setup_camera_and_light(size):
+def setup_camera_and_light(size, scale=1.0):
     scene = bpy.context.scene
     elevation = math.radians(CAMERA_ELEVATION_DEG)
     distance = 30.0
     horizontal = Vector((1.0, 1.0, 0.0)).normalized()
     cam_data = bpy.data.cameras.new("Camera")
     cam_data.type = "ORTHO"
-    cam_data.ortho_scale = size / PX_PER_UNIT
+    cam_data.ortho_scale = size / (PX_PER_UNIT * scale)
     cam_data.shift_y = ANCHOR_FROM_TOP - 0.5  # moves the ground point down to 75% of the frame
     cam_data.clip_start = 0.1
     cam_data.clip_end = 100.0
@@ -465,8 +474,8 @@ def main():
     else:
         pick_action(root, opts["action"], opts["frame_start"], opts["frame_end"])
     normalize_model(root, opts["height"])
-    apply_toon(root, opts["outline"], opts["outline_color"])
-    setup_camera_and_light(opts["size"])
+    apply_toon(root, opts["outline"], opts["outline_color"], opts["saturation"], opts["value"], opts["shadow"])
+    setup_camera_and_light(opts["size"], opts["scale"])
     render_all(root, opts)
 
 

@@ -148,3 +148,19 @@ Findings and decisions for the renderer:
 - Mixamo clips come with root motion unless "In Place" is ticked. `--in-place 1` removes the sideways travel of the hips in Blender, keeps its height, and keeps the character on the same ground point. Use it for every clip.
 - Clips are far longer than our targets (0.5 to 1.0 s). Frames are sampled evenly between `--frame-start` and `--frame-end`, so the clip is played faster in the game. The next step is a recipe file per clip with a hand-picked frame list, the FPS, loop on or off, and the hit frame.
 - `--only S,E` renders chosen facings for quick checks. A full 8-direction, 8-frame clip takes about 70 s.
+
+## Look test against a Dofus class sprite (2026-10-25)
+
+Our hero rendered at scale 2 (320 px frames), shrunk to 120 px project height and shown at phone scale (1.5x) next to a Dofus class sprite, normally and with the daylight glare. The comparison image stays in `build/` (ignored); the Dofus picture is never copied into the project. Tool: `tools/art/compare_with_reference.gd`.
+
+Result: **the technique passes, the current character does not.**
+- The 3D toon render gives clean, consistent sprites. No technical reason to change method.
+- Our hero is much less readable than the reference: low saturation, similar brightness in teal, green, grey and brown, face lost in the hood shadow, outline barely visible, a wide heavy silhouette. In daylight mode the lower body disappears into the ground.
+- Renderer settings that helped (`--saturation 1.4 --value 1.08 --shadow 0.58 --outline 0.03 --outline-color 0.06,0.09,0.11`): stronger colors, visible shadow steps and a readable outline. They do not fix the face or the brown-on-brown lower body, which are design problems.
+
+Brief for the next hero concept (readability rules, to be confirmed by you):
+1. Face visible in every view: hood down on the shoulders, or a small hood that leaves the whole face in light.
+2. Head at least 35% of the height, large simple eyes (6 project px or more).
+3. At least three clearly different brightness levels: one light (cream or white tunic), one mid (the accent colors), one dark (boots, gloves, belt).
+4. No brown on brown, no grey trousers: lower body in a color that differs from the ground in both hue and brightness.
+5. Slimmer silhouette than the first concept: short cloak, no big mass above the shoulders.
