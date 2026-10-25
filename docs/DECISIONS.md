@@ -33,18 +33,18 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 
 - **Decision:** all text via keys, `tr_n` for plurals, `.po` files.
 
-## D-006 Art direction and pipeline (direction decided, pipeline pending, Milestone 2)
+## D-006 Art direction and pipeline (direction and character pipeline decided, environment method pending)
 
 - **Context:** you do not paint and rely on AI tools; characters must work in 8 directions; budget up to about $20 per month.
 - **Decided 2026-10-25:** visual direction A, "dark fairytale": Dofus shapes and readability, gothic mood carried by light and palette. Chosen from three directions (A dark fairytale, B painterly gothic, C dark pixel art) after a generated sample. Style rules are in `ART_PIPELINE.md`.
 - **Dropped:** the cutout rig painted in Krita, because it needs painting skill and multiplies work per direction.
-- **Pending (M2 bake-off):** characters as 3D toon renders (favourite) or as AI 2D images per direction. Environment from single AI assets cleaned by scripts. Decide with measured time per asset.
+- **Decided 2026-10-25 after the bake-off:** characters and monsters are rendered from 3D into 2D sprites, see D-016 and D-017. The environment method (one painted backdrop per map, or modular assets) is decided after the test map described in `MAP_FORMAT.md`.
 
 ## D-007 Landscape orientation (2026-10-24)
 
 - **Decision:** landscape only. Isometric maps are wider than tall and combat UI needs horizontal space.
 
-## D-007 Tool and project naming: game is called Overthune (2026-10-24)
+## D-007b Tool and project naming: game is called Overthune (2026-10-24, number shared with D-007 by mistake)
 
 - **Decision:** project name `Overthune`, Android package `com.example.overthune` (placeholder prefix).
 - **Consequences:** change `package/unique_name` to a real domain-based ID before publishing, since it cannot change after release.
@@ -101,3 +101,36 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Decision:** a map lists its objects as `MapProp` resources (stable id like `prop.start.welcome_sign`, kind, cell, `text_key`). A prop's cell is always also in `blocked_cells`, so nobody walks through it. Using a prop is an `InteractCommand`; the Authority walks the character to the nearest free cell beside it (never an exit cell) and then answers with an `InteractedEvent`. If the character already stands beside it, nothing moves. The scene shows the text only after the walk ends and only through `tr(text_key)`; a test requires every key to exist in `en.po` and `pl.po`.
 - **Consequences:** `tools/paint_props.gd` paints props onto existing map scenes without touching hand-painted tiles. The sign picture is a placeholder block. The wording of the sign is placeholder text for you to rewrite.
 - **Revisit if:** props need states (a chest that opens), then they move into `WorldState`.
+
+## D-016 The game is 2D; characters are rendered from 3D (bake-off result, 2026-10-25)
+
+- **Context:** you do not paint, characters need 8 directions and several animations, budget about $20 a month. Bake-off on free plans of Meshy, Tripo and Mixamo, details in `ART_PIPELINE.md`.
+- **Decision:** everything in the game is 2D: sprites, map pictures, Godot 2D lights. Characters and monsters are made like this:
+  1. concept image from an AI image tool, following the style rules, checked at 120 px next to the reference (`tools/art/compare_with_reference.gd`),
+  2. image to 3D model (Tripo or Meshy; no PBR, lighting removed, about 20k triangles),
+  3. rig and clips in Mixamo (free, your Adobe account),
+  4. Blender toon render into sprites (`tools/blender/render_sprites.py`), checked on contact sheets.
+- **Measured:** concept 36 to 40 credits for four images; model 15 to 25 credits and about 60 s; Mixamo about 10 minutes of your time; render of one clip in 8 directions and 8 frames about 70 s.
+- **Rejected:** AI drawing frame by frame (the character changes between frames and directions); Tripo's rig on the free plan (the GLB skeleton is damaged, the FBX has none); a painted cutout rig (needs painting skill).
+- **Shipping rule:** nothing made on a free plan goes into the released game. Before an asset is final, it is made again on a paid plan whose terms give you the rights (both vendors state this for paid plans; re-check then).
+- **Revisit if:** on the phone the characters still read as 3D figurines after the M2 slice, or the animation library lacks a needed move.
+
+## D-017 Character sprite standard (2026-10-25)
+
+- **Size:** the hero is 120 project px tall at zoom 1, rendered at scale 2 (240 px body) in **320 x 320** frames. Feet anchor at **(160, 262)**. Light from the top-left, fixed for every direction.
+- **Directions:** 8 (S, SW, W, NW, N, NE, E, SE, clockwise from facing the camera). No mirroring for the hero and important characters: mirroring would light them from the wrong side and swap one-sided gear. Symmetric NPCs and monsters with flat shading may be mirrored to save memory.
+- **Clips:** idle 6 frames at 7 fps, walk 8 at 14, attack 8 at 15, hit 4 at 14, death 10 at 11, interact 6 at 11 (ranges in `ART_PIPELINE.md`, "Clip timing"). Unique frames, FPS and duration are designed separately: duration first, from game feel.
+- **Files:** frames `<entity>_<clip>_<dir>_<nn>.png`; sheet per clip with one row per direction; a manifest per sheet with frame size, FPS, loop, hit frame and anchor; Godot `SpriteFrames` generated from it. 2 px empty border per frame, straight alpha, no baked ground shadow, in-place clips only.
+- **Look parameters:** saturation 1.2, value 1.08, shadow 0.58, outline 0.03 in a dark blue-brown tint.
+- **Memory:** about 0.39 MB per raw frame, about 130 MB raw for 336 hero frames. Trimming and texture compression are mandatory; the compression quality on outlines is checked on the phone in M2.
+
+## D-018 Movement timing and zoom (2026-10-25)
+
+- **Decision:** every step from one cell to the next takes the same time, **0.28 s**, whatever the direction (a step is 64 to 128 px long on screen depending on the direction). One walk cycle is two steps, 0.56 s, 8 frames at about 14 fps. Maximum zoom becomes **1.6** instead of 2.0, because sprites are rendered at scale 2.
+- **Status:** agreed, not yet in the code (comes with the render upgrade).
+
+## D-019 Map ids and world coordinates (2026-10-25)
+
+- **Decision:** surface maps are `map.<region>.<cc>_<rr>`: `cc` is the column (grows to the east, the right of the screen), `rr` the row (grows to the south, the bottom of the screen), both counted inside the region from 00 at its north-west corner. Interiors `.in01`, floors above `.up01`, below ground `.dn01`, for example `map.hollow.04_07.dn01`. Neighbours follow from the coordinates.
+- **Consequences:** the two M1 maps get coordinate ids when the new map format lands. There are no saves yet, so this needs no migration.
+- **Open:** the shape of a map and the map file format are a proposal in `MAP_FORMAT.md`, waiting for your answers.

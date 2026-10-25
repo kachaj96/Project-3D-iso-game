@@ -13,6 +13,7 @@ Status: **Milestone 0, setup.** No game code yet.
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Milestones with goals, learning, testing and exit criteria |
 | [docs/GDD.md](docs/GDD.md) | Living game design document |
 | [docs/ART_PIPELINE.md](docs/ART_PIPELINE.md) | Art pipeline proposal, validated in Milestone 2 |
+| [docs/MAP_FORMAT.md](docs/MAP_FORMAT.md) | Map format review and proposal: screen-shaped maps, text map files, generator |
 | [docs/BACKLOG.md](docs/BACKLOG.md) | Prioritized backlog and First Playable scope |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Record of technical and design decisions |
 | [docs/RISKS.md](docs/RISKS.md) | Risks and known bugs |

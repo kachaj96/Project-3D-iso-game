@@ -180,3 +180,20 @@ Corrections to the spec above:
 - Death needs most of its frames in the fall (the last 40% of the clip); idle is a slow weight shift and needs a short segment or a hand-made loop.
 
 Known flaws of this model to judge on the phone: small grey speckles in the hair and bun texture (side and back views), thin legs and small hands at 120 px.
+
+## Clip timing (D-017)
+
+Three different numbers: **unique frames** (how many pictures, the cost in work and memory), **FPS** (how many are shown per second, the smoothness) and **duration** (frames divided by FPS, longer when a frame is held twice; the game feel). Pick the duration from game feel first, then frames and FPS.
+
+| Clip | Unique frames (standard) | FPS | Duration | Loops |
+|---|---|---|---|---|
+| Idle | 4 to 8 (6) | 6 to 8 | 0.8 to 1.0 s | yes |
+| Walk | 6 to 10 (8) | 12 to 14 | 0.55 to 0.7 s, two steps | yes |
+| Run (optional) | 8 | 14 to 16 | 0.5 to 0.57 s | yes |
+| Attack | 6 to 10 (8) | 14 to 16 | 0.45 to 0.6 s | no |
+| Cast | 8 to 10 (8) | 12 to 14 | 0.6 to 0.8 s | no |
+| Hit | 3 to 5 (4) | 12 to 15 | 0.25 to 0.35 s | no |
+| Death | 8 to 14 (10) | 10 to 12 | 0.8 to 1.1 s, last frame held | no |
+| Interact | 6 to 8 (6) | 10 to 12 | 0.5 to 0.7 s | no |
+
+Every looping clip starts and ends on the same contact pose. A change of direction keeps the frame number (every direction has the same frame count). Attack, cast, hit and interact return to idle; death stays on its last frame.
