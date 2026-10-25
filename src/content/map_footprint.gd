@@ -10,10 +10,19 @@ extends RefCounted
 ## of a recessed wall is drawn in front of that wall but behind the wings.
 
 const CLUSTER_MARGIN: float = 32.0
-const CLUSTER_HEADROOM: float = 120.0
+## Extra room above the footprint blocks for what rises above them (a roof), per symbol.
+const HEADROOM_OF: Dictionary = {"B": 120.0, "C": 24.0, "W": 40.0, "V": 40.0}
 const STRIP_WIDTH: float = 64.0
-## Height of a building block, from MapBlockout.OBSTACLE_HEIGHT.
-const BUILDING_HEIGHT: float = 160.0
+## Height of the footprint block of each symbol (B building, C coffin or altar, W and V back walls).
+const HEIGHT_OF: Dictionary = {"B": 160.0, "C": 48.0, "W": 224.0, "V": 224.0}
+
+
+static func height_of(symbol: String) -> float:
+	return HEIGHT_OF.get(symbol, 160.0)
+
+
+static func headroom_of(symbol: String) -> float:
+	return HEADROOM_OF.get(symbol, 120.0)
 
 
 ## Ground centres of every cell of a symbol, in project pixels.
@@ -35,7 +44,7 @@ static func cluster_rect(spec: MapSpec, symbol: String) -> Rect2:
 	var low: Vector2 = Vector2(INF, INF)
 	var high: Vector2 = Vector2(-INF, -INF)
 	for centre: Vector2 in centres:
-		low = Vector2(minf(low.x, centre.x - 64.0), minf(low.y, centre.y - BUILDING_HEIGHT - 32.0))
+		low = Vector2(minf(low.x, centre.x - 64.0), minf(low.y, centre.y - height_of(symbol) - 32.0))
 		high = Vector2(maxf(high.x, centre.x + 64.0), maxf(high.y, centre.y + 32.0))
 	return Rect2(low, high - low)
 
@@ -46,8 +55,8 @@ static func canvas_rect(spec: MapSpec, symbol: String) -> Rect2:
 	if cluster.size == Vector2.ZERO:
 		return cluster
 	return Rect2(
-		cluster.position - Vector2(CLUSTER_MARGIN, CLUSTER_HEADROOM),
-		cluster.size + Vector2(2.0 * CLUSTER_MARGIN, CLUSTER_HEADROOM + CLUSTER_MARGIN)
+		cluster.position - Vector2(CLUSTER_MARGIN, headroom_of(symbol)),
+		cluster.size + Vector2(2.0 * CLUSTER_MARGIN, headroom_of(symbol) + CLUSTER_MARGIN)
 	)
 
 

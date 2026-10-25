@@ -12,26 +12,26 @@ title_key: map.gluchobor.02_02.in01.title
 theme: dark_interior
 size: 10x20
 grid:
-# # # # # # # # # #
- # # # # # # # # #
-# # # # # # # # # #
- # # # # # # # # #
-# # # # # # # # # #
- # # # # V # # # #
-# # # # W V # # # #
- # # # W 2 V # # #
-# # # W . . V # # #
- # # W . . . V # #
-# # W . . . . V # #
- # W . . . . . V #
-# W . . C 1 . . V #
- # . # . C . . . #
-# # . . . . . . # #
- # # . . . . . # #
-# # # . . . . # # #
- # # # . # . # # #
-# # # # @ . # # # #
- # # # # 3 # # # #
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X V X X X X
+X X X X W V X X X X
+ X X X W 2 V X X X
+X X X W . . V X X X
+ X X W . . . V X X
+X X W . . . . V X X
+ X W . . . . . V X
+X W . . C 1 . . V X
+ X . # . C . . . X
+X X . . . . . . X X
+ X X . . . . . X X
+X X X . . . . X X X
+ X X X . # . X X X
+X X X X @ . X X X X
+ X X X X 3 X X X X
 markers:
 1 prop inspect prop.gluchobor.02_02.in01.blood inspect.gluchobor.02_02.in01.blood
 2 link stairs map.gluchobor.02_02.dn01 from_above

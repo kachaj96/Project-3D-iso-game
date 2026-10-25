@@ -94,10 +94,10 @@ func _write_art_helpers(spec: MapSpec, specs: Dictionary) -> bool:
 ## The layered experiment: ground and objects as separate pictures (see MapPrompt.build_layered).
 func _write_layered(spec: MapSpec, directory: String) -> bool:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
-	var pictures: Dictionary = {
-		"ground_blockout.png": MapBlockout.render_ground(spec),
-		"objects_B_blockout.png": MapBlockout.render_cluster(spec, "B"),
-	}
+	var pictures: Dictionary = {"ground_blockout.png": MapBlockout.render_ground(spec)}
+	for symbol: String in MapFootprint.HEIGHT_OF:
+		if not spec.find_symbol(symbol).is_empty():
+			pictures["objects_%s_blockout.png" % symbol] = MapBlockout.render_cluster(spec, symbol)
 	for file_name: String in pictures:
 		var error: Error = (pictures[file_name] as Image).save_png(ProjectSettings.globalize_path(directory + "/" + file_name))
 		if error != OK:
@@ -153,7 +153,7 @@ func _translation_keys() -> Dictionary:
 ## Dresses the scene of a map with its pictures (see MapDresser). Done once; `force` dresses again.
 func _dress(spec: MapSpec, scene_path: String, force: bool) -> bool:
 	var region: String = spec.id.split(".")[1]
-	var kit_path: String = "res://content/kits/%s.tres" % region
+	var kit_path: String = "res://content/kits/%s.tres" % MapKit.name_for(region, spec.theme)
 	var assets_dir: String = "res://assets/art/maps/%s/" % spec.id
 	if not ResourceLoader.exists(kit_path) or not FileAccess.file_exists(assets_dir + "ground.png"):
 		print("no pictures yet for %s: left undressed" % spec.id)
@@ -166,7 +166,7 @@ func _dress(spec: MapSpec, scene_path: String, force: bool) -> bool:
 		return true
 	var kit: MapKit = load(kit_path)
 	var buildings: Dictionary = {}
-	for symbol: String in "B":
+	for symbol: String in "BCWV":
 		if FileAccess.file_exists("%sbuilding_%s.png" % [assets_dir, symbol]) and not spec.find_symbol(symbol).is_empty():
 			buildings[symbol] = "%sbuilding_%s.png" % [assets_dir, symbol]
 	var placements: Array[MapPlacer.Placement] = MapPlacer.build(spec, kit, buildings, _picture_sizes(kit, buildings))

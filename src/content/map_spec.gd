@@ -18,8 +18,9 @@ extends RefCounted
 ##   entries:
 ##   from_inside 1 1
 
+## X is void: solid and invisible (the black outside an interior room).
 ## C is a low object (a coffin, an altar), W and V are tall wall pieces. All three are solid and get their own picture (see MapFootprint).
-const GROUND_SYMBOLS: String = ".,=@>#TB~SLCWV"
+const GROUND_SYMBOLS: String = ".,=@>#TB~SLCWVX"
 const WALKABLE_SYMBOLS: String = ".,=@>SL"
 const MAX_HEIGHT: int = 7
 const ID_PATTERN: String = "^map(\\.[a-z0-9_]+)+$"

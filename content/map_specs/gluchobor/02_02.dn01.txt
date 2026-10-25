@@ -8,26 +8,26 @@ title_key: map.gluchobor.02_02.dn01.title
 theme: dark_interior
 size: 10x20
 grid:
-# # # # # # # # # #
- # # # # # # # # #
-# # # # # # # # # #
- # # # # # # # # #
-# # # # # # # # # #
- # # # # V # # # #
-# # # # W V # # # #
- # # # W . V # # #
-# # # W . . V # # #
- # # W . . . V # #
-# # W . . . . V # #
- # W . . . . . V #
-# W . . . . . . V #
- # . . . . . . . #
-# # . . . . . . # #
- # # . . . . . # #
-# # # . . . . # # #
- # # # . . . # # #
-# # # # @ . # # # #
- # # # # 1 # # # #
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X V X X X X
+X X X X W V X X X X
+ X X X W . V X X X
+X X X W . . V X X X
+ X X W . . . V X X
+X X W . . . . V X X
+ X W . . . . . V X
+X W . . . . . . V X
+ X . . . . . . . X
+X X . . . . . . X X
+ X X . . . . . X X
+X X X . . . . X X X
+ X X X . . . X X X
+X X X X @ . X X X X
+ X X X X 1 X X X X
 markers:
 1 link stairs map.gluchobor.02_02.in01 from_depths
 entries:
