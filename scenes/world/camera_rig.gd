@@ -31,9 +31,12 @@ func _process(_delta: float) -> void:
 		global_position = target.global_position + look_offset
 
 
-## The area in world pixels the camera may show (the map diamond's rectangle).
-func set_map_bounds(bounds: Rect2) -> void:
-	_bounds = bounds.grow_individual(0.0, vertical_margin, 0.0, vertical_margin)
+## The area in world pixels the camera may show (the map's rectangle). `margin` is the extra room
+## above and below; a negative value means the default `vertical_margin`. A screen-shaped map is the
+## picture itself, so it gets no margin: the camera never shows what lies outside the picture.
+func set_map_bounds(bounds: Rect2, margin: float = -1.0) -> void:
+	var extra: float = vertical_margin if margin < 0.0 else margin
+	_bounds = bounds.grow_individual(0.0, extra, 0.0, extra)
 	limit_left = floori(_bounds.position.x)
 	limit_top = floori(_bounds.position.y)
 	limit_right = ceili(_bounds.end.x)

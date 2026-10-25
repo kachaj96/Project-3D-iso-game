@@ -183,7 +183,8 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 	_map_root.add_child(_marker)
 	_current_map_id = map_id
 	_player.place_at(_grid.cell_to_pixel(cell), _lift_of(cell))
-	_camera.set_map_bounds(_grid.bounds_of(_maps[map_id] as MapDef))
+	var shown: MapDef = _maps[map_id]
+	_camera.set_map_bounds(_grid.bounds_of(shown), 0.0 if shown.shape == MapDef.Shape.SCREEN else -1.0)
 	_camera.snap_to_target()
 	map_shown.emit(map_id)
 
