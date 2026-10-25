@@ -196,3 +196,22 @@ func test_the_real_game_starts_on_the_forest_crypt_at_its_spawn_cell() -> void:
 	assert_str(world.current_map_id()).is_equal("map.gluchobor.02_02")
 	var map: MapDef = (load("res://content/maps/catalog.tres") as MapCatalog).load_maps()["map.gluchobor.02_02"]
 	assert_vector(world.player_position()).is_equal(_grid.cell_to_pixel(map.spawn_cell))
+
+
+func test_on_a_screen_shaped_map_the_camera_never_shows_beyond_the_picture() -> void:
+	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	add_child(world)
+	var camera: CameraRig = world.camera()
+	var map: MapDef = (load("res://content/maps/catalog.tres") as MapCatalog).load_maps()["map.gluchobor.02_02"]
+	var picture: Rect2 = Rect2(0.0, 0.0, 1280.0, 672.0)
+	# The camera may not reach above the picture or below it, so its smallest zoom is a little above 1
+	# on a 16:9 screen (672 px of picture must cover the 720 px of screen height).
+	assert_float(camera.min_zoom()).is_greater_equal(camera.get_viewport_rect().size.y / 672.0 - 0.001)
+	for corner: Vector2i in [MapLayout.cell_from_row_col(0, 0), MapLayout.cell_from_row_col(0, 9), MapLayout.cell_from_row_col(19, 8), MapLayout.cell_from_row_col(19, 0)]:
+		world.place_player_visual_at(corner)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var half_view: Vector2 = camera.get_viewport_rect().size / camera.zoom.x / 2.0
+		var view: Rect2 = Rect2(camera.get_screen_center_position() - half_view, half_view * 2.0)
+		assert_bool(picture.grow(1.0).encloses(view)).is_true()
+	assert_bool(map.shape == MapDef.Shape.SCREEN).is_true()
