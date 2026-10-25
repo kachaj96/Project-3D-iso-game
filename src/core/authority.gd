@@ -111,7 +111,7 @@ func _handle_interact(command: InteractCommand) -> Array[GameEvent]:
 		return [CommandRejectedEvent.create(command.player_id, "nothing_there")]
 
 	var events: Array[GameEvent] = []
-	if not _is_beside(character.cell, prop.cell):
+	if not _is_beside(map, character.cell, prop.cell):
 		var path: Array[Vector2i] = _path_to_beside(character, map, prop.cell)
 		if path.is_empty():
 			return [CommandRejectedEvent.create(command.player_id, "no_path")]
@@ -131,9 +131,10 @@ func _handle_interact(command: InteractCommand) -> Array[GameEvent]:
 	return events
 
 
-## True when the two cells touch, including diagonally.
-func _is_beside(a: Vector2i, b: Vector2i) -> bool:
-	return maxi(absi(a.x - b.x), absi(a.y - b.y)) == 1
+## True when the two cells touch, including diagonally, and are at most one level apart
+## (a character cannot use an object on a platform two or more levels above or below).
+func _is_beside(map: MapDef, a: Vector2i, b: Vector2i) -> bool:
+	return maxi(absi(a.x - b.x), absi(a.y - b.y)) == 1 and absi(map.height_at(a) - map.height_at(b)) <= 1
 
 
 ## The shortest path from the character to any free, non-exit cell beside target. Empty if
@@ -144,7 +145,7 @@ func _path_to_beside(character: CharacterState, map: MapDef, target: Vector2i) -
 	for dy: int in [-1, 0, 1]:
 		for dx: int in [-1, 0, 1]:
 			var candidate: Vector2i = target + Vector2i(dx, dy)
-			if candidate == target or not map.is_in_bounds(candidate) or map.is_blocked(candidate):
+			if candidate == target or not map.is_walkable(candidate) or not _is_beside(map, candidate, target):
 				continue
 			if map.find_exit_at(candidate) != null:
 				continue

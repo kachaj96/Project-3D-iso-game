@@ -229,3 +229,34 @@ func test_the_cell_beside_a_sign_is_never_an_exit_cell() -> void:
 	assert_int(events.size()).is_equal(2)
 	assert_bool(map.find_exit_at((events[0] as MovedEvent).path.back()) == null).is_true()
 	assert_str(authority.get_character(P1).map_id).is_equal("map.test.exitbeside")
+
+
+## A 5x5 map with a sign at (2,2) on level 0, surrounded by a ring of cells on `ring_level`,
+## reached from the start (0,0) by a climbing cell at (0,1).
+func _sign_with_raised_ring(ring_level: int, kind: String) -> Authority:
+	var map: MapDef = MapDef.new()
+	map.id = "map.test.ring"
+	map.size = Vector2i(5, 5)
+	map.spawn_cell = Vector2i(0, 0)
+	map.blocked_cells = [Vector2i(2, 2)]
+	for x: int in range(1, 4):
+		for y: int in range(1, 4):
+			if Vector2i(x, y) != Vector2i(2, 2):
+				map.heights[Vector2i(x, y)] = ring_level
+	map.cell_kinds = {Vector2i(0, 1): kind}
+	map.props = [_sign_on(Vector2i(2, 2))]
+	var authority: Authority = Authority.new({"map.test.ring": map}, 1)
+	authority.add_character(P1, "char.0000000000000001", "map.test.ring")
+	return authority
+
+
+func test_a_sign_cannot_be_used_from_two_levels_above() -> void:
+	var authority: Authority = _sign_with_raised_ring(2, "ladder")
+	var events: Array[GameEvent] = authority.submit(P1, InteractCommand.create(P1, Vector2i(2, 2)))
+	assert_str((events[0] as CommandRejectedEvent).reason).is_equal("no_path")
+
+
+func test_a_sign_can_be_used_from_one_level_above() -> void:
+	var authority: Authority = _sign_with_raised_ring(1, "stairs")
+	var events: Array[GameEvent] = authority.submit(P1, InteractCommand.create(P1, Vector2i(2, 2)))
+	assert_bool(events.back() is InteractedEvent).is_true()

@@ -60,7 +60,7 @@ func _ready() -> void:
 	_marker = MARKER_SCENE.instantiate()
 	_popup = POPUP_SCENE.instantiate()
 	add_child(_popup)
-	_camera.target = _player
+	_camera.target = _player.visual
 	_gestures.tapped.connect(_on_screen_tapped)
 	_gestures.pinched.connect(_camera.zoom_by)
 
@@ -78,7 +78,7 @@ func _ready() -> void:
 func tap_at(world_position: Vector2) -> void:
 	if _session == null or _ground == null or _busy or _popup.is_open():
 		return
-	_last_tapped_cell = _grid.pixel_to_cell(_ground.to_local(world_position))
+	_last_tapped_cell = _grid.pick_cell(_ground.to_local(world_position), _maps[_current_map_id])
 	if (_maps[_current_map_id] as MapDef).find_prop_at(_last_tapped_cell) != null:
 		_session.send(InteractCommand.create(_session.local_player_id, _last_tapped_cell))
 	else:
@@ -108,7 +108,7 @@ func popup() -> TextPopup:
 ## Presentation only: puts the character picture on a cell without telling the Authority.
 ## For screenshots and tests of drawing order.
 func place_player_visual_at(cell: Vector2i) -> void:
-	_player.place_at(_grid.cell_to_pixel(cell))
+	_player.place_at(_grid.cell_to_pixel(cell), _lift_of(cell))
 	_camera.snap_to_target()
 
 
@@ -129,27 +129,29 @@ func _on_events(events: Array[GameEvent]) -> void:
 			_show_map(spawned.map_id, spawned.cell)
 		elif event is MovedEvent:
 			var moved: MovedEvent = event as MovedEvent
-			_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), true)
+			_marker.show_at(_marker_position(_last_tapped_cell), true)
 			_busy = true
 			walked = true
 			var points: Array[Vector2] = []
+			var lifts: Array[float] = []
 			for cell: Vector2i in moved.path:
 				points.append(_grid.cell_to_pixel(cell))
-			_player.walk_along(points)
+				lifts.append(_lift_of(cell))
+			_player.walk_along(points, lifts)
 			await _player.walk_finished
 		elif event is MapChangedEvent:
 			var changed: MapChangedEvent = event as MapChangedEvent
 			_show_map(changed.map_id, changed.cell)
 		elif event is InteractedEvent:
 			var interacted: InteractedEvent = event as InteractedEvent
-			_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), true)
+			_marker.show_at(_marker_position(_last_tapped_cell), true)
 			if interacted.kind == "sign":
 				_popup.show_key(interacted.text_key)
 		elif event is CommandRejectedEvent:
 			if _current_map_id.is_empty():
 				push_error("Could not place the character: " + (event as CommandRejectedEvent).reason)
 			else:
-				_marker.show_at(_grid.cell_to_pixel(_last_tapped_cell), false)
+				_marker.show_at(_marker_position(_last_tapped_cell), false)
 	if walked:
 		_busy = false
 		walk_finished.emit()
@@ -178,8 +180,18 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 
 	_map_root.add_child(_player)
 	_map_root.add_child(_marker)
-	_player.place_at(_grid.cell_to_pixel(cell))
+	_current_map_id = map_id
+	_player.place_at(_grid.cell_to_pixel(cell), _lift_of(cell))
 	_camera.set_map_bounds(_grid.map_pixel_bounds((_maps[map_id] as MapDef).size))
 	_camera.snap_to_target()
-	_current_map_id = map_id
 	map_shown.emit(map_id)
+
+
+## How many pixels a cell of the current map is drawn above the ground.
+func _lift_of(cell: Vector2i) -> float:
+	return _grid.level_lift((_maps[_current_map_id] as MapDef).height_at(cell))
+
+
+## The marker sits on the surface of the tapped cell, so it is raised like the character.
+func _marker_position(cell: Vector2i) -> Vector2:
+	return _grid.cell_to_pixel(cell) - Vector2(0.0, _lift_of(cell))
