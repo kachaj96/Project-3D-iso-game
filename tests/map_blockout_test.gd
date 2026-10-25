@@ -138,6 +138,7 @@ func test_the_layered_prompts_name_what_to_attach_and_are_ready_to_paste() -> vo
 	assert_str(text).contains("real transparent background")
 	assert_str(text).contains("WHITE mist on a pure BLACK background")
 	assert_str(text).contains("1024 x 448 px")
+	assert_str(text).contains("The dirt path follows the tan cells of picture B exactly")
 	assert_str(text).contains("## 4. Mist")
 	assert_str(text).contains("## 5. Light shafts")
 	# Eight prompts, each in its own box.

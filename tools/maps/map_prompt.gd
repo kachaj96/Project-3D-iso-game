@@ -146,6 +146,7 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("Paint only the ground of a forest clearing for an isometric game, size %s, filling the whole canvas to every edge." % canvas)
 	lines.append("Picture B is the layout. Light green means grass, tan means a dirt path, dark green means forest floor. The colours only show where each ground type goes: do not copy the flat colours, the diamond shapes or the straight zigzag borders. Paint soft, natural, organic transitions, so that nobody can see a grid. The dark green continues to every edge of the canvas: there are no empty corners.")
 	lines.append("Ground in the look of the clearing in picture A: short grass with lighter sunlit patches and softer darker patches, a few tiny white flowers, a dirt path with small pebbles along its edges and a worn centre, and toward the dark areas moss, roots, fallen needles and deep teal shadow.")
+	lines.append(_path_sentence(spec))
 	lines.append("Do not paint trees, rocks, stumps, logs, bushes, mushrooms, buildings or any other object standing on the ground, and no mist or light shafts: they are separate layers.")
 	lines.append(style)
 	lines.append("```")
@@ -220,3 +221,23 @@ static func build_layered(spec: MapSpec) -> String:
 	lines.append("```")
 	lines.append("")
 	return "\n".join(lines)
+
+
+## One sentence that pins the dirt path to the tan cells of the layout: where it starts, where it
+## ends (at the gate of a building, if the map has one) and that it must not wander. Empty when the
+## map has no path.
+static func _path_sentence(spec: MapSpec) -> String:
+	var top: Vector2i = Vector2i(-1, -1)
+	var bottom: Vector2i = Vector2i(-1, -1)
+	for row: int in spec.rows:
+		for col: int in spec.grid[row].length():
+			if spec.symbol_at(row, col) == "=":
+				if top.x < 0:
+					top = Vector2i(row, col)
+				bottom = Vector2i(row, col)
+	if top.x < 0:
+		return "The ground has no dirt path."
+	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows)
+	var top_at: Vector2 = MapLayout.pixel_center(top.x, top.y) / size
+	var bottom_at: Vector2 = MapLayout.pixel_center(bottom.x, bottom.y) / size
+	return "The dirt path follows the tan cells of picture B exactly: it starts at the bottom of the clearing (about %d%% from the left and %d%% from the top) and runs almost straight up and ends at its top end (about %d%% from the left and %d%% from the top), where it stops at the edge of the dark forest floor. It must end there, because that is where a building with a gate will stand, and it must not bend away to the left or to the right, not turn into a second path and not continue into the dark area. It is about two cells wide. The light green clearing exists only where picture B shows it, around the path in the lower part of the picture. Everything above it, and the whole upper half of the picture, is dark forest floor under dense trees (the trees are added later) with no clearing and no path." % [roundi(bottom_at.x * 100.0), roundi(bottom_at.y * 100.0), roundi(top_at.x * 100.0), roundi(top_at.y * 100.0)]
