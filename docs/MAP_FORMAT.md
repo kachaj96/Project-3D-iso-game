@@ -194,3 +194,7 @@ Built and tested (G1 to G4):
 - The blockout is 2560 x 1344 px for a 10 x 20 map: cells as coloured blocks raised by level, rocks, trees and buildings as taller blocks, letters E (exit), D (door), S (stairs), L (ladder), a white dot for the spawn. It is a layout guide for the image AI, not art.
 
 Not done yet (G5 and G6): the two start maps as text files, the world loading maps through the catalog, removing `DIAMOND`, camera limits widened by the highest level.
+
+### 5.1 Alignment check of a picture
+
+`godot --headless --path . --script res://tools/maps/overlay_check.gd -- <map id> <picture> <output.png>` scales the picture to the backdrop size and draws every cell on it (green walkable, red blocked, blue exit, yellow stairs, orange ladder). Use it on every picture from the image AI before it goes into a scene.
