@@ -131,3 +131,20 @@ Rig results (2026-10-25):
 - `render_sprites.py --procedural walk|idle` plays a simple test animation on any skeleton with Mixamo bone names, to check how the mesh bends before real animations are used.
 
 Tripo FBX exports (2026-10-25): both the "Blender" and the "Mixamo" export modes (zip with FBX and texture) contain only the mesh: no skeleton, no skin weights, no animation (checked in Blender and by searching the raw FBX for skeleton data). The Mixamo mode file is the model in centimetres, Y up, with a PNG texture, meant for uploading to Mixamo. So on the free plan Tripo's rig could only be exported as the damaged GLB. Rigging goes through Mixamo instead.
+
+## Mixamo animations on the Tripo character (2026-10-25)
+
+Five clips from Mixamo (auto rig, 33 bones, 28 weight groups, 2048 px texture, 30 fps) render correctly in `render_sprites.py`: no exploded mesh, the cape and hood bend acceptably at sprite size.
+
+| Clip | Frames in file | Natural length | Notes |
+|---|---|---|---|
+| Idle | 250 | 8.3 s | Almost no visible change between samples, only breathing. Needs a short segment or a hand-made 1 s loop |
+| Walking | 32 | 1.07 s | One full cycle of two steps. Contains root motion (walks away from its spot) |
+| Standing Melee Attack Horizontal | 73 | 2.4 s | Strong anticipation and strike. About 4x compression needed for a 0.6 s attack |
+| Reaction | 56 | 1.9 s | Bends deeply, hood hides the face, returns to the idle pose at the end |
+| Death | 92 | 3.1 s | Crouch for the first third, then a fast fall. Even sampling wastes frames on the crouch; the fall needs more of them |
+
+Findings and decisions for the renderer:
+- Mixamo clips come with root motion unless "In Place" is ticked. `--in-place 1` removes the sideways travel of the hips in Blender, keeps its height, and keeps the character on the same ground point. Use it for every clip.
+- Clips are far longer than our targets (0.5 to 1.0 s). Frames are sampled evenly between `--frame-start` and `--frame-end`, so the clip is played faster in the game. The next step is a recipe file per clip with a hand-picked frame list, the FPS, loop on or off, and the hit frame.
+- `--only S,E` renders chosen facings for quick checks. A full 8-direction, 8-frame clip takes about 70 s.

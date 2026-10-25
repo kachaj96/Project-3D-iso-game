@@ -13,6 +13,11 @@ Options (all after the "--"):
   --frames N          frames to render per direction, spread over the animation (default 1)
   --action NAME       animation (action) to play; default is the first one found, if any
   --procedural KIND   walk or idle: a simple test animation on a Mixamo-named skeleton
+  --frame-start N     first frame of the animation to sample (default: the action's own start)
+  --frame-end N       last frame to sample (default: the action's own end). Frames are taken evenly from
+                      start up to, but not including, end, so a looping clip does not repeat its first pose
+  --in-place 1        cancel the sideways travel of the hips (Mixamo "root motion"): the character stays on one ground point
+  --only S,E          render only these facings, for quick checks
   --outline UNITS     outline thickness in world units (default 0.015)
   --outline-color R,G,B   outline color, 0-1 (default 0.12,0.09,0.07: dark warm brown, not black)
 
@@ -50,14 +55,14 @@ def parse_args():
     argv = argv[argv.index("--") + 1:] if "--" in argv else []
     opts = {
         "input": "demo", "out": "build/sprites", "name": "sprite", "size": 256,
-        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "",
+        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "", "frame_start": 0, "frame_end": 0, "only": "", "in_place": "",
         "outline": 0.015, "outline_color": (0.12, 0.09, 0.07),
     }
     i = 0
     while i < len(argv):
         key = argv[i].lstrip("-").replace("-", "_")
         value = argv[i + 1]
-        if key in ("size", "directions", "frames"):
+        if key in ("size", "directions", "frames", "frame_start", "frame_end"):
             opts[key] = int(value)
         elif key in ("height", "outline"):
             opts[key] = float(value)
@@ -377,7 +382,7 @@ def build_procedural(root, kind):
             lift("mixamorig:Hips", 0.006 * breathe)
 
 
-def pick_action(root, wanted):
+def pick_action(root, wanted, frame_start=0, frame_end=0):
     actions = list(bpy.data.actions)
     if not actions:
         return None
@@ -391,6 +396,10 @@ def pick_action(root, wanted):
             except TypeError:
                 pass
     start, end = (int(action.frame_range[0]), int(action.frame_range[1]))
+    if frame_start > 0:
+        start = frame_start
+    if frame_end > 0:
+        end = frame_end
     bpy.context.scene.frame_start, bpy.context.scene.frame_end = start, end
     return action
 
@@ -404,12 +413,40 @@ def render_all(root, opts):
     base_z = root.rotation_euler.z
     frames = max(1, opts["frames"])
     start, end = scene.frame_start, scene.frame_end
+    arm_obj = next((o for o in bpy.data.objects if o.type == "ARMATURE"), None)
+    hips = None
+    if opts["in_place"] and arm_obj is not None:
+        hips = arm_obj.pose.bones.get("mixamorig:Hips") or arm_obj.pose.bones[0]
+    base_location = arm_obj.location.copy() if arm_obj is not None else None
+
+    def hips_world():
+        bpy.context.view_layer.update()
+        return arm_obj.matrix_world @ hips.head
+
+    def keep_in_place(reference):
+        # Cancels the sideways travel of the hips (Mixamo "root motion") but keeps its height,
+        # so the character stays on the same ground point in every frame.
+        arm_obj.location = base_location
+        current = hips_world()
+        delta = Vector((current.x - reference.x, current.y - reference.y, 0.0))
+        arm_obj.location = base_location - (arm_obj.parent.matrix_world.to_3x3().inverted() @ delta)
+        bpy.context.view_layer.update()
+
     for k, direction in enumerate(names):
+        if opts["only"] and direction not in opts["only"].split(","):
+            continue
         theta = math.radians(FACING_S_DEG - step_deg * k)
         root.rotation_euler.z = base_z + theta
+        reference = None
+        if hips is not None:
+            arm_obj.location = base_location
+            scene.frame_set(start)
+            reference = hips_world()
         for f in range(frames):
             frame = start if frames == 1 else round(start + (end - start) * f / frames)
             scene.frame_set(frame)
+            if hips is not None:
+                keep_in_place(reference)
             scene.render.filepath = os.path.join(out_dir, "%s_%s_%03d.png" % (opts["name"], direction, f))
             bpy.ops.render.render(write_still=True)
     print("Rendered %d directions x %d frames into %s" % (len(names), frames, out_dir))
@@ -426,7 +463,7 @@ def main():
     if opts["procedural"]:
         build_procedural(root, opts["procedural"])
     else:
-        pick_action(root, opts["action"])
+        pick_action(root, opts["action"], opts["frame_start"], opts["frame_end"])
     normalize_model(root, opts["height"])
     apply_toon(root, opts["outline"], opts["outline_color"])
     setup_camera_and_light(opts["size"])
