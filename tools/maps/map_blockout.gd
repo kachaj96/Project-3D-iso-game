@@ -30,6 +30,8 @@ const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 ## Heights in project pixels (before SCALE) of obstacle blocks standing on a cell.
 const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
 const PROP_HEIGHT: int = 64
+const CLUSTER_MARGIN: int = 64
+const CLUSTER_HEADROOM: int = 240
 
 ## Layered experiment: the ground picture shows this where obstacles stand.
 const FOREST_FLOOR: Color = Color(0.28, 0.4, 0.25, 1.0)
@@ -82,6 +84,34 @@ static func render_in_place(spec: MapSpec, symbols: String) -> Image:
 	return image
 
 
+## Layered experiment, picture 2 as a separate asset: the objects of one kind cut out of the map
+## canvas with room around them (CLUSTER_MARGIN on the sides and below, CLUSTER_HEADROOM above
+## for roofs and spires). The building is painted as its own picture and placed on the map
+## afterwards, so it may be larger than the blocks above the ground.
+static func render_cluster(spec: MapSpec, symbols: String) -> Image:
+	var full: Image = render_in_place(spec, symbols)
+	var found: Rect2i = cluster_rect(full)
+	var image: Image = Image.create(found.size.x + 2 * CLUSTER_MARGIN, found.size.y + CLUSTER_HEADROOM + CLUSTER_MARGIN, false, Image.FORMAT_RGBA8)
+	image.fill(BACKGROUND)
+	image.blit_rect(full, found, Vector2i(CLUSTER_MARGIN, CLUSTER_HEADROOM))
+	return image
+
+
+## The smallest rectangle of the picture that holds everything drawn (not the background).
+## Pictures store 8 bits per colour, so the background is compared with a small tolerance.
+static func cluster_rect(image: Image) -> Rect2i:
+	var low: Vector2i = Vector2i(image.get_width(), image.get_height())
+	var high: Vector2i = Vector2i(-1, -1)
+	for y: int in image.get_height():
+		for x: int in image.get_width():
+			if not _is_background(image.get_pixel(x, y)):
+				low = Vector2i(mini(low.x, x), mini(low.y, y))
+				high = Vector2i(maxi(high.x, x), maxi(high.y, y))
+	if high.x < 0:
+		return Rect2i()
+	return Rect2i(low, high - low + Vector2i.ONE)
+
+
 ## Layered experiment, picture 3: one object alone on the empty background colour, standing on one cell,
 ## for a tree or a rock that is placed many times. `height` is in project pixels.
 static func render_single(symbol: String, height: int) -> Image:
@@ -94,6 +124,10 @@ static func render_single(symbol: String, height: int) -> Image:
 	var colour: Color = TREE if symbol == "T" else (BUILDING if symbol == "B" else ROCK)
 	_draw_block(image, base, height * SCALE, colour)
 	return image
+
+
+static func _is_background(colour: Color) -> bool:
+	return absf(colour.r - BACKGROUND.r) < 0.01 and absf(colour.g - BACKGROUND.g) < 0.01 and absf(colour.b - BACKGROUND.b) < 0.01
 
 
 static func _canvas(spec: MapSpec, colour: Color) -> Image:

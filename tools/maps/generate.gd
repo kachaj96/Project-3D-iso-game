@@ -90,9 +90,7 @@ func _write_layered(spec: MapSpec, directory: String) -> bool:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
 	var pictures: Dictionary = {
 		"ground_blockout.png": MapBlockout.render_ground(spec),
-		"objects_B_blockout.png": MapBlockout.render_in_place(spec, "B"),
-		"objects_T_blockout.png": MapBlockout.render_in_place(spec, "T"),
-		"single_T_blockout.png": MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"]),
+		"objects_B_blockout.png": MapBlockout.render_cluster(spec, "B"),
 	}
 	for file_name: String in pictures:
 		var error: Error = (pictures[file_name] as Image).save_png(ProjectSettings.globalize_path(directory + "/" + file_name))

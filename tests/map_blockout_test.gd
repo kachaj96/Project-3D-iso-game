@@ -132,8 +132,28 @@ func test_a_single_object_stands_on_the_bottom_diamond() -> void:
 
 func test_the_layered_prompts_name_what_to_attach_and_are_ready_to_paste() -> void:
 	var text: String = MapPrompt.build_layered(_spec())
-	assert_str(text).contains("**Attach (in this order):** 1. `ground_blockout.png`")
-	assert_str(text).contains("`objects_B_blockout.png`").contains("`single_T_blockout.png`").contains("`objects_T_blockout.png`")
-	assert_str(text).contains("transparent")
+	assert_str(text).contains("**Attach, in this order:** B `ground_blockout.png`, then A `backdrop_source.png`.")
+	assert_str(text).contains("**Attach, in this order:** B `objects_B_blockout.png`, then A `backdrop_source.png`.")
+	assert_str(text).contains("fleur-de-lis")
+	assert_str(text).contains("real transparent background")
+	assert_str(text).contains("WHITE mist on a pure BLACK background")
 	assert_str(text).contains("1024 x 448 px")
-	assert_int(text.count("```")).is_equal(8)
+	assert_str(text).contains("## 4. Mist")
+	assert_str(text).contains("## 5. Light shafts")
+	# Five prompts, each in its own box.
+	assert_int(text.count("```")).is_equal(10)
+
+
+func test_the_crypt_cluster_is_cropped_with_headroom_for_the_roof() -> void:
+	var text: String = "id: map.test.01_01\nregion: test\nsize: 6x8\ngrid:\n. . . . . .\n . . . . .\n. . B B . .\n . . . . .\n. @ . . . .\n . . . . .\n. . . . . .\n . . . . .\n"
+	var spec: MapSpec = _spec(text)
+	var full: Image = MapBlockout.render_in_place(spec, "B")
+	var found: Rect2i = MapBlockout.cluster_rect(full)
+	assert_bool(found.size.x > 0 and found.size.y > 0).is_true()
+	# The crop must be much smaller than the whole map canvas (it holds only the two building cells).
+	assert_bool(found.size.x < full.get_width() / 2 and found.size.y < full.get_height() / 2).is_true()
+	var cropped: Image = MapBlockout.render_cluster(spec, "B")
+	assert_int(cropped.get_width()).is_equal(found.size.x + 2 * MapBlockout.CLUSTER_MARGIN)
+	assert_int(cropped.get_height()).is_equal(found.size.y + MapBlockout.CLUSTER_HEADROOM + MapBlockout.CLUSTER_MARGIN)
+	# The top left corner is empty space and the headroom above the blocks is empty too.
+	assert_bool(_same(cropped.get_pixel(0, 0), MapBlockout.BACKGROUND)).is_true()

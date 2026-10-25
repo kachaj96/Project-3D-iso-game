@@ -110,68 +110,85 @@ static func _along(spec: MapSpec, edge: String, where: Vector2i) -> float:
 		return where.y / float(maxi(spec.columns - 1, 1))
 	return where.x / float(maxi(spec.rows - 1, 1))
 
-## The layered experiment: instead of one backdrop with everything painted in, the ground and
-## the tall objects are painted as separate pictures. Objects come as PNGs with a real alpha
-## channel (the image AI of the developer can do that), so they need no cutting and can be
-## reused on other maps. In the object layouts the dark blue-grey is empty space.
-## The result is a file of ready-to-paste prompts, each with the exact pictures to attach.
+
+## The layered backdrop: instead of one picture with everything painted in, the ground, the
+## tall objects and the mist are painted as separate pictures that the game stacks. The look
+## comes from the developer's first concept picture (`backdrop_source.png`), which is attached
+## to every prompt. The result is a file of ready-to-paste prompts with the exact pictures to
+## attach, in order.
 static func build_layered(spec: MapSpec) -> String:
 	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * MapBlockout.SCALE
 	var canvas: String = "%d x %d px" % [int(size.x), int(size.y)]
-	var tree: Image = MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"])
-	var tree_size: String = "%d x %d px" % [tree.get_width(), tree.get_height()]
-	var style: String = "Style: dark fairytale, strict 2:1 isometric projection exactly like the layout picture (a map cell is a 2:1 diamond, 256 x 128 px), key light from the top left, thin dark outlines tinted with each object's own colour (never pure black), cel shading in 2 to 3 tones with soft edges, chunky exaggerated shapes. No text, no characters."
-	var only_use: String = "In the first attached picture the dark blue-grey is empty space: it must become fully transparent. Use the first attached picture only for exact position and size. Use the second attached picture only for style, colours and light. Do not paint any ground and do not copy the ground from the second picture."
+	var crypt: Image = MapBlockout.render_cluster(spec, "B")
+	var crypt_size: String = "%d x %d px" % [crypt.get_width(), crypt.get_height()]
+	var style: String = "Art style: exactly the look of the attached concept picture (picture A): a hand-painted, semi-realistic fantasy illustration with soft painterly shading, saturated moss greens and warm ochre, cold teal-grey shadows, thin dark outlines in a darker shade of each object's own colour (never pure black). It is NOT pixel art and has no visible tile grid. Strict isometric view like the concept (the camera looks down at about 30 degrees, a ground cell is a 2:1 diamond). Key light from the top left, a low warm golden sun, shadows fall to the bottom right. No text, no characters."
+	var transparent: String = "Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the object must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass, mist, light shafts or shadow on the ground."
 	var lines: Array[String] = []
 	lines.append("# Layered prompts: %s" % spec.id)
 	lines.append("")
-	lines.append("Four pictures, in this order: 1, 2, 4, then 3 (the hardest). For each one: attach the pictures named under **Attach**, in that order, then paste the text in the box. Keep the same chat or project for all of them if the tool allows it. When picture 1 is good, keep it: it is the **style picture** for the rest. Save every version you use together with its prompt.")
+	lines.append("Five pictures, one prompt each. Every prompt says which pictures to attach and in which order. Picture A is always the concept picture `backdrop_source.png`: it carries the look. Use one chat or project for all of them if the tool allows it. Save every version you use together with its prompt. If the tool cannot make exactly the size asked, choose the nearest ratio and tell Claude the real size: pictures are scaled afterwards.")
 	lines.append("")
-	lines.append("If the tool cannot make exactly the size asked, choose the nearest ratio and tell Claude the real size: pictures are scaled afterwards.")
+	lines.append("| # | Picture | Attach, in this order | Size |")
+	lines.append("|---|---|---|---|")
+	lines.append("| 1 | Ground | B `ground_blockout.png` (layout), A `backdrop_source.png` (look) | %s |" % canvas)
+	lines.append("| 2 | Crypt | B `objects_B_blockout.png` (where the walls stand), A `backdrop_source.png` (the building's design) | %s |" % crypt_size)
+	lines.append("| 3 | Trees (3 in a row) | A `backdrop_source.png` only | about 2048 x 1024 px |")
+	lines.append("| 4 | Mist | A `backdrop_source.png` only | %s |" % canvas)
+	lines.append("| 5 | Light shafts (optional) | A `backdrop_source.png` only | %s |" % canvas)
+	lines.append("")
+	lines.append("The mist and the light shafts are separate layers on purpose: the game draws them above the trees and the hero, can move them slowly, and can change them per map. Mist painted into the trees would show as hard patches when the hero walks behind a tree.")
 	lines.append("")
 	lines.append("## 1. Ground, size %s" % canvas)
 	lines.append("")
-	lines.append("**Attach (in this order):** 1. `ground_blockout.png` (layout)  2. `backdrop_source.png` (style, the first concept picture)")
+	lines.append("**Attach, in this order:** B `ground_blockout.png`, then A `backdrop_source.png`.")
 	lines.append("")
 	lines.append("```")
 	lines.append("Paint only the ground of a forest clearing for an isometric game, size %s, filling the whole canvas to every edge." % canvas)
-	lines.append("The first attached picture is the exact layout: light green cells are grass you walk on, tan cells are a dirt path, dark green cells are forest floor (moss, roots, fallen needles, deep shadow). Keep the shapes and positions of the cells. The dark green also continues to every edge of the canvas: there must be no empty or dark-blue corners.")
-	lines.append("The second attached picture is only a style reference: use its colours, light and painting style.")
-	lines.append("Do not paint trees, rocks, buildings, signs or any other object standing on the ground: they are painted separately. Calm, readable walkable ground, with more detail only at the edges.")
+	lines.append("Picture B is the layout. Light green means grass, tan means a dirt path, dark green means forest floor. The colours only show where each ground type goes: do not copy the flat colours, the diamond shapes or the straight zigzag borders. Paint soft, natural, organic transitions, so that nobody can see a grid. The dark green continues to every edge of the canvas: there are no empty corners.")
+	lines.append("Ground in the look of the clearing in picture A: short grass with lighter sunlit patches and softer darker patches, a few tiny white flowers, a dirt path with small pebbles along its edges and a worn centre, and toward the dark areas moss, roots, fallen needles and deep teal shadow.")
+	lines.append("Do not paint trees, rocks, stumps, logs, bushes, mushrooms, buildings or any other object standing on the ground, and no mist or light shafts: they are separate layers.")
 	lines.append(style)
 	lines.append("```")
 	lines.append("")
-	lines.append("## 2. Crypt (buildings in place), size %s" % canvas)
+	lines.append("## 2. Crypt, size %s" % crypt_size)
 	lines.append("")
-	lines.append("**Attach (in this order):** 1. `objects_B_blockout.png` (layout)  2. the picture 1 you chose (style)")
+	lines.append("**Attach, in this order:** B `objects_B_blockout.png`, then A `backdrop_source.png`.")
 	lines.append("")
 	lines.append("```")
-	lines.append("Paint the old stone and timber crypt building shown by the brown blocks in the first attached picture, exactly where and as large as the blocks are, size %s." % canvas)
-	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the building must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground. The bottom edge of the building follows the bottom edges of the blocks. The whole building, including the roof and every spire, must fit inside the canvas with a margin of at least 40 px at the top. A gate opening in the front wall faces the viewer.")
-	lines.append(only_use)
+	lines.append("Paint the crypt building from picture A as a separate game object, size %s." % crypt_size)
+	lines.append("Keep exactly its design: dark weathered timber-plank walls on a grey stone plinth, a steep terracotta-red tile roof with several gables and dormers, tall carved wooden corner posts with pointed finials, tall pointed-arch windows glowing warm orange, a red banner with a gold fleur-de-lis on the left wall, an open timber-framed arched gate at the front with a hanging lit lantern, and two big mossy grey stone blocks standing in front of the walls on both sides of the gate.")
+	lines.append("Picture B shows only where the walls stand on the ground (the brown footprint blocks). The bottom edges of the walls and of the two stone blocks follow the bottom edges of those blocks. The roof, finials and lantern may rise above the blocks. The whole building stays inside the canvas with at least 40 px of margin on every side. The gate faces the viewer.")
+	lines.append("In picture B the dark blue-grey is empty space and must become fully transparent. Copy only the building from picture A, not its ground, trees, mist or light shafts.")
+	lines.append(transparent)
 	lines.append(style)
 	lines.append("```")
 	lines.append("")
-	lines.append("## 4. One tree to reuse, size %s" % tree_size)
+	lines.append("## 3. Trees, three in a row, about 2048 x 1024 px")
 	lines.append("")
-	lines.append("**Attach (in this order):** 1. `single_T_blockout.png` (layout)  2. the picture 1 you chose (style)")
+	lines.append("**Attach:** A `backdrop_source.png` only.")
 	lines.append("")
 	lines.append("```")
-	lines.append("Paint one tall conifer tree standing on the diamond at the bottom of the first attached picture, its trunk base at the centre of the diamond, size %s." % tree_size)
-	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the tree must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground. The whole tree must fit inside the canvas.")
-	lines.append(only_use)
+	lines.append("Paint three different tall conifer trees (firs) side by side as separate game objects, in the style of the fir trees in the attached picture A: layered drooping boughs, dark teal-green needles with warm yellow-green sunlit tops on the left side, a visible trunk with roots at the bottom. One tree is tall, one medium, one small and young. Leave at least 100 px of empty space between the trees. All trunk bases stand on the same horizontal line, near the bottom of the picture. Each tree is complete and nothing is cut off at the edges. Size about 2048 x 1024 px.")
+	lines.append(transparent)
 	lines.append(style)
 	lines.append("```")
 	lines.append("")
-	lines.append("## 3. Forest edge (trees in place), size %s - try last" % canvas)
+	lines.append("## 4. Mist, size %s" % canvas)
 	lines.append("")
-	lines.append("**Attach (in this order):** 1. `objects_T_blockout.png` (layout)  2. the picture 1 you chose (style)")
+	lines.append("**Attach:** A `backdrop_source.png` only.")
 	lines.append("")
 	lines.append("```")
-	lines.append("Paint conifer trees, one tree standing on each dark green block of the first attached picture, exactly where the blocks are, size %s. Trees overlap like a dense forest edge, but each trunk stands on its own block's base. Vary the trees." % canvas)
-	lines.append("Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not a tree must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no ground, grass or shadow on the ground.")
-	lines.append(only_use)
-	lines.append(style)
+	lines.append("Paint only a layer of low drifting mist for an isometric forest game, size %s. The look of the mist at the edges of the attached picture A: soft, cool blue-grey with a faint teal tint, thick and bright along the left edge, the right edge and the bottom edge and in all four corners, almost clear in the middle of the picture, with wispy tendrils curling inward." % canvas)
+	lines.append("Deliver the mist as WHITE mist on a pure BLACK background (#000000), grayscale only: the brighter the pixel, the thicker the mist. Nothing else in the picture: no ground, no trees, no buildings, no light shafts, no border, no vignette frame.")
+	lines.append("```")
+	lines.append("")
+	lines.append("## 5. Light shafts (optional), size %s" % canvas)
+	lines.append("")
+	lines.append("**Attach:** A `backdrop_source.png` only.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint only soft diagonal shafts of warm sunlight for an isometric forest game, size %s: a few broad golden-white beams that start at the top left corner and fall toward the bottom right, strongest near the top left and fading out before the middle of the picture, like the light shaft in the top left of the attached picture A." % canvas)
+	lines.append("Deliver the beams as WARM WHITE on a pure BLACK background (#000000): the brighter the pixel, the stronger the light. Nothing else in the picture: no ground, no trees, no buildings, no mist.")
 	lines.append("```")
 	lines.append("")
 	return "\n".join(lines)
