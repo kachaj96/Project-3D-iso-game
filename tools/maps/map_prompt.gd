@@ -117,6 +117,8 @@ static func _along(spec: MapSpec, edge: String, where: Vector2i) -> float:
 ## to every prompt. The result is a file of ready-to-paste prompts with the exact pictures to
 ## attach, in order.
 static func build_layered(spec: MapSpec) -> String:
+	if spec.theme == MapTheme.DARK_INTERIOR:
+		return _build_dark_interior(spec)
 	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * MapBlockout.SCALE
 	var canvas: String = "%d x %d px" % [int(size.x), int(size.y)]
 	var crypt: Image = MapBlockout.render_cluster(spec, "B")
@@ -241,3 +243,153 @@ static func _path_sentence(spec: MapSpec) -> String:
 	var top_at: Vector2 = MapLayout.pixel_center(top.x, top.y) / size
 	var bottom_at: Vector2 = MapLayout.pixel_center(bottom.x, bottom.y) / size
 	return "The dirt path follows the tan cells of picture B exactly: it starts at the bottom of the clearing (about %d%% from the left and %d%% from the top) and runs almost straight up and ends at its top end (about %d%% from the left and %d%% from the top), where it stops at the edge of the dark forest floor. It must end there, because that is where a building with a gate will stand, and it must not bend away to the left or to the right, not turn into a second path and not continue into the dark area. It is about two cells wide. The light green clearing exists only where picture B shows it, around the path in the lower part of the picture. Everything above it, and the whole upper half of the picture, is dark forest floor under dense trees (the trees are added later) with no clearing and no path." % [roundi(bottom_at.x * 100.0), roundi(bottom_at.y * 100.0), roundi(top_at.x * 100.0), roundi(top_at.y * 100.0)]
+
+
+## Prompts for a dark interior (a crypt chamber): floor, back walls, a low object (the coffin),
+## pillars, debris, floor decals, mist and light shafts. Horror mood on purpose. The look comes from the
+## concept picture A (its painting style, not its sunny mood); the layout from the blockouts.
+static func _build_dark_interior(spec: MapSpec) -> String:
+	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * MapBlockout.SCALE
+	var canvas: String = "%d x %d px" % [int(size.x), int(size.y)]
+	var style: String = "Art style: the painting style of the attached concept picture (picture A): hand-painted, semi-realistic fantasy illustration, soft painterly shading, thin dark outlines in a darker shade of each object's own colour (never pure black). But the mood is the opposite of picture A: a HORROR scene in deep darkness. Almost everything is in near-black shadow (never flat pure black, always a hint of detail), cold desaturated blue-grey and sickly teal stone, grime, damp, dust and cobwebs. The only colour is small pools of warm orange torch light, thin cold blue-white light from high windows, and dark dried-blood red. Oppressive, abandoned, something terrible happened here recently. Not pixel art, no visible tile grid. Strict isometric view like picture A (the camera looks down at about 30 degrees, a floor cell is a 2:1 diamond). No text, no characters, no monsters."
+	var transparent: String = "Deliver a PNG with a real transparent background (an alpha channel): every pixel that is not the object must be fully transparent. Do not paint a checkerboard, white or any colour as background, and no floor, mist, light shafts or shadow on the floor."
+	var in_blockout: String = "In picture B the dark blue-grey is empty space and must become fully transparent. Use picture B only for exact position and size, and picture A only for the painting style, not for its subject or its colours."
+	var wall: Image = MapBlockout.render_cluster(spec, "W")
+	var wall_v: Image = MapBlockout.render_cluster(spec, "V")
+	var coffin: Image = MapBlockout.render_cluster(spec, "C")
+	var wall_size: String = "%d x %d px" % [wall.get_width(), wall.get_height()]
+	var wall_v_size: String = "%d x %d px" % [wall_v.get_width(), wall_v.get_height()]
+	var coffin_size: String = "%d x %d px" % [coffin.get_width(), coffin.get_height()]
+	var lines: Array[String] = []
+	lines.append("# Layered prompts (dark interior): %s" % spec.id)
+	lines.append("")
+	lines.append("Nine pictures, one prompt each. Picture A is always the concept picture `backdrop_source.png`: it carries the painting style only. The mood is in the prompts: this room is much darker and more frightening than the forest. Use one chat or project for all of them. Save every version you use together with its prompt. If the tool cannot make exactly the size asked, choose the nearest ratio and tell Claude the real size: pictures are scaled afterwards.")
+	lines.append("")
+	lines.append("| # | Picture | Attach, in this order | Size |")
+	lines.append("|---|---|---|---|")
+	lines.append("| 1 | Floor | B `ground_blockout.png`, A `backdrop_source.png` | %s |" % canvas)
+	lines.append("| 2 | North-west wall (with windows) | B `objects_W_blockout.png`, the floor you chose, A | %s |" % wall_size)
+	lines.append("| 3 | North-east wall | B `objects_V_blockout.png`, the floor you chose, A | %s |" % wall_v_size)
+	lines.append("| 4 | Coffin | B `objects_C_blockout.png`, the floor you chose, A | %s |" % coffin_size)
+	lines.append("| 5 | Pillars and rubble | the floor you chose, A | about 2048 x 1024 px |")
+	lines.append("| 6 | Debris sheet | the floor you chose, A | about 2048 x 1024 px |")
+	lines.append("| 7 | Floor decals sheet | the floor you chose, A | about 2048 x 1024 px |")
+	lines.append("| 8 | Mist | A `backdrop_source.png` only | %s |" % canvas)
+	lines.append("| 9 | Light from the windows | A `backdrop_source.png` only | %s |" % canvas)
+	lines.append("")
+	lines.append("The game makes the whole room dark and adds the flickering torches itself, so do not paint torch flames or glow into the walls: paint the empty iron brackets. The floor and the walls must look like one room built of the same stone.")
+	lines.append("")
+	lines.append("## 1. Floor, size %s" % canvas)
+	lines.append("")
+	lines.append("**Attach, in this order:** B `ground_blockout.png`, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint only the stone floor of a crypt chamber for an isometric horror game, size %s, filling the whole canvas to every edge." % canvas)
+	lines.append("Picture B is the layout. The light green diamond in the middle is the floor of the room: old cracked grey-green flagstones, worn and dirty, with dark grime in the joints, hairline cracks, dust, scattered ash and a few damp dark stains. Everything else (dark green) is outside the room and is near-black: cold dark shadow with only a hint of stone, no detail. The colours of picture B only show where things go: do not copy the flat colours or the straight diamond edge, paint natural worn stone.")
+	var trail: String = _trail_sentence(spec)
+	if not trail.is_empty():
+		lines.append(trail)
+	lines.append("The floor is lit unevenly: darker toward the edges and corners of the room, a little lighter in the middle, so that the walkable floor stays readable. No walls, no coffin, no pillars, no objects, no mist and no light shafts: they are separate layers.")
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 2. North-west wall, size %s" % wall_size)
+	lines.append("")
+	lines.append("**Attach, in this order:** B `objects_W_blockout.png`, then the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint the north-west back wall of a crypt chamber as a separate game object, size %s. It is a long, tall wall of old dark weathered stone blocks, seen from inside the room, running along the slanted row of grey blocks in the first attached picture (its bottom edge follows the bottom edges of those blocks). The face of the wall looks towards the lower right." % wall_size)
+	lines.append("Details: three tall, narrow, pointed-arch windows with iron bars, evenly spaced along the wall, each letting in cold blue-white light; damp stains running down from the windows; green-black moss and mould in the cracks; cobwebs in the corners; a few deep cracks; two empty rusted iron torch brackets on the wall (no fire, the game adds it); an old rusted chain hanging between two of the windows. Heavy stone plinth at the bottom. A frightening, decayed look.")
+	lines.append("The whole wall stays inside the canvas with some margin above it. %s" % in_blockout)
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 3. North-east wall, size %s" % wall_v_size)
+	lines.append("")
+	lines.append("**Attach, in this order:** B `objects_V_blockout.png`, then the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint the north-east back wall of the same crypt chamber as a separate game object, size %s. It matches the north-west wall (same stone, same damage, same plinth) but has NO windows. It runs along the slanted row of grey blocks in the first attached picture (its bottom edge follows the bottom edges of those blocks) and its face looks towards the lower left." % wall_v_size)
+	lines.append("Details: dark stone blocks, damp stains, moss and mould in the cracks, thick cobwebs, deep cracks, two empty rusted iron torch brackets (no fire), carved funeral reliefs half eaten by damp (no readable text), one iron ring with a broken chain.")
+	lines.append("The whole wall stays inside the canvas with some margin above it. %s" % in_blockout)
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 4. Coffin, size %s" % coffin_size)
+	lines.append("")
+	lines.append("**Attach, in this order:** B `objects_C_blockout.png`, then the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint an old heavy stone coffin on a low plinth as a separate game object, size %s, standing on the blocks of the first attached picture (its bottom edges follow the bottom edges of the blocks). The lid is pushed slightly aside: a narrow dark gap shows the black inside. The stone is cracked and scraped, with long scratch marks on the lid, and there is dried dark-red blood on the lid, the edge and the sides. A few strips of rotten cloth hang from the gap. Unsettling, as if something had pushed its way out." % coffin_size)
+	lines.append("The whole coffin stays inside the canvas. %s" % in_blockout)
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 5. Pillars and rubble sheet, about 2048 x 1024 px")
+	lines.append("")
+	lines.append("**Attach, in this order:** the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint a sheet of 9 separate pieces for an isometric crypt, in a grid with at least 80 px of empty space between the pieces, in the stone of the attached floor. Pieces: 3 old round stone pillars of the same style (cracked, damp, one with a broken top and strands of cobweb; each stands on a square plinth; one tall, two a bit shorter), 3 heaps of fallen stone blocks of different sizes, 3 single broken stone blocks. Each piece is seen from the same isometric camera as the attached pictures, stands on its own flat base and is complete: nothing is cut off at its edge. A pillar is about one map cell wide.")
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 6. Debris sheet, about 2048 x 1024 px")
+	lines.append("")
+	lines.append("**Attach, in this order:** the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint a sheet of 16 small separate pieces of crypt debris for an isometric horror game, in a grid of 4 columns and 4 rows with at least 80 px of empty space between the pieces. Pieces: 3 piles of old bones with a skull, 2 scattered rib cages, 2 clumps of thick cobweb with dust, 2 candle stubs with melted wax, 2 broken clay jars with shards, 1 rusted chain with a shackle, 2 clusters of pale sickly fungus, 2 dry twisted roots coming through broken stone. Each piece is seen from the same isometric camera, stands on its own flat base and is complete: nothing is cut off at its edge. Sizes: small, from a hand to half a map cell wide.")
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 7. Floor decals sheet, about 2048 x 1024 px")
+	lines.append("")
+	lines.append("**Attach, in this order:** the floor you chose in step 1, then A `backdrop_source.png`.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint a sheet of 12 separate flat decals that lie on the stone floor of a crypt, seen from the same isometric camera as the attached pictures, in a grid with at least 80 px of empty space between them. Each decal has soft, irregular, feathered edges that fade into transparency, so that it blends into any stone floor. Decals: 3 pools of dried dark-red blood, 2 long drag marks of blood smeared across stone, 2 patches of cracked and sunken flagstones, 2 patches of grey dust and ash, 1 puddle of black stagnant water, 2 patches of dark mould. Sizes vary from half a map cell to two cells wide. Nothing stands on them.")
+	lines.append(transparent)
+	lines.append(style)
+	lines.append("```")
+	lines.append("")
+	lines.append("## 8. Mist, size %s" % canvas)
+	lines.append("")
+	lines.append("**Attach:** A `backdrop_source.png` only.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint only a layer of low, cold, heavy mist for an isometric horror game, size %s: a thick ground fog hugging the floor, dense along the bottom edge, in the four corners and in the lower half of the picture, thinner toward the top, with slow wispy tendrils curling inward and a few places where the fog is almost clear." % canvas)
+	lines.append("Deliver the mist as WHITE mist on a pure BLACK background (#000000), grayscale only: the brighter the pixel, the thicker the mist. Nothing else in the picture: no walls, no floor, no objects, no light shafts, no border, no vignette frame.")
+	lines.append("```")
+	lines.append("")
+	lines.append("## 9. Light from the windows, size %s" % canvas)
+	lines.append("")
+	lines.append("**Attach:** A `backdrop_source.png` only.")
+	lines.append("")
+	lines.append("```")
+	lines.append("Paint only three thin, cold shafts of moonlight for an isometric horror game, size %s: three separate narrow beams that start at three points along the upper-left part of the picture (where three tall narrow windows would be) and fall diagonally toward the lower right, widening a little, crossing the middle of the picture and fading out before the lower right. Tiny floating dust specks glitter in the beams. The beams are cold blue-white and fairly weak." % canvas)
+	lines.append("Deliver the beams as COLD WHITE on a pure BLACK background (#000000): the brighter the pixel, the stronger the light. Nothing else in the picture: no walls, no floor, no objects, no mist.")
+	lines.append("```")
+	lines.append("")
+	return "\n".join(lines)
+
+
+## One sentence about the trail of blood on the floor, from the coffin to the stairs down, with the
+## positions in percent of the picture. Empty when the map has no coffin or no stairs.
+static func _trail_sentence(spec: MapSpec) -> String:
+	var coffin: Array[Vector2i] = spec.find_symbol("C")
+	var stairs: Vector2i = Vector2i(-1, -1)
+	for link: Dictionary in spec.links:
+		if link["kind"] == "stairs":
+			stairs = spec.find_symbol(link["marker"] as String)[0]
+	if coffin.is_empty() or stairs.x < 0:
+		return ""
+	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows)
+	var from: Vector2 = MapLayout.pixel_center(coffin[0].x, coffin[0].y) / size
+	var to: Vector2 = MapLayout.pixel_center(stairs.x, stairs.y) / size
+	return "A trail of dried dark-red blood and long drag marks lies on the floor. It starts at the middle of the room (about %d%% from the left and %d%% from the top, where a coffin will stand) and leads straight to the far upper corner of the room (about %d%% from the left and %d%% from the top), where a stone stairway goes down into pure blackness: paint the dark stairwell opening in that corner, steps leading down, nothing visible below." % [roundi(from.x * 100.0), roundi(from.y * 100.0), roundi(to.x * 100.0), roundi(to.y * 100.0)]

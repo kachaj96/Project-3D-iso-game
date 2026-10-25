@@ -1,0 +1,34 @@
+// Gluchobor, the depth of the crypt (first sequence, map 3, docs/FIRST_SEQUENCE.md).
+// PLACEHOLDER: only the empty room and the way back up, so that the chain of maps works. The
+// stone dais with the open book, the monster in front of it and the layout of this room are for the
+// developer to design (see FIRST_SEQUENCE.md, map 3); nothing about them is decided yet.
+id: map.gluchobor.02_02.dn01
+region: gluchobor
+title_key: map.gluchobor.02_02.dn01.title
+theme: dark_interior
+size: 10x20
+grid:
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X V X X X X
+X X X X W V X X X X
+ X X X W . V X X X
+X X X W . . V X X X
+ X X W . . . V X X
+X X W . . . . V X X
+ X W . . . . . V X
+X W . . . . . . V X
+ X . . . . . . . X
+X X . . . . . . X X
+ X X . . . . . X X
+X X X . . . . X X X
+ X X X . . . X X X
+X X X X @ . X X X X
+ X X X X 1 X X X X
+markers:
+1 link stairs map.gluchobor.02_02.in01 from_depths
+entries:
+from_above 18 4

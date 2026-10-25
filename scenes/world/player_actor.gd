@@ -13,6 +13,7 @@ signal walk_finished
 var speed: float = 360.0
 
 var _tween: Tween
+var _aura: PointLight2D
 
 ## The raised picture. Available as soon as the scene is instantiated.
 var visual: Node2D:
@@ -38,6 +39,22 @@ func walk_along(points: Array[Vector2], lifts: Array[float] = []) -> void:
 			_tween.parallel().tween_property(visual, "position:y", -lifts[i], duration)
 		from = points[i]
 	_tween.finished.connect(_on_tween_finished)
+
+
+## A faint pale light around the hero for dark rooms. He stays readable and the room stays dark.
+func set_aura(enabled: bool, radius: float = 210.0, energy: float = 0.7) -> void:
+	if _aura == null:
+		if not enabled:
+			return
+		_aura = PointLight2D.new()
+		_aura.name = "Aura"
+		_aura.texture = LightTextures.radial()
+		_aura.color = Color(0.8, 0.88, 1.0)
+		_aura.position = Vector2(0.0, -40.0)
+		visual.add_child(_aura)
+	_aura.enabled = enabled
+	_aura.energy = energy
+	_aura.texture_scale = LightTextures.scale_for_radius(radius)
 
 
 func place_at(point: Vector2, lift: float = 0.0) -> void:

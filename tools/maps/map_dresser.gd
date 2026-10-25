@@ -22,7 +22,7 @@ const DRESSING: String = "Dressing"
 const MIST: String = "Mist"
 const LIGHT: String = "Light"
 ## How strong the mist and the light shafts are drawn (can be changed per map in the scene).
-const MIST_OPACITY: float = 0.4
+const MIST_OPACITY: float = 0.4  # the forest default, see MapTheme
 const LIGHT_OPACITY: float = 0.45
 ## Mist and light are drawn above the hero.
 const EFFECT_Z: int = 50
@@ -47,8 +47,8 @@ static func dress(root: Node2D, spec: MapSpec, placements: Array[MapPlacer.Place
 			index += 1
 		counts[placement.kind] = index
 		_sprite(root, parent, "%s_%03d" % [placement.kind, index], placement)
-	_effect(root, "Effects", MIST, assets_dir + "mist.png", canvas_width, MIST_OPACITY, false)
-	_effect(root, "Lights", LIGHT, assets_dir + "light.png", canvas_width, LIGHT_OPACITY, true)
+	_effect(root, "Effects", MIST, assets_dir + "mist.png", canvas_width, MapTheme.mist_opacity(spec.theme), false)
+	_effect(root, "Lights", LIGHT, assets_dir + "light.png", canvas_width, MapTheme.light_opacity(spec.theme), true)
 
 
 ## Removes every node of the group "generated" from the scene (and only those).
@@ -135,3 +135,42 @@ static func _effect(root: Node2D, layer_name: String, node_name: String, texture
 	sprite.add_to_group(GENERATED_GROUP, true)
 	layer.add_child(sprite)
 	sprite.owner = root
+
+
+## The mood of the scene: darkness over everything and the flickering torches. Done once, also when the
+## pictures are not there yet, so that the placeholder room is already dark. Everything is in the group
+## "generated". `torches` are positions in project pixels (see MapPlacer.torch_positions).
+static func dress_mood(root: Node2D, theme: String, torches: Array[Vector2]) -> void:
+	for node: Node in root.get_children():
+		if node.is_in_group(GENERATED_GROUP) and (node is CanvasModulate):
+			root.remove_child(node)
+			node.free()
+	var lights_layer: Node2D = root.get_node_or_null("Lights")
+	if lights_layer != null:
+		for node: Node in lights_layer.get_children():
+			if node.is_in_group(GENERATED_GROUP) and node is TorchFlicker:
+				lights_layer.remove_child(node)
+				node.free()
+	if MapTheme.darkness(theme) == Color.WHITE:
+		return
+	var darkness: CanvasModulate = CanvasModulate.new()
+	darkness.name = "Darkness"
+	darkness.color = MapTheme.darkness(theme)
+	darkness.add_to_group(GENERATED_GROUP, true)
+	root.add_child(darkness)
+	darkness.owner = root
+	if lights_layer == null:
+		return
+	var index: int = 0
+	for position: Vector2 in torches:
+		index += 1
+		var torch: TorchFlicker = TorchFlicker.new()
+		torch.name = "Torch_%02d" % index
+		torch.texture = LightTextures.radial()
+		torch.texture_scale = LightTextures.scale_for_radius(MapTheme.torch_radius())
+		torch.color = MapTheme.torch_color()
+		torch.base_energy = MapTheme.torch_energy()
+		torch.position = position
+		torch.add_to_group(GENERATED_GROUP, true)
+		lights_layer.add_child(torch)
+		torch.owner = root

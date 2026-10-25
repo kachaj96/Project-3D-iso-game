@@ -14,3 +14,12 @@ msgstr "Close"
 
 msgid "map.gluchobor.02_02.title"
 msgstr "The Forest Crypt"
+
+msgid "map.gluchobor.02_02.in01.title"
+msgstr "The Crypt, Main Chamber"
+
+msgid "map.gluchobor.02_02.dn01.title"
+msgstr "The Depth of the Crypt"
+
+msgid "inspect.gluchobor.02_02.in01.blood"
+msgstr "So it is true..."

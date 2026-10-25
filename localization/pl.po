@@ -15,3 +15,12 @@ msgstr "Zamknij"
 
 msgid "map.gluchobor.02_02.title"
 msgstr "Leśna Krypta"
+
+msgid "map.gluchobor.02_02.in01.title"
+msgstr "Krypta, główna komnata"
+
+msgid "map.gluchobor.02_02.dn01.title"
+msgstr "Głębia krypty"
+
+msgid "inspect.gluchobor.02_02.in01.blood"
+msgstr "Czyli to prawda…"

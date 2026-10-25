@@ -94,10 +94,10 @@ func _write_art_helpers(spec: MapSpec, specs: Dictionary) -> bool:
 ## The layered experiment: ground and objects as separate pictures (see MapPrompt.build_layered).
 func _write_layered(spec: MapSpec, directory: String) -> bool:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
-	var pictures: Dictionary = {
-		"ground_blockout.png": MapBlockout.render_ground(spec),
-		"objects_B_blockout.png": MapBlockout.render_cluster(spec, "B"),
-	}
+	var pictures: Dictionary = {"ground_blockout.png": MapBlockout.render_ground(spec)}
+	for symbol: String in MapFootprint.HEIGHT_OF:
+		if not spec.find_symbol(symbol).is_empty():
+			pictures["objects_%s_blockout.png" % symbol] = MapBlockout.render_cluster(spec, symbol)
 	for file_name: String in pictures:
 		var error: Error = (pictures[file_name] as Image).save_png(ProjectSettings.globalize_path(directory + "/" + file_name))
 		if error != OK:
@@ -153,29 +153,40 @@ func _translation_keys() -> Dictionary:
 ## Dresses the scene of a map with its pictures (see MapDresser). Done once; `force` dresses again.
 func _dress(spec: MapSpec, scene_path: String, force: bool) -> bool:
 	var region: String = spec.id.split(".")[1]
-	var kit_path: String = "res://content/kits/%s.tres" % region
+	var kit_path: String = "res://content/kits/%s.tres" % MapKit.name_for(region, spec.theme)
 	var assets_dir: String = "res://assets/art/maps/%s/" % spec.id
-	if not ResourceLoader.exists(kit_path) or not FileAccess.file_exists(assets_dir + "ground.png"):
+	var has_pictures: bool = ResourceLoader.exists(kit_path) and FileAccess.file_exists(assets_dir + "ground.png")
+	var dark: bool = MapTheme.darkness(spec.theme) != Color.WHITE
+	if not has_pictures and not dark:
 		print("no pictures yet for %s: left undressed" % spec.id)
 		return true
 	var packed: PackedScene = load(scene_path)
 	var root: Node2D = packed.instantiate()
-	if root.has_node(MapDresser.DRESSING) and not force:
+	if (root.has_node(MapDresser.DRESSING) or root.has_node("Darkness")) and not force:
 		print("already dressed (use -- --redress to dress again): " + scene_path)
 		root.free()
 		return true
-	var kit: MapKit = load(kit_path)
-	var buildings: Dictionary = {}
-	for symbol: String in "B":
-		if FileAccess.file_exists("%sbuilding_%s.png" % [assets_dir, symbol]) and not spec.find_symbol(symbol).is_empty():
-			buildings[symbol] = "%sbuilding_%s.png" % [assets_dir, symbol]
-	var placements: Array[MapPlacer.Placement] = MapPlacer.build(spec, kit, buildings, _picture_sizes(kit, buildings))
-	MapDresser.dress(root, spec, placements, assets_dir)
+	var placements: Array[MapPlacer.Placement] = []
+	if has_pictures:
+		placements = _place(spec, kit_path, assets_dir)
+		MapDresser.dress(root, spec, placements, assets_dir)
+	MapDresser.dress_mood(root, spec.theme, MapPlacer.torch_positions(spec))
 	var result: PackedScene = PackedScene.new()
 	result.pack(root)
 	root.free()
-	print("dressed %s with %d pieces" % [scene_path, placements.size()])
+	print("dressed %s with %d pieces and the mood %s" % [scene_path, placements.size(), spec.theme])
 	return _save(result, scene_path)
+
+
+## What goes where on the map, from the kit and the pictures of the map.
+func _place(spec: MapSpec, kit_path: String, assets_dir: String) -> Array[MapPlacer.Placement]:
+	var kit: MapKit = load(kit_path)
+	var buildings: Dictionary = {}
+	for symbol: String in "BCWV":
+		if FileAccess.file_exists("%sbuilding_%s.png" % [assets_dir, symbol]) and not spec.find_symbol(symbol).is_empty():
+			buildings[symbol] = "%sbuilding_%s.png" % [assets_dir, symbol]
+	var placements: Array[MapPlacer.Placement] = MapPlacer.build(spec, kit, buildings, _picture_sizes(kit, buildings))
+	return placements
 
 
 ## Picture path -> size, for every kit piece, shadow and building picture that exists.

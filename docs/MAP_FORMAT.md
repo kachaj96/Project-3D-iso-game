@@ -227,3 +227,27 @@ Rules that came out of building it:
 - **Moving a sprite in the editor does not move the blocked cell.** What is walkable comes from the map file only.
 
 Not done yet: the screen-shaped maps replace the diamond M1 maps in the game, but the two M1 maps stay as test fixtures (`tests/fixtures/maps`), so `MapDef.Shape.DIAMOND` is still in use there. Mist and light do not move yet, and nothing is compressed for the phone (texture compression and the phone test come at the end of the slice).
+
+## 7. Interiors and the dark mood (map 2, 2026-10-25, D-023)
+
+New in the map file:
+
+| What | Meaning |
+|---|---|
+| `X` | void: solid and invisible, the black outside a room |
+| `C`, `W`, `V` | solid footprint objects with their own pictures: `C` a low object (coffin, altar, 48 px), `W` and `V` the two tall back walls (224 px). `B` stays the building (160 px) |
+| `theme: dark_interior` | header line; `forest` is the default. The theme sets the darkness of the scene, the tint and strength of mist and light, and which prompts are written (`MapTheme`) |
+| `lights:` section | `torch <row> <column>`: a wall torch on that cell. The game makes a flickering light of it |
+| prop kind `inspect` | a thing the hero looks at: shows his comment (translation key) instead of a sign text |
+
+How an interior is built: a room is a diamond of floor cells in the middle of the screen. The two back walls (`W` north-west, `V` north-east) stand behind it, the front is open to the camera, everything else is `X`. Doors and stairs to other maps are `link` markers as before; interiors of a building are `<id>.in01`, rooms below `<id>.dn01` (D-019).
+
+The pipeline is the one of section 6, with these differences:
+
+- `generate.gd` writes a blockout for every footprint symbol of the map (`objects_W_blockout.png`, `objects_C_blockout.png`, ...) and nine prompts (`layered_prompt.md`): floor with the trail of blood, the two walls, the coffin, pillars, debris, floor decals, mist, light from the windows. The mood is horror: near-black shadows, cold stone, torch light and dried blood as the only colour.
+- The kit of a mood has its own name (`MapKit.name_for`): `content/kits/gluchobor_dark_interior.tres`.
+- Walls and the coffin are cut into depth strips like the building. Only `B` and `C` get a ground shadow (a dark room has no sun).
+- **The mood is put into the scene even before the pictures exist** (`MapDresser.dress_mood`): a `CanvasModulate` named `Darkness` and one `TorchFlicker` light per torch. The hero carries a faint pale light (`PlayerActor.set_aura`) in every dark room, so that he stays readable and the room still feels dark around him.
+- Everything the generator adds is in the group `generated`; `generate.gd -- --redress` replaces only that.
+
+Open: all pictures of map 2 (the prompts are written), the amount of darkness (a constant in `MapTheme`, to be tuned on the phone in daylight), the layout of map 3 (a placeholder room for now).

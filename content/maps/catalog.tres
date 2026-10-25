@@ -5,8 +5,12 @@
 [resource]
 script = ExtResource("1_cpvxk")
 defs = Dictionary[String, String]({
-"map.gluchobor.02_02": "res://content/maps/gluchobor/02_02.tres"
+"map.gluchobor.02_02": "res://content/maps/gluchobor/02_02.tres",
+"map.gluchobor.02_02.dn01": "res://content/maps/gluchobor/02_02.dn01.tres",
+"map.gluchobor.02_02.in01": "res://content/maps/gluchobor/02_02.in01.tres"
 })
 scenes = Dictionary[String, String]({
-"map.gluchobor.02_02": "res://scenes/world/maps/gluchobor/02_02.tscn"
+"map.gluchobor.02_02": "res://scenes/world/maps/gluchobor/02_02.tscn",
+"map.gluchobor.02_02.dn01": "res://scenes/world/maps/gluchobor/02_02.dn01.tscn",
+"map.gluchobor.02_02.in01": "res://scenes/world/maps/gluchobor/02_02.in01.tscn"
 })

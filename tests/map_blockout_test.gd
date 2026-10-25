@@ -156,6 +156,25 @@ func test_the_crypt_cluster_is_cropped_with_headroom_for_the_roof() -> void:
 	assert_bool(found.size.x < full.get_width() / 2 and found.size.y < full.get_height() / 2).is_true()
 	var cropped: Image = MapBlockout.render_cluster(spec, "B")
 	assert_int(cropped.get_width()).is_equal(found.size.x + 2 * MapBlockout.CLUSTER_MARGIN)
-	assert_int(cropped.get_height()).is_equal(found.size.y + MapBlockout.CLUSTER_HEADROOM + MapBlockout.CLUSTER_MARGIN)
+	assert_int(cropped.get_height()).is_equal(found.size.y + MapBlockout.cluster_headroom("B") + MapBlockout.CLUSTER_MARGIN)
 	# The top left corner is empty space and the headroom above the blocks is empty too.
 	assert_bool(_same(cropped.get_pixel(0, 0), MapBlockout.BACKGROUND)).is_true()
+
+
+func test_void_cells_stay_empty_in_every_picture() -> void:
+	var text: String = TEXT.replace(". . . .\n . . .\n. @ = .", ". . . .\n . X .\n. @ = .")
+	var spec: MapSpec = _spec(text)
+	assert_bool(_same(_pixel(MapBlockout.render(spec), 1, 1), MapBlockout.BACKGROUND)).is_true()
+	# The ground picture fills its whole canvas, so void shows the dark floor colour there.
+	assert_bool(_same(_pixel(MapBlockout.render_ground(spec), 1, 1), MapBlockout.FOREST_FLOOR)).is_true()
+
+
+func test_the_dark_interior_prompts_are_ready_to_paste_and_name_the_pictures() -> void:
+	var spec: MapSpec = MapSpec.parse(FileAccess.get_file_as_string("res://content/map_specs/gluchobor/02_02.in01.txt"))
+	assert_array(spec.errors).is_empty()
+	assert_str(spec.theme).is_equal("dark_interior")
+	var text: String = MapPrompt.build_layered(spec)
+	for fragment: String in ["`objects_W_blockout.png`", "`objects_V_blockout.png`", "`objects_C_blockout.png`", "HORROR", "## 9. Light from the windows", "WHITE mist on a pure BLACK background", "A trail of dried dark-red blood"]:
+		assert_str(text).contains(fragment)
+	# Nine prompts, each in its own box.
+	assert_int(text.count("```")).is_equal(18)

@@ -13,9 +13,9 @@ extends SceneTree
 ##
 ##   godot --headless --path . --script res://tools/art/prepare_map_assets.gd -- <map id>
 
-const MIST_TINT: Color = Color(0.62, 0.72, 0.78)
-const LIGHT_TINT: Color = Color(1.0, 0.86, 0.55)
 ## Sheets and the kit folder and name they become.
+## Symbols whose picture gets a soft shadow on the ground.
+const SHADOWED_SYMBOLS: String = "BC"
 const SHEETS: Dictionary = {"trees": "tree", "plants": "plant", "rocks": "rock", "patches": "patch"}
 
 
@@ -34,19 +34,37 @@ func _init() -> void:
 		printerr("Cannot read the manifest " + source_dir + "assets_manifest.json")
 		quit(1)
 		return
+	var theme: String = manifest.get("theme", MapTheme.FOREST)
+	var kit_name: String = MapKit.name_for(region, theme)
 	var map_dir: String = "res://assets/art/maps/%s/" % map_id
-	var kit_dir: String = "res://assets/art/kits/%s/" % region
+	var kit_dir: String = "res://assets/art/kits/%s/" % kit_name
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(map_dir))
 	var ok: bool = true
 	ok = ok and _write(_load(source_dir + manifest["ground"]), map_dir + "ground.png")
-	var building: Image = _cleaned(_load(source_dir + manifest["building_B"]))
-	ok = ok and _write(building, map_dir + "building_B.png")
-	ok = ok and _write(SpriteCleanup.make_shadow(building), map_dir + "building_B_shadow.png")
-	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["mist"]), MIST_TINT), map_dir + "mist.png")
-	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["light"]), LIGHT_TINT), map_dir + "light.png")
+	for key: String in manifest:
+		if key.begins_with("building_"):
+			var symbol: String = key.trim_prefix("building_")
+			# Trimmed to its content: the map placer fits the picture to its footprint by it.
+			var building: Image = SpriteCleanup.trimmed(_cleaned(_load(source_dir + (manifest[key] as String))))
+			# The AI sometimes paints a wall at the other slant than the blockout: "flip_building_X": true mirrors it.
+			if manifest.get("flip_" + key, false):
+				building.flip_x()
+			ok = ok and _write(building, "%sbuilding_%s.png" % [map_dir, symbol])
+			# Only things that stand in daylight cast a shadow on the ground; walls of a dark room do not.
+			if SHADOWED_SYMBOLS.contains(symbol):
+				ok = ok and _write(SpriteCleanup.make_shadow(building), "%sbuilding_%s_shadow.png" % [map_dir, symbol])
+	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["mist"] as String)), MapTheme.mist_tint(theme)), map_dir + "mist.png")
+	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["light"] as String)), MapTheme.light_tint(theme)), map_dir + "light.png")
 	var kit: MapKit = MapKit.new()
-	kit.region = region
+	kit.region = kit_name
+	if theme == MapTheme.DARK_INTERIOR:
+		# Pillars instead of boulders, small debris instead of plants.
+		kit.cell_rocks = 3
+		kit.rock_width = Vector2(95.0, 125.0)
+		kit.plant_width = Vector2(40.0, 85.0)
 	for sheet_key: String in SHEETS:
+		if not manifest.has(sheet_key):
+			continue
 		var sheet: Image = _cleaned(_load(source_dir + manifest[sheet_key]))
 		var rects: Array[Rect2i] = SpriteCleanup.split_items(sheet)
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(kit_dir + sheet_key))
@@ -62,7 +80,7 @@ func _init() -> void:
 		print("%s: %d pieces" % [sheet_key, rects.size()])
 		kit.set(sheet_key, paths)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://content/kits"))
-	var save_error: Error = ResourceSaver.save(kit, "res://content/kits/%s.tres" % region)
+	var save_error: Error = ResourceSaver.save(kit, "res://content/kits/%s.tres" % kit_name)
 	if save_error != OK:
 		printerr("Cannot save the kit: " + error_string(save_error))
 		ok = false

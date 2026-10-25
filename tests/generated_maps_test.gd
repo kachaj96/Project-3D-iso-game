@@ -84,3 +84,42 @@ func test_every_scene_covers_exactly_the_cells_of_its_map() -> void:
 		assert_int(ground.get_used_cells().size()).is_equal(map.all_cells().size())
 		var obstacles: TileMapLayer = scene.get_node("Objects")
 		assert_array(_sorted(obstacles.get_used_cells())).is_equal(_sorted(map.blocked_cells))
+
+
+func test_the_three_maps_of_the_first_sequence_lead_into_each_other_and_back() -> void:
+	var maps: Dictionary = (load(CATALOG_PATH) as MapCatalog).load_maps()
+	var outside: MapDef = maps["map.gluchobor.02_02"]
+	var chamber: MapDef = maps["map.gluchobor.02_02.in01"]
+	var depth: MapDef = maps["map.gluchobor.02_02.dn01"]
+	var door: MapExit = _only_exit(outside, "door")
+	assert_str(door.target_map_id).is_equal(chamber.id)
+	var way_out: MapExit = _only_exit(chamber, "door")
+	assert_str(way_out.target_map_id).is_equal(outside.id)
+	var stairs_down: MapExit = _only_exit(chamber, "stairs")
+	assert_str(stairs_down.target_map_id).is_equal(depth.id)
+	var stairs_up: MapExit = _only_exit(depth, "stairs")
+	assert_str(stairs_up.target_map_id).is_equal(chamber.id)
+	# Arriving, the hero does not stand on a door: no loop of maps.
+	for exit: MapExit in [door, way_out, stairs_down, stairs_up]:
+		var target: MapDef = maps[exit.target_map_id]
+		assert_bool(target.find_exit_at(exit.target_entry_cell) == null).is_true()
+		assert_bool(target.is_walkable(exit.target_entry_cell)).is_true()
+
+
+func test_the_chamber_has_the_blood_traces_and_a_coffin() -> void:
+	var chamber: MapDef = (load(CATALOG_PATH) as MapCatalog).load_maps()["map.gluchobor.02_02.in01"]
+	assert_int(chamber.props.size()).is_equal(1)
+	assert_str(chamber.props[0].kind).is_equal("inspect")
+	assert_str(chamber.props[0].text_key).is_equal("inspect.gluchobor.02_02.in01.blood")
+	# The hero can reach a cell beside the traces and the way down from where he arrives.
+	var finder: Pathfinder = Pathfinder.new(chamber, Pathfinder.Movement.EIGHT_WAY)
+	assert_bool(finder.find_path(chamber.spawn_cell, _only_exit(chamber, "stairs").cells[0]).is_empty()).is_false()
+
+
+func _only_exit(map: MapDef, kind: String) -> MapExit:
+	var found: Array[MapExit] = []
+	for exit: MapExit in map.exits:
+		if exit.kind == kind:
+			found.append(exit)
+	assert_int(found.size()).is_equal(1)
+	return found[0]

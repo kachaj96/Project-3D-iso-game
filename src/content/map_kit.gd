@@ -21,3 +21,9 @@ extends Resource
 ## The first N rocks are big enough to stand on rock cells; the rest (small stones, a stump,
 ## a log) are used as decoration around objects.
 @export var cell_rocks: int = 4
+
+
+## The name (and file name) of the kit of a region in a mood: "gluchobor" for the forest,
+## "gluchobor_dark_interior" for the interiors.
+static func name_for(region: String, theme: String) -> String:
+	return region if theme == MapTheme.FOREST else "%s_%s" % [region, theme]

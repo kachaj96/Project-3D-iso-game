@@ -146,7 +146,7 @@ func _on_events(events: Array[GameEvent]) -> void:
 		elif event is InteractedEvent:
 			var interacted: InteractedEvent = event as InteractedEvent
 			_marker.show_at(_marker_position(_last_tapped_cell), true)
-			if interacted.kind == "sign":
+			if interacted.kind == "sign" or interacted.kind == "inspect":
 				_popup.show_key(interacted.text_key)
 		elif event is CommandRejectedEvent:
 			if _current_map_id.is_empty():
@@ -184,6 +184,7 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 	_current_map_id = map_id
 	_player.place_at(_grid.cell_to_pixel(cell), _lift_of(cell))
 	var shown: MapDef = _maps[map_id]
+	_player.set_aura(MapTheme.darkness(shown.theme) != Color.WHITE)
 	_camera.set_map_bounds(_grid.bounds_of(shown), 0.0 if shown.shape == MapDef.Shape.SCREEN else -1.0)
 	_camera.snap_to_target()
 	map_shown.emit(map_id)

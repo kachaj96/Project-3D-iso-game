@@ -1,0 +1,46 @@
+// Gluchobor, the main chamber of the crypt (first sequence, map 2, docs/FIRST_SEQUENCE.md).
+// A room of 7 x 7 floor cells drawn as a diamond in the middle of the screen. The two back walls
+// (W: north-west, with three tall narrow windows, V: north-east) stand behind it, the front is
+// open towards the camera. The coffin (C, two cells) stands in the middle with its lid slightly
+// open; the blood traces (marker 1) lie beside it and a trail on the floor leads to the stairs
+// down (marker 2) in the far corner. The way out (marker 3) is in the front corner. Two pillars
+// stand on the floor. The torches (lights section) hang on the walls. Everything outside the room is
+// black void (#). The mood is dark, cold and unsettling: see the prompts of this map.
+id: map.gluchobor.02_02.in01
+region: gluchobor
+title_key: map.gluchobor.02_02.in01.title
+theme: dark_interior
+size: 10x20
+grid:
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X X X X X X
+X X X X X X X X X X
+ X X X X V X X X X
+X X X X W V X X X X
+ X X X W 2 V X X X
+X X X W . . V X X X
+ X X W . . . V X X
+X X W . . . . V X X
+ X W . . . . . V X
+X W . . C 1 . . V X
+ X . # . C . . . X
+X X . . . . . . X X
+ X X . . . . . X X
+X X X . . . . X X X
+ X X X . # . X X X
+X X X X @ . X X X X
+ X X X X 3 X X X X
+markers:
+1 prop inspect prop.gluchobor.02_02.in01.blood inspect.gluchobor.02_02.in01.blood
+2 link stairs map.gluchobor.02_02.dn01 from_above
+3 link door map.gluchobor.02_02 from_crypt
+entries:
+from_gate 18 4
+from_depths 8 5
+lights:
+torch 8 6
+torch 11 7
+torch 8 3
+torch 10 2

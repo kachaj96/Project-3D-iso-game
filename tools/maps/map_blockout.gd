@@ -22,16 +22,17 @@ const DOOR: Color = Color(0.7, 0.4, 0.9, 1.0)
 const ROCK: Color = Color(0.5, 0.5, 0.55, 1.0)
 const TREE: Color = Color(0.15, 0.4, 0.2, 1.0)
 const BUILDING: Color = Color(0.6, 0.38, 0.25, 1.0)
+const COFFIN: Color = Color(0.45, 0.2, 0.2, 1.0)
+const WALL: Color = Color(0.45, 0.45, 0.6, 1.0)
 const WATER: Color = Color(0.15, 0.3, 0.5, 1.0)
 const PROP: Color = Color(0.95, 0.4, 0.7, 1.0)
 const SPAWN_DOT: Color = Color(1.0, 1.0, 1.0, 1.0)
 const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 
 ## Heights in project pixels (before SCALE) of obstacle blocks standing on a cell.
-const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
+const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160, "C": 48, "W": 224, "V": 224}
 const PROP_HEIGHT: int = 64
 const CLUSTER_MARGIN: int = int(MapFootprint.CLUSTER_MARGIN) * SCALE
-const CLUSTER_HEADROOM: int = int(MapFootprint.CLUSTER_HEADROOM) * SCALE
 
 ## Layered experiment: the ground picture shows this where obstacles stand.
 const FOREST_FLOOR: Color = Color(0.28, 0.4, 0.25, 1.0)
@@ -61,6 +62,8 @@ static func render_ground(spec: MapSpec) -> Image:
 	# The edge of the canvas outside the cells is forest floor too, so the picture has no empty corners.
 	var image: Image = _canvas(spec, FOREST_FLOOR)
 	for entry: Vector3i in _back_to_front(spec):
+		if spec.symbol_at(entry.x, entry.y) == "X":
+			continue
 		var symbol: String = spec.symbol_at(entry.x, entry.y)
 		var solid: bool = OBSTACLE_HEIGHT.has(symbol) or _is_prop(spec, symbol)
 		var colour: Color = FOREST_FLOOR if solid else _floor_colour(spec, symbol)
@@ -91,14 +94,20 @@ static func render_in_place(spec: MapSpec, symbols: String) -> Image:
 static func render_cluster(spec: MapSpec, symbols: String) -> Image:
 	var full: Image = render_in_place(spec, symbols)
 	var found: Rect2i = cluster_rect(full)
-	var image: Image = Image.create(found.size.x + 2 * CLUSTER_MARGIN, found.size.y + CLUSTER_HEADROOM + CLUSTER_MARGIN, false, Image.FORMAT_RGBA8)
+	var headroom: int = cluster_headroom(symbols)
+	var image: Image = Image.create(found.size.x + 2 * CLUSTER_MARGIN, found.size.y + headroom + CLUSTER_MARGIN, false, Image.FORMAT_RGBA8)
 	image.fill(BACKGROUND)
-	image.blit_rect(full, found, Vector2i(CLUSTER_MARGIN, CLUSTER_HEADROOM))
+	image.blit_rect(full, found, Vector2i(CLUSTER_MARGIN, headroom))
 	return image
 
 
 ## The smallest rectangle of the picture that holds everything drawn (not the background).
 ## Pictures store 8 bits per colour, so the background is compared with a small tolerance.
+## Pixels of room above the blocks in a cluster picture, from the first symbol.
+static func cluster_headroom(symbols: String) -> int:
+	return int(MapFootprint.headroom_of(symbols[0])) * SCALE
+
+
 static func cluster_rect(image: Image) -> Rect2i:
 	var low: Vector2i = Vector2i(image.get_width(), image.get_height())
 	var high: Vector2i = Vector2i(-1, -1)
@@ -151,6 +160,8 @@ static func _back_to_front(spec: MapSpec) -> Array[Vector3i]:
 
 static func _draw_cell(image: Image, spec: MapSpec, row: int, col: int) -> void:
 	var symbol: String = spec.symbol_at(row, col)
+	if symbol == "X":
+		return
 	var centre: Vector2 = MapLayout.pixel_center(row, col) * SCALE
 	var level: float = spec.height_at(row, col) * GridMath.LEVEL_HEIGHT * SCALE
 	var colour: Color = _floor_colour(spec, symbol).lightened(0.07 * spec.height_at(row, col))
@@ -227,6 +238,10 @@ static func _obstacle_colour(spec: MapSpec, symbol: String) -> Color:
 			return TREE
 		"B":
 			return BUILDING
+		"C":
+			return COFFIN
+		"W", "V":
+			return WALL
 	return PROP
 
 

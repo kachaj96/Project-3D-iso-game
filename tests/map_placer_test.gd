@@ -160,10 +160,12 @@ func test_the_strips_in_front_of_the_gate_gap_sort_behind_the_wings() -> void:
 
 
 func test_a_strip_hangs_its_picture_at_the_top_of_the_canvas() -> void:
-	var canvas: Rect2 = MapFootprint.canvas_rect(_spec(), "B")
+	var cluster: Rect2 = MapFootprint.cluster_rect(_spec(), "B")
+	var scale: float = cluster.size.x / 1720.0
+	var expected_top: float = cluster.end.y - 914.0 * scale
 	for strip: MapPlacer.Placement in _of_kind(_build(), "building"):
 		var top: float = strip.position.y + strip.offset.y * strip.scale
-		assert_float(top).is_equal_approx(canvas.position.y, 0.05)
+		assert_float(top).is_equal_approx(expected_top, 0.05)
 
 
 func test_no_plant_near_the_building_is_cut_by_a_taller_strip() -> void:

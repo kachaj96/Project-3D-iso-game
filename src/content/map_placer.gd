@@ -22,6 +22,8 @@ const ORIGIN_CENTRE: Vector2 = Vector2(0.5, 0.5)
 const ORIGIN_ROCK: Vector2 = Vector2(0.5, 0.9)
 ## Plants are skipped when a taller part of the building would cut them at a strip edge.
 const PLANT_CLEARANCE: float = 3.0
+## A torch hangs this far above the ground centre of its wall cell (negative is up on screen).
+const TORCH_HEIGHT: float = -70.0
 
 
 class Placement extends RefCounted:
@@ -159,11 +161,13 @@ static func _shadow(path: String, owner_placement: Placement, sizes: Dictionary,
 static func _building(spec: MapSpec, symbol: String, path: String, sizes: Dictionary, placements: Array[Placement]) -> Array[Placement]:
 	var strips: Array[Placement] = []
 	var size: Vector2i = sizes.get(path, Vector2i.ZERO)
-	var canvas: Rect2 = MapFootprint.canvas_rect(spec, symbol)
 	var cluster: Rect2 = MapFootprint.cluster_rect(spec, symbol)
-	if size.x <= 0 or canvas.size == Vector2.ZERO:
+	if size.x <= 0 or cluster.size == Vector2.ZERO:
 		return strips
-	var scale: float = canvas.size.x / size.x
+	# The picture is trimmed to its content (prepare_map_assets.gd): its width is the width of the footprint
+	# and its bottom touches the lowest point of the footprint. Roofs and walls rise above the blocks.
+	var scale: float = cluster.size.x / size.x
+	var canvas: Rect2 = Rect2(Vector2(cluster.position.x, cluster.end.y - size.y * scale), Vector2(cluster.size.x, size.y * scale))
 	var strip_native: float = MapFootprint.STRIP_WIDTH / scale
 	var count: int = ceili(size.x / strip_native)
 	for index: int in count:
@@ -190,8 +194,7 @@ static func _building(spec: MapSpec, symbol: String, path: String, sizes: Dictio
 		shadow.texture = shadow_path
 		shadow.scale = scale
 		shadow.offset = -Vector2(shadow_size) * ORIGIN_FEET
-		# The building stands on the ground line, one margin above the bottom of its canvas.
-		shadow.position = Vector2(canvas.position.x + canvas.size.x / 2.0, canvas.end.y - MapFootprint.CLUSTER_MARGIN)
+		shadow.position = Vector2(canvas.position.x + canvas.size.x / 2.0, canvas.end.y)
 		shadow.layer = LAYER_GROUND
 		placements.append(shadow)
 	return strips
@@ -237,3 +240,13 @@ static func _is_clear(plant: Placement, sizes: Dictionary, strips: Array[Placeme
 		if overlaps_x and overlaps_y:
 			return false
 	return true
+
+
+## Where the torches of a map hang, in project pixels: the middle of the wall cell, a little above the
+## ground and a little towards the room, so that the pool of light falls on the floor beside the wall.
+static func torch_positions(spec: MapSpec) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	for light: Dictionary in spec.lights:
+		if light["kind"] == "torch":
+			positions.append(MapLayout.pixel_center(light["row"] as int, light["col"] as int) + Vector2(0.0, TORCH_HEIGHT))
+	return positions

@@ -16,7 +16,7 @@ extends RefCounted
 ##                      the opposite edge of the neighbour, at the same row (left and right
 ##                      edges) or the same column (top and bottom edges).
 
-const BLOCKING_SYMBOLS: String = "#TB~"
+const BLOCKING_SYMBOLS: String = "#TB~CWVX"
 const COORDINATE_ID_PATTERN: String = "^map\\.([a-z0-9_]+)\\.(\\d{2})_(\\d{2})$"
 
 var map: MapDef
@@ -37,6 +37,7 @@ func _build(spec: MapSpec, specs: Dictionary) -> void:
 	map = MapDef.new()
 	map.id = spec.id
 	map.region = spec.region
+	map.theme = spec.theme
 	map.shape = MapDef.Shape.SCREEN
 	map.size = Vector2i(spec.columns, spec.rows)
 	for row: int in spec.rows:
