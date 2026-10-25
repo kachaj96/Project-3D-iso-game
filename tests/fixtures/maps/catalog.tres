@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="MapCatalog" format=3]
+
+[ext_resource type="Script" path="res://src/content/map_catalog.gd" id="1_catalog"]
+
+[resource]
+script = ExtResource("1_catalog")
+defs = Dictionary[String, String]({
+"map.start.01": "res://tests/fixtures/maps/start_01.tres",
+"map.start.02": "res://tests/fixtures/maps/start_02.tres"
+})
+scenes = Dictionary[String, String]({
+"map.start.01": "res://tests/fixtures/maps/map_start_01.tscn",
+"map.start.02": "res://tests/fixtures/maps/map_start_02.tscn"
+})

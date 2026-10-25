@@ -5,8 +5,13 @@ var _grid: GridMath = GridMath.new()
 var _events: Array[GameEvent]
 
 
+const FIXTURE_CATALOG: String = "res://tests/fixtures/maps/catalog.tres"
+
+
 func _make_world() -> World:
 	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	world.catalog_path = FIXTURE_CATALOG
+	world.start_map_id = "map.start.01"
 	world.walk_speed = 1000000.0
 	add_child(world)
 	_events = []
@@ -183,3 +188,11 @@ func test_tapping_a_sign_you_stand_beside_opens_it_without_walking() -> void:
 	assert_bool(_events.back() is InteractedEvent).is_true()
 	assert_bool(world.popup().is_open()).is_true()
 	world.popup().close()
+
+
+func test_the_real_game_starts_on_the_forest_crypt_at_its_spawn_cell() -> void:
+	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	add_child(world)
+	assert_str(world.current_map_id()).is_equal("map.gluchobor.02_02")
+	var map: MapDef = (load("res://content/maps/catalog.tres") as MapCatalog).load_maps()["map.gluchobor.02_02"]
+	assert_vector(world.player_position()).is_equal(_grid.cell_to_pixel(map.spawn_cell))

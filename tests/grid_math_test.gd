@@ -100,3 +100,18 @@ func test_the_higher_surface_wins_where_it_covers_a_lower_cell() -> void:
 	var covered: Vector2 = _grid.cell_to_pixel(Vector2i(4, 4)) - Vector2(0.0, _grid.level_lift(2))
 	assert_vector(_grid.pixel_to_cell(covered)).is_not_equal(Vector2i(4, 4))
 	assert_vector(_grid.pick_cell(covered, map)).is_equal(Vector2i(4, 4))
+
+
+func test_the_bounds_of_a_screen_map_are_its_rectangle_with_room_for_the_highest_level() -> void:
+	var map: MapDef = MapDef.new()
+	map.shape = MapDef.Shape.SCREEN
+	map.size = Vector2i(10, 20)
+	assert_object(_grid.bounds_of(map)).is_equal(Rect2(0.0, 0.0, 1280.0, 672.0))
+	map.heights = {Vector2i(2, 2): 3}
+	assert_object(_grid.bounds_of(map)).is_equal(Rect2(0.0, -96.0, 1280.0, 768.0))
+
+
+func test_the_bounds_of_a_diamond_map_are_the_old_ones() -> void:
+	var map: MapDef = MapDef.new()
+	map.size = Vector2i(12, 12)
+	assert_object(_grid.bounds_of(map)).is_equal(_grid.map_pixel_bounds(Vector2i(12, 12)))

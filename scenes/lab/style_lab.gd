@@ -4,7 +4,7 @@ extends Node2D
 ## a phone screen in daylight (blacks lifted, contrast flattened). Every asset in M2 is
 ## checked here before it goes into the game. Not shown to players.
 
-const MAP_SCENE: PackedScene = preload("res://scenes/world/map_start_01.tscn")
+const MAP_SCENE: PackedScene = preload("res://tests/fixtures/maps/map_start_01.tscn")
 const PLAYER_SCENE: PackedScene = preload("res://scenes/world/player_actor.tscn")
 ## How much white is laid over the picture. Sunlight on glass is roughly this much.
 const DAYLIGHT_WHITE: float = 0.38

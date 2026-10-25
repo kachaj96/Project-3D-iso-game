@@ -3,7 +3,7 @@ extends GdUnitTestSuite
 ## Rule 7 of ARCHITECTURE.md: every text the player sees is a key with an English and a
 ## Polish translation.
 
-const MAP_PATHS: Array[String] = ["res://content/maps/start_01.tres", "res://content/maps/start_02.tres"]
+const MAP_PATHS: Array[String] = ["res://tests/fixtures/maps/start_01.tres", "res://tests/fixtures/maps/start_02.tres", "res://content/maps/gluchobor/02_02.tres"]
 
 
 func after_test() -> void:
