@@ -162,3 +162,11 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Alternatives:** raise the whole character node (breaks the drawing order behind obstacles); a height number on every cell in `MapDef` (large files, no benefit).
 - **Consequences:** nothing visual changes on the two M1 maps. New behaviour appears only on maps that use heights.
 - **Revisit if:** tall platforms hide walkable cells (the generator will warn), or ladders need a different cost.
+
+## D-022 Layered backdrop instead of one painted picture (2026-10-25)
+
+- **Context:** the first test of a map picture (the whole scene painted by the image AI in one go, then cut for objects) produced objects fused with the ground and a building that could not be sorted with the hero.
+- **Decision:** ground, building, kit pieces (trees, plants, rocks, patches), mist and light shafts are separate pictures. The image AI paints each from a blockout that the generator makes from the map file, with the first concept picture as the style reference. Objects come as PNG with a real alpha channel (it works in the developer's image tool); mist and light come as white on black and become opacity. A cleanup step and a placer turn them into scene nodes. The building is cut into depth strips. Shadows are computed from the objects, not painted.
+- **Alternatives:** one painted backdrop with occluders cut out of it (the cut never follows the shape of a tree); magenta key colour instead of real alpha (not needed, but the fallback if a tool cannot do alpha).
+- **Consequences:** more files per map (about 16 MB of PNG for the first map before compression), a clean-up tool, and the rule that anything tall stands in a footprint. In return objects can be moved, scaled and removed in the editor, reused on other maps and sorted with the hero.
+- **Revisit if:** memory or load time on the phone is too high, or the kit looks repetitive on bigger maps.

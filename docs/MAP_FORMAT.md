@@ -198,3 +198,32 @@ Not done yet (G5 and G6): the two start maps as text files, the world loading ma
 ### 5.1 Alignment check of a picture
 
 `godot --headless --path . --script res://tools/maps/overlay_check.gd -- <map id> <picture> <output.png>` scales the picture to the backdrop size and draws every cell on it (green walkable, red blocked, blue exit, yellow stairs, orange ladder). Use it on every picture from the image AI before it goes into a scene.
+
+## 6. The layered backdrop pipeline (2026-10-25, D-022)
+
+A map picture is not one painting but a stack, so that objects can be sorted with the hero, moved and reused:
+
+| Layer | What | Made by |
+|---|---|---|
+| Ground | one opaque picture of the grass, path and forest floor | the image AI, from `ground_blockout.png` |
+| Ground decals | soil and moss patches, soft shadows | kit pictures and shadows computed from the objects |
+| Objects | the building (cut into depth strips), trees, rocks, plants | kit pictures; the building from the AI |
+| Mist, light shafts | one-colour pictures whose opacity is the brightness of the AI picture | the image AI (white on black) |
+
+Steps, in order, for a map `<id>`:
+
+1. `godot --headless --path . --script res://tools/maps/generate.gd` writes data, scene stub, blockouts and `layered_prompt.md`.
+2. You make the pictures with the prompts and save them in `art_source/maps/<id>/layered/results/`; the file names go into `assets_manifest.json`.
+3. `godot --headless --path . --script res://tools/art/prepare_map_assets.gd -- <id>` cleans the pictures (`SpriteCleanup`: faint pixels removed, nearly opaque pixels made solid, colours under the edge replaced, sheets cut into pieces, shadows computed) and writes `assets/art/maps/<id>/` and the region kit `content/kits/<region>.tres`.
+4. `godot --headless --import`, then `generate.gd` again: `MapPlacer` decides what goes where (seeded by the map id, so the map is dressed the same way every time) and `MapDresser` puts the nodes into the scene. A scene that is already dressed is not touched; `generate.gd -- --redress` replaces only the nodes in the group `generated`.
+5. `godot --path . --script res://tools/render_dressed_map.gd -- <scene> <prefix> <row,col>...` makes engine screenshots with the hero on given cells, to check the drawing order.
+
+Rules that came out of building it:
+
+- **A building is cut into vertical strips of half a cell**, each sorted by the front edge of the footprint below it. One sprite per building is wrong: a recessed gate wall would hide a hero standing in front of it.
+- **A plant that a taller strip would cut is left out**, its patch stays.
+- **A building stands on its footprint only.** The crypt picture has its own stone blocks beside the gate, so the map has no rock cells there.
+- **A building must not stand in the first rows of a map**: its roof needs about 5 rows of height plus 120 px of headroom. The crypt of the first map stands in rows 8 to 10.
+- **Moving a sprite in the editor does not move the blocked cell.** What is walkable comes from the map file only.
+
+Not done yet: the screen-shaped maps replace the diamond M1 maps in the game, but the two M1 maps stay as test fixtures (`tests/fixtures/maps`), so `MapDef.Shape.DIAMOND` is still in use there. Mist and light do not move yet, and nothing is compressed for the phone (texture compression and the phone test come at the end of the slice).
