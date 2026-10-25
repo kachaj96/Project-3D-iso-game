@@ -128,3 +128,12 @@ func test_a_single_object_stands_on_the_bottom_diamond() -> void:
 	assert_int(image.get_height()).is_equal(256 + 128 + 128)
 	assert_bool(_same(image.get_pixel(0, 0), MapBlockout.KEY_COLOUR)).is_true()
 	assert_bool(_same(image.get_pixel(image.get_width() / 2, image.get_height() - 64 - 64 - 256 + 10), MapBlockout.TREE)).is_true()
+
+
+func test_the_layered_prompts_name_what_to_attach_and_are_ready_to_paste() -> void:
+	var text: String = MapPrompt.build_layered(_spec())
+	assert_str(text).contains("**Attach (in this order):** 1. `ground_blockout.png`")
+	assert_str(text).contains("`objects_B_blockout.png`").contains("`single_T_blockout.png`").contains("`objects_T_blockout.png`")
+	assert_str(text).contains("#FF00FF")
+	assert_str(text).contains("1024 x 448 px")
+	assert_int(text.count("```")).is_equal(8)
