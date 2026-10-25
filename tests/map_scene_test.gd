@@ -4,8 +4,8 @@ extends GdUnitTestSuite
 ## the rules use (MapDef) and the pixel maths used for input (GridMath).
 
 const MAPS: Dictionary = {
-	"res://content/maps/start_01.tres": "res://scenes/world/map_start_01.tscn",
-	"res://content/maps/start_02.tres": "res://scenes/world/map_start_02.tscn",
+	"res://tests/fixtures/maps/start_01.tres": "res://tests/fixtures/maps/map_start_01.tscn",
+	"res://tests/fixtures/maps/start_02.tres": "res://tests/fixtures/maps/map_start_02.tscn",
 }
 
 
@@ -57,7 +57,7 @@ func test_exit_tiles_match_exit_cells_of_the_map_data() -> void:
 
 
 func test_tilemap_positions_agree_with_grid_math() -> void:
-	var scene: Node2D = auto_free((load("res://scenes/world/map_start_01.tscn") as PackedScene).instantiate())
+	var scene: Node2D = auto_free((load("res://tests/fixtures/maps/map_start_01.tscn") as PackedScene).instantiate())
 	var ground: TileMapLayer = scene.get_node("Ground")
 	var grid: GridMath = GridMath.new()
 	assert_vector(Vector2(ground.tile_set.tile_size)).is_equal(Vector2(grid.tile_width, grid.tile_height))

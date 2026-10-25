@@ -11,3 +11,6 @@ msgstr "Welcome to Overthune. The path east leads to the next clearing."
 
 msgid "ui.popup.close"
 msgstr "Close"
+
+msgid "map.gluchobor.02_02.title"
+msgstr "The Forest Crypt"

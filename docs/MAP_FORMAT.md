@@ -182,3 +182,48 @@ Things to know when drawing a map (from the Opus review of step 2):
 - **The camera does not yet know about levels.** Its limits come from the map on the ground, so a character on a high level at the top edge of a map can be drawn above the camera limit. The generator fixes this by widening the limits by the highest level on the map (7 levels = 224 px).
 
 Still open: the generator (data, catalog, scene stub, blockout picture, prompt), warnings for walkable cells hidden behind high platforms, rewriting the two M1 maps as text files (this removes `DIAMOND`), and the test map.
+
+## 5. Implementation status: the generator (2026-10-25, branch `feature/map-generator`)
+
+Built and tested (G1 to G4):
+
+- `MapBuilder` turns a parsed map file into `MapDef`. Each `>` becomes its own edge exit to the neighbour named by the map id coordinates (same region): left to column - 1, right to column + 1, top to row - 1, bottom to row + 1. The character arrives one step inward from the matching `>` on the opposite edge, in the same row (left and right edges) or the same column (top and bottom edges). A `>` without a partner, or an edge whose neighbour file does not exist, is an error: write `.` on edges that lead nowhere yet. Links (doors, stairs, ladders to another map) arrive at the named `entries:` cell of the target map.
+- `MapChecks`: every walkable cell reachable from the spawn (the same eight-direction walking as in the game), translation keys present in `en` and `pl`, warnings for walkable cells hidden behind a higher platform (stairs and ladders are not reported).
+- `MapGenerator` runs everything on the texts of all map files and writes nothing itself. `tools/maps/generate.gd` reads `content/map_specs/**/*.txt` and writes `content/maps/<region>/<cc>_<rr>.tres`, `content/maps/catalog.tres` (`MapCatalog`), and `art_source/maps/<id>/blockout.png` plus `prompt.md`. The scene `scenes/world/maps/<region>/<cc>_<rr>.tscn` is written only when it does not exist (layers Backdrop, Ground, Objects, Occluders, Effects, Lights, CellOverlay), so your edits are never lost. With errors nothing is written.
+- Run: `godot --headless --path . --script res://tools/maps/generate.gd`. After adding a new script class run `godot --headless --path . --import` once, or the editor, so Godot learns the class name.
+- The blockout is 2560 x 1344 px for a 10 x 20 map: cells as coloured blocks raised by level, rocks, trees and buildings as taller blocks, letters E (exit), D (door), S (stairs), L (ladder), a white dot for the spawn. It is a layout guide for the image AI, not art.
+
+Not done yet (G5 and G6): the two start maps as text files, the world loading maps through the catalog, removing `DIAMOND`, camera limits widened by the highest level.
+
+### 5.1 Alignment check of a picture
+
+`godot --headless --path . --script res://tools/maps/overlay_check.gd -- <map id> <picture> <output.png>` scales the picture to the backdrop size and draws every cell on it (green walkable, red blocked, blue exit, yellow stairs, orange ladder). Use it on every picture from the image AI before it goes into a scene.
+
+## 6. The layered backdrop pipeline (2026-10-25, D-022)
+
+A map picture is not one painting but a stack, so that objects can be sorted with the hero, moved and reused:
+
+| Layer | What | Made by |
+|---|---|---|
+| Ground | one opaque picture of the grass, path and forest floor | the image AI, from `ground_blockout.png` |
+| Ground decals | soil and moss patches, soft shadows | kit pictures and shadows computed from the objects |
+| Objects | the building (cut into depth strips), trees, rocks, plants | kit pictures; the building from the AI |
+| Mist, light shafts | one-colour pictures whose opacity is the brightness of the AI picture | the image AI (white on black) |
+
+Steps, in order, for a map `<id>`:
+
+1. `godot --headless --path . --script res://tools/maps/generate.gd` writes data, scene stub, blockouts and `layered_prompt.md`.
+2. You make the pictures with the prompts and save them in `art_source/maps/<id>/layered/results/`; the file names go into `assets_manifest.json`.
+3. `godot --headless --path . --script res://tools/art/prepare_map_assets.gd -- <id>` cleans the pictures (`SpriteCleanup`: faint pixels removed, nearly opaque pixels made solid, colours under the edge replaced, sheets cut into pieces, shadows computed) and writes `assets/art/maps/<id>/` and the region kit `content/kits/<region>.tres`.
+4. `godot --headless --import`, then `generate.gd` again: `MapPlacer` decides what goes where (seeded by the map id, so the map is dressed the same way every time) and `MapDresser` puts the nodes into the scene. A scene that is already dressed is not touched; `generate.gd -- --redress` replaces only the nodes in the group `generated`.
+5. `godot --path . --script res://tools/render_dressed_map.gd -- <scene> <prefix> <row,col>...` makes engine screenshots with the hero on given cells, to check the drawing order.
+
+Rules that came out of building it:
+
+- **A building is cut into vertical strips of half a cell**, each sorted by the front edge of the footprint below it. One sprite per building is wrong: a recessed gate wall would hide a hero standing in front of it.
+- **A plant that a taller strip would cut is left out**, its patch stays.
+- **A building stands on its footprint only.** The crypt picture has its own stone blocks beside the gate, so the map has no rock cells there.
+- **A building must not stand in the first rows of a map**: its roof needs about 5 rows of height plus 120 px of headroom. The crypt of the first map stands in rows 8 to 10.
+- **Moving a sprite in the editor does not move the blocked cell.** What is walkable comes from the map file only.
+
+Not done yet: the screen-shaped maps replace the diamond M1 maps in the game, but the two M1 maps stay as test fixtures (`tests/fixtures/maps`), so `MapDef.Shape.DIAMOND` is still in use there. Mist and light do not move yet, and nothing is compressed for the phone (texture compression and the phone test come at the end of the slice).

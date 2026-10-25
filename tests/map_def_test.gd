@@ -51,7 +51,7 @@ func test_validate_set_catches_unknown_target_and_bad_entry_cell() -> void:
 
 func test_shipped_start_maps_are_valid_and_connected() -> void:
 	var maps: Dictionary = {}
-	for path: String in ["res://content/maps/start_01.tres", "res://content/maps/start_02.tres"]:
+	for path: String in ["res://tests/fixtures/maps/start_01.tres", "res://tests/fixtures/maps/start_02.tres"]:
 		var map: MapDef = load(path)
 		assert_object(map).is_not_null()
 		maps[map.id] = map
@@ -224,3 +224,11 @@ func test_a_diagonal_step_along_the_edge_of_a_drop_is_allowed() -> void:
 	map.heights[Vector2i(2, 1)] = 0
 	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_true()
 	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_true()
+
+
+func test_the_game_catalog_lists_valid_connected_maps_with_scenes() -> void:
+	var catalog: MapCatalog = load("res://content/maps/catalog.tres")
+	assert_bool(catalog.ids().has("map.gluchobor.02_02")).is_true()
+	assert_array(MapDef.validate_set(catalog.load_maps())).is_empty()
+	for map_id: String in catalog.ids():
+		assert_bool(ResourceLoader.exists(catalog.scenes[map_id])).is_true()

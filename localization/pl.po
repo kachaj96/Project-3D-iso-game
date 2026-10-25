@@ -12,3 +12,6 @@ msgstr "Witaj w Overthune. Ścieżka na wschód prowadzi na następną polanę."
 
 msgid "ui.popup.close"
 msgstr "Zamknij"
+
+msgid "map.gluchobor.02_02.title"
+msgstr "Leśna Krypta"

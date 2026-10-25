@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MapKit" format=3]
+
+[ext_resource type="Script" path="res://src/content/map_kit.gd" id="1_aedn1"]
+
+[resource]
+script = ExtResource("1_aedn1")
+region = "gluchobor"
+trees = Array[String](["res://assets/art/kits/gluchobor/trees/tree_01.png", "res://assets/art/kits/gluchobor/trees/tree_02.png", "res://assets/art/kits/gluchobor/trees/tree_03.png"])
+plants = Array[String](["res://assets/art/kits/gluchobor/plants/plant_01.png", "res://assets/art/kits/gluchobor/plants/plant_02.png", "res://assets/art/kits/gluchobor/plants/plant_03.png", "res://assets/art/kits/gluchobor/plants/plant_04.png", "res://assets/art/kits/gluchobor/plants/plant_05.png", "res://assets/art/kits/gluchobor/plants/plant_06.png", "res://assets/art/kits/gluchobor/plants/plant_07.png", "res://assets/art/kits/gluchobor/plants/plant_08.png", "res://assets/art/kits/gluchobor/plants/plant_09.png", "res://assets/art/kits/gluchobor/plants/plant_10.png", "res://assets/art/kits/gluchobor/plants/plant_11.png", "res://assets/art/kits/gluchobor/plants/plant_12.png"])
+rocks = Array[String](["res://assets/art/kits/gluchobor/rocks/rock_01.png", "res://assets/art/kits/gluchobor/rocks/rock_02.png", "res://assets/art/kits/gluchobor/rocks/rock_03.png", "res://assets/art/kits/gluchobor/rocks/rock_04.png", "res://assets/art/kits/gluchobor/rocks/rock_05.png", "res://assets/art/kits/gluchobor/rocks/rock_06.png", "res://assets/art/kits/gluchobor/rocks/rock_07.png", "res://assets/art/kits/gluchobor/rocks/rock_08.png", "res://assets/art/kits/gluchobor/rocks/rock_09.png"])
+patches = Array[String](["res://assets/art/kits/gluchobor/patches/patch_01.png", "res://assets/art/kits/gluchobor/patches/patch_02.png", "res://assets/art/kits/gluchobor/patches/patch_03.png", "res://assets/art/kits/gluchobor/patches/patch_04.png", "res://assets/art/kits/gluchobor/patches/patch_05.png", "res://assets/art/kits/gluchobor/patches/patch_06.png", "res://assets/art/kits/gluchobor/patches/patch_07.png", "res://assets/art/kits/gluchobor/patches/patch_08.png", "res://assets/art/kits/gluchobor/patches/patch_09.png", "res://assets/art/kits/gluchobor/patches/patch_10.png"])

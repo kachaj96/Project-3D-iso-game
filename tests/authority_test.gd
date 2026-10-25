@@ -9,7 +9,7 @@ var _maps: Dictionary
 
 func before_test() -> void:
 	_maps = {}
-	for path: String in ["res://content/maps/start_01.tres", "res://content/maps/start_02.tres"]:
+	for path: String in ["res://tests/fixtures/maps/start_01.tres", "res://tests/fixtures/maps/start_02.tres"]:
 		var map: MapDef = load(path)
 		_maps[map.id] = map
 	_authority = Authority.new(_maps, 1234)

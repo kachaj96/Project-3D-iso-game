@@ -67,3 +67,17 @@ func pick_cell(pixel: Vector2, map: MapDef) -> Vector2i:
 		if map.is_in_bounds(candidate) and map.height_at(candidate) == level:
 			return candidate
 	return pixel_to_cell(pixel)
+
+
+## The rectangle of pixels that holds a whole map, for the camera limits. A screen-shaped map is
+## a plain rectangle (see MapLayout) with room above for its highest level, because a character
+## standing on high ground is drawn that far up.
+func bounds_of(map: MapDef) -> Rect2:
+	if map.shape == MapDef.Shape.DIAMOND:
+		return map_pixel_bounds(map.size)
+	var size: Vector2 = MapLayout.pixel_size(map.size.x, map.size.y)
+	var top_level: int = 0
+	for level: int in map.heights.values():
+		top_level = maxi(top_level, level)
+	var lift: float = level_lift(top_level)
+	return Rect2(0.0, -lift, size.x, size.y + lift)

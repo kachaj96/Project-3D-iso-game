@@ -76,3 +76,17 @@ Verdict: fine to merge. Fixed right away: a prop's `kind` is now validated. Left
 - Text box keeps its language if the language is switched while it is open. Handle with the live language switch in M4.
 - Android Back button while a text box is open should close the box, not leave the game. M4, with menus.
 - The way to a sign is chosen by fewest steps, not by exact distance, so a diagonal detour can win a tie. Not noticeable now; revisit only if it looks odd.
+
+## Map generator review notes (Opus, 2026-10-25)
+
+Verdict: fine to merge after one fix. Fixed right away: plants in front of trees beside a building were not checked against the building strips and could be cut by a strip edge (now checked like the plants at the building, with a test). Left for later:
+
+| # | Finding | When | Status |
+|---|---|---|---|
+| 1 | **Memory and quality on the phone.** One map is about 42 MB of uncompressed textures: ground, building, mist and light are full-screen pictures of about 6 MB each, kit pieces keep the full AI resolution although they are drawn at 25 to 45 % of it, and there are no mipmaps, so foliage can shimmer when the camera moves. Fix in `prepare_map_assets.gd`: scale kit pieces down to what zoom 1.6 needs, mist and light to half resolution, VRAM compression (ETC2/ASTC) for Android. Measure before and after. | M2 phone test | open |
+| 2 | **Big pictures in plain git.** `assets/` is in normal git (by the rule in `.gitattributes`). Every new version of a ground or building picture adds megabytes to the history for good. Decide whether `assets/art/**` moves to Git LFS before maps 2 and 3 (your decision; it changes the repository rule). | before maps 2 and 3 | open, your decision |
+| 3 | `generate.gd` dresses only the building symbol `B` (written in the code). | when a second building type appears | open |
+| 4 | The game stops without a readable message if the catalog lacks a map or a scene path (a test keeps the real catalog valid). | M4, with error screens | open |
+| 5 | `MapSpec` prints untyped-Variant warnings. | any time | open |
+| 6 | The dressing seed is the built-in hash of the map id; another Godot version could change it. It only affects dressing again, not the game. | if it ever happens | open |
+| 7 | The script parse check sometimes fails on a random test file right after new pictures were added, before they were imported. Probably a race with the import; CI imports first and is not affected. Not confirmed. | watch | open |

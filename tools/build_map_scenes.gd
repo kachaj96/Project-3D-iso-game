@@ -20,8 +20,8 @@ const STONE: Vector2i = Vector2i(3, 0)
 const LOG: Vector2i = Vector2i(4, 0)
 
 const MAPS: Dictionary = {
-	"res://content/maps/start_01.tres": "res://scenes/world/map_start_01.tscn",
-	"res://content/maps/start_02.tres": "res://scenes/world/map_start_02.tscn",
+	"res://tests/fixtures/maps/start_01.tres": "res://tests/fixtures/maps/map_start_01.tscn",
+	"res://tests/fixtures/maps/start_02.tres": "res://tests/fixtures/maps/map_start_02.tscn",
 }
 
 

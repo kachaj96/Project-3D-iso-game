@@ -10,7 +10,9 @@ signal map_shown(map_id: String)
 
 ## In solo play this device is always seat 1. In co-op the host will assign seats.
 const LOCAL_PLAYER_ID: String = "player:1"
-const START_MAP_ID: String = "map.start.01"
+## The map the game starts on and the catalog the maps come from (written by tools/maps/generate.gd).
+const START_MAP_ID: String = "map.gluchobor.02_02"
+const CATALOG_PATH: String = "res://content/maps/catalog.tres"
 const RNG_SEED: int = 20261024
 ## Height of one block in pixels. Obstacles are drawn one block higher than the ground.
 const BLOCK_HEIGHT: int = 64
@@ -18,12 +20,10 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/world/player_actor.tscn"
 const MARKER_SCENE: PackedScene = preload("res://scenes/world/tap_marker.tscn")
 const POPUP_SCENE: PackedScene = preload("res://scenes/ui/text_popup.tscn")
 
-## Map id -> where its data and painted scene live.
-const MAP_FILES: Dictionary = {
-	"map.start.01": {"def": "res://content/maps/start_01.tres", "scene": "res://scenes/world/map_start_01.tscn"},
-	"map.start.02": {"def": "res://content/maps/start_02.tres", "scene": "res://scenes/world/map_start_02.tscn"},
-}
 
+## Tests start the world on a small fixture world instead of the real one.
+@export var catalog_path: String = CATALOG_PATH
+@export var start_map_id: String = START_MAP_ID
 @export var walk_speed: float = 360.0:
 	set(value):
 		walk_speed = value
@@ -32,6 +32,7 @@ const MAP_FILES: Dictionary = {
 
 var _grid: GridMath = GridMath.new()
 var _maps: Dictionary = {}
+var _catalog: MapCatalog
 var _session: GameSession
 var _map_root: Node2D
 var _ground: TileMapLayer
@@ -47,8 +48,8 @@ var _busy: bool = false
 
 
 func _ready() -> void:
-	for map_id: String in MAP_FILES:
-		_maps[map_id] = load(MAP_FILES[map_id]["def"])
+	_catalog = load(catalog_path)
+	_maps = _catalog.load_maps()
 	var problems: Array[String] = MapDef.validate_set(_maps)
 	if not problems.is_empty():
 		# An assert would be removed from exported builds, so report the error ourselves.
@@ -70,7 +71,7 @@ func _ready() -> void:
 	_session = local
 	_session.events_emitted.connect(_on_events)
 	# Until saves exist (M4) every start creates a new character.
-	local.start(CharacterState.generate_character_id(), START_MAP_ID)
+	local.start(CharacterState.generate_character_id(), start_map_id)
 
 
 ## A tap at a world (not screen) position. A tap on an object (a sign) uses it, any other tap
@@ -164,7 +165,7 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 	if _map_root != null:
 		_map_root.queue_free()
 
-	var scene: PackedScene = load(MAP_FILES[map_id]["scene"])
+	var scene: PackedScene = load(_catalog.scenes[map_id])
 	_map_root = scene.instantiate()
 	add_child(_map_root)
 	_ground = _map_root.get_node("Ground")
@@ -182,7 +183,7 @@ func _show_map(map_id: String, cell: Vector2i) -> void:
 	_map_root.add_child(_marker)
 	_current_map_id = map_id
 	_player.place_at(_grid.cell_to_pixel(cell), _lift_of(cell))
-	_camera.set_map_bounds(_grid.map_pixel_bounds((_maps[map_id] as MapDef).size))
+	_camera.set_map_bounds(_grid.bounds_of(_maps[map_id] as MapDef))
 	_camera.snap_to_target()
 	map_shown.emit(map_id)
 

@@ -6,8 +6,8 @@ var _received: Array[GameEvent]
 
 
 func before_test() -> void:
-	var map: MapDef = load("res://content/maps/start_01.tres")
-	var maps: Dictionary = {map.id: map, "map.start.02": load("res://content/maps/start_02.tres")}
+	var map: MapDef = load("res://tests/fixtures/maps/start_01.tres")
+	var maps: Dictionary = {map.id: map, "map.start.02": load("res://tests/fixtures/maps/start_02.tres")}
 	_session = LocalSession.new(Authority.new(maps, 1), "player:1")
 	_received = []
 	_session.events_emitted.connect(func(events: Array[GameEvent]) -> void: _received.append_array(events))

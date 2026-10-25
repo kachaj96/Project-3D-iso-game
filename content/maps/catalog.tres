@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MapCatalog" format=3]
+
+[ext_resource type="Script" path="res://src/content/map_catalog.gd" id="1_cpvxk"]
+
+[resource]
+script = ExtResource("1_cpvxk")
+defs = Dictionary[String, String]({
+"map.gluchobor.02_02": "res://content/maps/gluchobor/02_02.tres"
+})
+scenes = Dictionary[String, String]({
+"map.gluchobor.02_02": "res://scenes/world/maps/gluchobor/02_02.tscn"
+})
