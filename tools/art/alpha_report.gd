@@ -27,23 +27,28 @@ func _init() -> void:
 	image.convert(Image.FORMAT_RGBA8)
 	var total: int = image.get_width() * image.get_height()
 	var clear: int = 0
-	var partial: int = 0
+	var edge: int = 0
+	var almost: int = 0
 	var magenta: int = 0
 	for y: int in image.get_height():
 		for x: int in image.get_width():
 			var colour: Color = image.get_pixel(x, y)
 			if colour.a < 0.01:
 				clear += 1
+			elif colour.a < 0.9:
+				edge += 1
 			elif colour.a < 0.99:
-				partial += 1
+				almost += 1
 			elif colour.r > 1.0 - MAGENTA_TOLERANCE and colour.b > 1.0 - MAGENTA_TOLERANCE and colour.g < MAGENTA_TOLERANCE:
 				magenta += 1
 	print("File: %s" % args[0])
 	print("Size: %d x %d, Godot format id %s, alpha channel present: %s" % [image.get_width(), image.get_height(), original_format, had_alpha])
-	print("Fully transparent: %.1f%%   Half transparent (edges): %.1f%%   Magenta key colour: %.1f%%" % [100.0 * clear / total, 100.0 * partial / total, 100.0 * magenta / total])
+	print("Fully transparent: %.1f%%   Soft edges (alpha 0.01 to 0.9): %.1f%%   Almost opaque (0.9 to 0.99): %.1f%%   Magenta key colour: %.1f%%" % [100.0 * clear / total, 100.0 * edge / total, 100.0 * almost / total, 100.0 * magenta / total])
 	print("Checkerboard painted in the corner: %s" % ("LOOKS LIKE YES" if _looks_like_checkerboard(image) else "no"))
 	if clear > 0:
 		print("Verdict: real transparency, the background can be used as it is.")
+		if almost > edge * 5:
+			print("Note: most of the object is slightly see-through (alpha 0.9 to 0.99). Raise it to fully opaque in the cleanup step.")
 	elif magenta > 0:
 		print("Verdict: no transparency, but a magenta key background: use the key colour cleanup.")
 	else:
