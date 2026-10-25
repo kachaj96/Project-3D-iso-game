@@ -197,3 +197,32 @@ func test_a_full_10_by_20_map_parses() -> void:
 	var spec: MapSpec = MapSpec.parse(text)
 	assert_array(spec.errors).is_empty()
 	assert_int(spec.grid.size()).is_equal(20)
+
+
+func test_low_object_and_wall_symbols_are_solid_and_known() -> void:
+	var text: String = VALID.replace("0 0 1 1\n 0 1 2", "0 0 1 1\n 0 1 2").replace(". . = .\n . = 1", ". C W V\n . = 1")
+	var spec: MapSpec = MapSpec.parse(text)
+	assert_array(spec.errors).is_empty()
+	for col: int in [1, 2, 3]:
+		assert_bool(spec.is_walkable(0, col)).is_false()
+
+
+func test_theme_and_lights_are_read_and_checked() -> void:
+	var text: String = VALID.replace("size: 4x4", "size: 4x4\ntheme: dark_interior") + "lights:\ntorch 1 1\ntorch 3 2\n"
+	var spec: MapSpec = MapSpec.parse(text)
+	assert_array(spec.errors).is_empty()
+	assert_str(spec.theme).is_equal("dark_interior")
+	assert_int(spec.lights.size()).is_equal(2)
+	assert_str(spec.lights[1]["kind"]).is_equal("torch")
+	assert_int(spec.lights[1]["col"]).is_equal(2)
+	assert_str(MapSpec.parse(VALID).theme).is_equal("forest")
+	assert_bool(_has_error(MapSpec.parse(VALID.replace("size: 4x4", "size: 4x4\ntheme: neon")), "unknown theme")).is_true()
+	assert_bool(_has_error(MapSpec.parse(VALID + "lights:\ntorch 9 9\n"), "outside the map")).is_true()
+	assert_bool(_has_error(MapSpec.parse(VALID + "lights:\nlamp 1 1\n"), "unknown light kind")).is_true()
+	assert_bool(_has_error(MapSpec.parse(VALID + "lights:\ntorch one\n"), "a light line looks like")).is_true()
+
+
+func test_an_inspect_prop_is_a_valid_prop_kind() -> void:
+	var spec: MapSpec = MapSpec.parse(VALID.replace("1 prop sign prop.hollow.04_07.sign sign.hollow.04_07.sign", "1 prop inspect prop.hollow.04_07.blood inspect.hollow.04_07.blood"))
+	assert_array(spec.errors).is_empty()
+	assert_str(spec.props[0]["kind"]).is_equal("inspect")

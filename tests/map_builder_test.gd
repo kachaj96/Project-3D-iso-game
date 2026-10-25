@@ -174,3 +174,14 @@ func test_a_world_of_coordinates_off_the_map_is_reported() -> void:
 	# The left edge of column 0 would lead to column -1.
 	var builder: MapBuilder = _build("map.test.00_00", _specs(MAP_A_WITH_ENTRY.replace(". @ = >", "> @ = ."), MAP_B))
 	assert_bool(_has_error(builder, "needs an id like")).is_true()
+
+
+func test_a_low_object_and_walls_are_blocked_cells() -> void:
+	var text: String = MAP_A_WITH_ENTRY.replace(". . = .
+ . # 1", ". . C W
+ V # 1")
+	var spec: MapSpec = MapSpec.parse(text)
+	assert_array(spec.errors).is_empty()
+	var map: MapDef = MapBuilder.build(spec, {spec.id: spec, "map.test.01_00": MapSpec.parse(MAP_B)}).map
+	for col: int in [2, 3]:
+		assert_bool(map.is_blocked(MapLayout.cell_from_row_col(0, col))).is_true()

@@ -18,18 +18,24 @@ extends RefCounted
 ##   entries:
 ##   from_inside 1 1
 
-const GROUND_SYMBOLS: String = ".,=@>#TB~SL"
+## C is a low object (a coffin, an altar), W and V are tall wall pieces. All three are solid and get their own picture (see MapFootprint).
+const GROUND_SYMBOLS: String = ".,=@>#TB~SLCWV"
 const WALKABLE_SYMBOLS: String = ".,=@>SL"
 const MAX_HEIGHT: int = 7
 const ID_PATTERN: String = "^map(\\.[a-z0-9_]+)+$"
 const PROP_ID_PATTERN: String = "^prop(\\.[a-z0-9_]+)+$"
 const NAME_PATTERN: String = "^[a-z][a-z0-9_]*$"
 const LINK_KINDS: Array[String] = ["door", "stairs", "ladder"]
-const SECTIONS: Array[String] = ["grid:", "heights:", "markers:", "entries:"]
+const SECTIONS: Array[String] = ["grid:", "heights:", "markers:", "entries:", "lights:"]
+## The mood of a map: the prompts and the darkness of the scene follow it.
+const THEMES: Array[String] = ["forest", "dark_interior"]
+const LIGHT_KINDS: Array[String] = ["torch"]
 
 var id: String = ""
 var region: String = ""
 var title_key: String = ""
+## "forest" (default) or "dark_interior".
+var theme: String = "forest"
 var columns: int = 0
 var rows: int = 0
 ## One string per row, spaces removed.
@@ -42,6 +48,8 @@ var props: Array[Dictionary] = []
 var links: Array[Dictionary] = []
 ## {"name", "row", "col"}: where a character appears when it arrives from another map
 var entries: Array[Dictionary] = []
+## {"kind", "row", "col"}: lights that stand on or beside a cell (a torch on a wall)
+var lights: Array[Dictionary] = []
 var errors: Array[String] = []
 
 
@@ -112,6 +120,8 @@ func _read(text: String) -> void:
 				_read_marker(line, line_number)
 			"entries":
 				_read_entry(line, line_number)
+			"lights":
+				_read_light(line, line_number)
 
 
 func _read_header(line: String, line_number: int) -> void:
@@ -128,6 +138,8 @@ func _read_header(line: String, line_number: int) -> void:
 			region = value
 		"title_key":
 			title_key = value
+		"theme":
+			theme = value
 		"size":
 			var parts: PackedStringArray = value.split("x")
 			if parts.size() != 2 or not parts[0].is_valid_int() or not parts[1].is_valid_int():
@@ -164,6 +176,14 @@ func _read_entry(line: String, line_number: int) -> void:
 	entries.append({"name": tokens[0], "row": int(tokens[1]), "col": int(tokens[2])})
 
 
+func _read_light(line: String, line_number: int) -> void:
+	var tokens: PackedStringArray = line.split(" ", false)
+	if tokens.size() != 3 or not tokens[1].is_valid_int() or not tokens[2].is_valid_int():
+		_error(line_number, "a light line looks like '<kind> <row> <column>', got '%s'" % line)
+		return
+	lights.append({"kind": tokens[0], "row": int(tokens[1]), "col": int(tokens[2])})
+
+
 func _marker_declared(marker: String) -> bool:
 	for prop: Dictionary in props:
 		if prop["marker"] == marker:
@@ -195,6 +215,7 @@ func _check() -> void:
 	_check_heights()
 	_check_markers()
 	_check_entries()
+	_check_theme_and_lights()
 
 
 ## Number of rows and the length of every row.
@@ -273,3 +294,13 @@ func _check_entries() -> void:
 			_error(0, "entry '%s' at row %d column %d is outside the map" % [entry["name"], entry["row"], entry["col"]])
 		elif not is_walkable(entry["row"], entry["col"]):
 			_error(0, "entry '%s' must stand on a walkable cell" % entry["name"])
+
+
+func _check_theme_and_lights() -> void:
+	if not THEMES.has(theme):
+		_error(0, "unknown theme '%s', allowed: %s" % [theme, ", ".join(THEMES)])
+	for light: Dictionary in lights:
+		if not LIGHT_KINDS.has(light["kind"]):
+			_error(0, "unknown light kind '%s'" % light["kind"])
+		if not MapLayout.has_row_col(columns, rows, light["row"] as int, light["col"] as int):
+			_error(0, "light '%s' at row %d column %d is outside the map" % [light["kind"], light["row"], light["col"]])

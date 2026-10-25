@@ -22,13 +22,15 @@ const DOOR: Color = Color(0.7, 0.4, 0.9, 1.0)
 const ROCK: Color = Color(0.5, 0.5, 0.55, 1.0)
 const TREE: Color = Color(0.15, 0.4, 0.2, 1.0)
 const BUILDING: Color = Color(0.6, 0.38, 0.25, 1.0)
+const COFFIN: Color = Color(0.45, 0.2, 0.2, 1.0)
+const WALL: Color = Color(0.45, 0.45, 0.6, 1.0)
 const WATER: Color = Color(0.15, 0.3, 0.5, 1.0)
 const PROP: Color = Color(0.95, 0.4, 0.7, 1.0)
 const SPAWN_DOT: Color = Color(1.0, 1.0, 1.0, 1.0)
 const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 
 ## Heights in project pixels (before SCALE) of obstacle blocks standing on a cell.
-const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
+const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160, "C": 48, "W": 224, "V": 224}
 const PROP_HEIGHT: int = 64
 const CLUSTER_MARGIN: int = int(MapFootprint.CLUSTER_MARGIN) * SCALE
 const CLUSTER_HEADROOM: int = int(MapFootprint.CLUSTER_HEADROOM) * SCALE
@@ -227,6 +229,10 @@ static func _obstacle_colour(spec: MapSpec, symbol: String) -> Color:
 			return TREE
 		"B":
 			return BUILDING
+		"C":
+			return COFFIN
+		"W", "V":
+			return WALL
 	return PROP
 
 

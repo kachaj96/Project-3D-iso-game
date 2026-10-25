@@ -16,7 +16,7 @@ extends RefCounted
 ##                      the opposite edge of the neighbour, at the same row (left and right
 ##                      edges) or the same column (top and bottom edges).
 
-const BLOCKING_SYMBOLS: String = "#TB~"
+const BLOCKING_SYMBOLS: String = "#TB~CWV"
 const COORDINATE_ID_PATTERN: String = "^map\\.([a-z0-9_]+)\\.(\\d{2})_(\\d{2})$"
 
 var map: MapDef
