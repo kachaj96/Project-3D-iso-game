@@ -17,6 +17,8 @@ const EXIT_KINDS: Array[String] = ["edge", "door", "stairs", "ladder"]
 
 @export var id: String = ""
 @export var region: String = ""
+## The mood of the map ("forest", "dark_interior"), from the map file. The scene darkens itself by it.
+@export var theme: String = "forest"
 @export var shape: Shape = Shape.DIAMOND
 @export var size: Vector2i = Vector2i(12, 12)
 ## Where a new character appears on this map.

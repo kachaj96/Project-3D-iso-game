@@ -37,6 +37,7 @@ func _build(spec: MapSpec, specs: Dictionary) -> void:
 	map = MapDef.new()
 	map.id = spec.id
 	map.region = spec.region
+	map.theme = spec.theme
 	map.shape = MapDef.Shape.SCREEN
 	map.size = Vector2i(spec.columns, spec.rows)
 	for row: int in spec.rows:

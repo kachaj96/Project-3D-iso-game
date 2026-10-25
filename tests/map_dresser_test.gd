@@ -118,3 +118,75 @@ func test_a_dressed_scene_can_be_saved_and_loaded_with_its_generated_group() -> 
 	var plant: Sprite2D = copy.get_node("%s/plant_001" % MapDresser.DRESSING)
 	assert_bool(plant.is_in_group(MapDresser.GENERATED_GROUP)).is_true()
 	assert_vector(plant.position).is_equal(Vector2(20.0, 100.0))
+
+
+const CHAMBER_SPEC: String = "res://content/map_specs/gluchobor/02_02.in01.txt"
+
+
+func _chamber() -> MapSpec:
+	var spec: MapSpec = MapSpec.parse(FileAccess.get_file_as_string(CHAMBER_SPEC))
+	assert_array(spec.errors).is_empty()
+	return spec
+
+
+func test_torch_positions_come_from_the_lights_section_above_the_wall_cell() -> void:
+	var spec: MapSpec = _chamber()
+	var positions: Array[Vector2] = MapPlacer.torch_positions(spec)
+	assert_int(positions.size()).is_equal(4)
+	var first: Dictionary = spec.lights[0]
+	var expected: Vector2 = MapLayout.pixel_center(first["row"] as int, first["col"] as int) + Vector2(0.0, MapPlacer.TORCH_HEIGHT)
+	assert_vector(positions[0]).is_equal(expected)
+
+
+func test_a_dark_room_gets_darkness_and_flickering_torches() -> void:
+	var spec: MapSpec = _chamber()
+	var root: Node2D = _stub(spec)
+	MapDresser.dress_mood(root, spec.theme, MapPlacer.torch_positions(spec))
+	var darkness: CanvasModulate = root.get_node("Darkness")
+	assert_object(darkness.color).is_equal(MapTheme.darkness(MapTheme.DARK_INTERIOR))
+	var torches: Array[Node] = root.get_node("Lights").get_children().filter(func(node: Node) -> bool: return node is TorchFlicker)
+	assert_int(torches.size()).is_equal(4)
+	var torch: TorchFlicker = torches[0]
+	assert_bool(torch.is_in_group(MapDresser.GENERATED_GROUP)).is_true()
+	assert_float(torch.color.r).is_greater(torch.color.b)
+	# The radius on screen is the radius of the theme.
+	assert_float(torch.texture.get_width() / 2.0 * torch.texture_scale).is_equal_approx(MapTheme.torch_radius(), 0.5)
+
+
+func test_the_mood_is_replaced_not_doubled_when_dressed_again() -> void:
+	var spec: MapSpec = _chamber()
+	var root: Node2D = _stub(spec)
+	for round_number: int in 2:
+		MapDresser.dress_mood(root, spec.theme, MapPlacer.torch_positions(spec))
+	var darkness_nodes: int = 0
+	for node: Node in root.get_children():
+		if node is CanvasModulate:
+			darkness_nodes += 1
+	assert_int(darkness_nodes).is_equal(1)
+	assert_int(root.get_node("Lights").get_child_count()).is_equal(4)
+
+
+func test_a_forest_map_gets_no_darkness_and_loses_an_old_one() -> void:
+	var spec: MapSpec = _spec()
+	var root: Node2D = _stub(spec)
+	MapDresser.dress_mood(root, MapTheme.DARK_INTERIOR, [Vector2(10.0, 10.0)])
+	assert_object(root.get_node_or_null("Darkness")).is_not_null()
+	MapDresser.dress_mood(root, MapTheme.FOREST, [])
+	assert_object(root.get_node_or_null("Darkness")).is_null()
+	assert_int(root.get_node("Lights").get_child_count()).is_equal(0)
+
+
+func test_a_torch_flickers_between_its_base_and_a_dimmer_light() -> void:
+	var torch: TorchFlicker = auto_free(TorchFlicker.new())
+	torch.base_energy = 1.0
+	torch.flicker = 0.3
+	add_child(torch)
+	var lowest: float = 10.0
+	var highest: float = 0.0
+	for step: int in 400:
+		torch._process(0.02)
+		lowest = minf(lowest, torch.energy)
+		highest = maxf(highest, torch.energy)
+	assert_float(highest).is_less_equal(1.0)
+	assert_float(lowest).is_greater_equal(0.69)
+	assert_float(highest - lowest).is_greater(0.1)

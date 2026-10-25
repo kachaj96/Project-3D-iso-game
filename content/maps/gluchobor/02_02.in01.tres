@@ -29,6 +29,7 @@ text_key = "inspect.gluchobor.02_02.in01.blood"
 script = ExtResource("3_dftml")
 id = "map.gluchobor.02_02.in01"
 region = "gluchobor"
+theme = "dark_interior"
 shape = 1
 size = Vector2i(10, 20)
 spawn_cell = Vector2i(13, 5)

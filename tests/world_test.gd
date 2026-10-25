@@ -215,3 +215,16 @@ func test_on_a_screen_shaped_map_the_camera_never_shows_beyond_the_picture() -> 
 		var view: Rect2 = Rect2(camera.get_screen_center_position() - half_view, half_view * 2.0)
 		assert_bool(picture.grow(1.0).encloses(view)).is_true()
 	assert_bool(map.shape == MapDef.Shape.SCREEN).is_true()
+
+
+func test_the_hero_carries_a_faint_light_only_in_dark_rooms() -> void:
+	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	world.start_map_id = "map.gluchobor.02_02.in01"
+	add_child(world)
+	var aura: PointLight2D = world.get_node("Camera").target.get_node_or_null("Aura")
+	assert_object(aura).is_not_null()
+	assert_bool(aura.enabled).is_true()
+	var forest: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	add_child(forest)
+	var none: Node = forest.get_node("Camera").target.get_node_or_null("Aura")
+	assert_bool(none == null or not (none as PointLight2D).enabled).is_true()

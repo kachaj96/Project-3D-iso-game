@@ -2,6 +2,55 @@
 
 [ext_resource type="TileSet" path="res://content/tilesets/placeholder_iso.tres" id="1_0m0vl"]
 [ext_resource type="Script" path="res://scenes/world/cell_overlay.gd" id="2_00266"]
+[ext_resource type="Script" path="res://scenes/world/torch_flicker.gd" id="2_qijtl"]
+
+[sub_resource type="Gradient" id="Gradient_tk7rv"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_weekn"]
+gradient = SubResource("Gradient_tk7rv")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_v315s"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_w8btj"]
+gradient = SubResource("Gradient_v315s")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_cfwb4"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gcn8w"]
+gradient = SubResource("Gradient_cfwb4")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_j46hs"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_l4h7m"]
+gradient = SubResource("Gradient_j46hs")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="Map" type="Node2D" unique_id=1438102025]
 
@@ -25,8 +74,39 @@ tile_set = ExtResource("1_0m0vl")
 
 [node name="Lights" type="Node2D" parent="." unique_id=1992549887]
 
+[node name="Torch_01" type="PointLight2D" parent="Lights" unique_id=1472713680 groups=["generated"]]
+position = Vector2(832, 218)
+color = Color(1, 0.55, 0.2, 1)
+texture = SubResource("GradientTexture2D_weekn")
+texture_scale = 2.578125
+script = ExtResource("2_qijtl")
+
+[node name="Torch_02" type="PointLight2D" parent="Lights" unique_id=2116778996 groups=["generated"]]
+position = Vector2(1024, 314)
+color = Color(1, 0.55, 0.2, 1)
+texture = SubResource("GradientTexture2D_w8btj")
+texture_scale = 2.578125
+script = ExtResource("2_qijtl")
+
+[node name="Torch_03" type="PointLight2D" parent="Lights" unique_id=2056835851 groups=["generated"]]
+position = Vector2(448, 218)
+color = Color(1, 0.55, 0.2, 1)
+texture = SubResource("GradientTexture2D_gcn8w")
+texture_scale = 2.578125
+script = ExtResource("2_qijtl")
+
+[node name="Torch_04" type="PointLight2D" parent="Lights" unique_id=16356734 groups=["generated"]]
+position = Vector2(320, 282)
+color = Color(1, 0.55, 0.2, 1)
+texture = SubResource("GradientTexture2D_l4h7m")
+texture_scale = 2.578125
+script = ExtResource("2_qijtl")
+
 [node name="CellOverlay" type="Node2D" parent="." unique_id=1863036259]
 visible = false
 z_index = 100
 script = ExtResource("2_00266")
 map_path = "res://content/maps/gluchobor/02_02.in01.tres"
+
+[node name="Darkness" type="CanvasModulate" parent="." unique_id=973349245 groups=["generated"]]
+color = Color(0.2, 0.22, 0.3, 1)

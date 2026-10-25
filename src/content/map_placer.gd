@@ -22,6 +22,8 @@ const ORIGIN_CENTRE: Vector2 = Vector2(0.5, 0.5)
 const ORIGIN_ROCK: Vector2 = Vector2(0.5, 0.9)
 ## Plants are skipped when a taller part of the building would cut them at a strip edge.
 const PLANT_CLEARANCE: float = 3.0
+## A torch hangs this far above the ground centre of its wall cell (negative is up on screen).
+const TORCH_HEIGHT: float = -70.0
 
 
 class Placement extends RefCounted:
@@ -237,3 +239,13 @@ static func _is_clear(plant: Placement, sizes: Dictionary, strips: Array[Placeme
 		if overlaps_x and overlaps_y:
 			return false
 	return true
+
+
+## Where the torches of a map hang, in project pixels: the middle of the wall cell, a little above the
+## ground and a little towards the room, so that the pool of light falls on the floor beside the wall.
+static func torch_positions(spec: MapSpec) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	for light: Dictionary in spec.lights:
+		if light["kind"] == "torch":
+			positions.append(MapLayout.pixel_center(light["row"] as int, light["col"] as int) + Vector2(0.0, TORCH_HEIGHT))
+	return positions

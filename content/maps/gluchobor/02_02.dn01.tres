@@ -15,6 +15,7 @@ target_entry_cell = Vector2i(9, -1)
 script = ExtResource("3_k8wkh")
 id = "map.gluchobor.02_02.dn01"
 region = "gluchobor"
+theme = "dark_interior"
 shape = 1
 size = Vector2i(10, 20)
 spawn_cell = Vector2i(13, 5)
