@@ -1,0 +1,93 @@
+extends SceneTree
+## The map generator. Reads every map file in content/map_specs, checks the whole set and
+## writes the game data. Run it after changing a map file:
+##
+##   godot --headless --path . --script res://tools/maps/generate.gd
+##
+## Writes (always): content/maps/<region>/<cc>_<rr>.tres for every map and content/maps/catalog.tres.
+## Writes (only when missing): scenes/world/maps/<region>/<cc>_<rr>.tscn, the scene you edit by
+## hand. An existing scene is never touched.
+## With errors nothing is written and the exit code is 1.
+
+const SPECS_DIR: String = "res://content/map_specs"
+const CATALOG_PATH: String = "res://content/maps/catalog.tres"
+const LANGUAGES: Array[String] = ["en", "pl"]
+
+
+func _init() -> void:
+	var texts: Dictionary = {}
+	for path: String in _find_files(SPECS_DIR, ".txt"):
+		texts[path.trim_prefix(SPECS_DIR + "/")] = FileAccess.get_file_as_string(path)
+	if texts.is_empty():
+		push_error("No map files found in " + SPECS_DIR)
+		quit(1)
+		return
+	var generator: MapGenerator = MapGenerator.run(texts, _translation_keys())
+	for warning: String in generator.warnings:
+		print("WARNING: " + warning)
+	if not generator.is_valid():
+		for error: String in generator.errors:
+			printerr("ERROR: " + error)
+		printerr("%d error(s). Nothing was written." % generator.errors.size())
+		quit(1)
+		return
+	var tile_set: TileSet = load(MapSceneStub.TILE_SET_PATH)
+	for map_id: String in generator.maps:
+		var map: MapDef = generator.maps[map_id]
+		if not _save(map, MapGenerator.def_path(map_id)):
+			return
+		var scene_path: String = MapGenerator.scene_path(map_id)
+		if FileAccess.file_exists(scene_path):
+			print("kept your scene: " + scene_path)
+		elif not _write_scene(map, tile_set, scene_path):
+			return
+	if not _save(generator.build_catalog(), CATALOG_PATH):
+		return
+	print("Generated %d map(s)." % generator.maps.size())
+	quit(0)
+
+
+func _save(resource: Resource, path: String) -> bool:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
+	var error: Error = ResourceSaver.save(resource, path)
+	if error != OK:
+		printerr("Cannot save %s: %s" % [path, error_string(error)])
+		quit(1)
+		return false
+	print("wrote " + path)
+	return true
+
+
+func _write_scene(map: MapDef, tile_set: TileSet, scene_path: String) -> bool:
+	var root: Node2D = MapSceneStub.build(map, MapGenerator.def_path(map.id), tile_set)
+	var packed: PackedScene = PackedScene.new()
+	packed.pack(root)
+	root.free()
+	return _save(packed, scene_path)
+
+
+## Every file with this ending under a directory, sorted.
+func _find_files(directory: String, ending: String) -> Array[String]:
+	var found: Array[String] = []
+	var dir: DirAccess = DirAccess.open(directory)
+	if dir == null:
+		return found
+	for entry: String in dir.get_directories():
+		found.append_array(_find_files(directory + "/" + entry, ending))
+	for file: String in dir.get_files():
+		if file.ends_with(ending):
+			found.append(directory + "/" + file)
+	found.sort()
+	return found
+
+
+## Language -> translation keys, from the .po files in localization/.
+func _translation_keys() -> Dictionary:
+	var keys: Dictionary = {}
+	var regex: RegEx = RegEx.create_from_string("(?m)^msgid \"(.+)\"$")
+	for language: String in LANGUAGES:
+		var found: Array[String] = []
+		for match_found: RegExMatch in regex.search_all(FileAccess.get_file_as_string("res://localization/%s.po" % language)):
+			found.append(match_found.get_string(1))
+		keys[language] = found
+	return keys
