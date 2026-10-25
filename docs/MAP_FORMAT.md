@@ -182,3 +182,15 @@ Things to know when drawing a map (from the Opus review of step 2):
 - **The camera does not yet know about levels.** Its limits come from the map on the ground, so a character on a high level at the top edge of a map can be drawn above the camera limit. The generator fixes this by widening the limits by the highest level on the map (7 levels = 224 px).
 
 Still open: the generator (data, catalog, scene stub, blockout picture, prompt), warnings for walkable cells hidden behind high platforms, rewriting the two M1 maps as text files (this removes `DIAMOND`), and the test map.
+
+## 5. Implementation status: the generator (2026-10-25, branch `feature/map-generator`)
+
+Built and tested (G1 to G4):
+
+- `MapBuilder` turns a parsed map file into `MapDef`. Each `>` becomes its own edge exit to the neighbour named by the map id coordinates (same region): left to column - 1, right to column + 1, top to row - 1, bottom to row + 1. The character arrives one step inward from the matching `>` on the opposite edge, in the same row (left and right edges) or the same column (top and bottom edges). A `>` without a partner, or an edge whose neighbour file does not exist, is an error: write `.` on edges that lead nowhere yet. Links (doors, stairs, ladders to another map) arrive at the named `entries:` cell of the target map.
+- `MapChecks`: every walkable cell reachable from the spawn (the same eight-direction walking as in the game), translation keys present in `en` and `pl`, warnings for walkable cells hidden behind a higher platform (stairs and ladders are not reported).
+- `MapGenerator` runs everything on the texts of all map files and writes nothing itself. `tools/maps/generate.gd` reads `content/map_specs/**/*.txt` and writes `content/maps/<region>/<cc>_<rr>.tres`, `content/maps/catalog.tres` (`MapCatalog`), and `art_source/maps/<id>/blockout.png` plus `prompt.md`. The scene `scenes/world/maps/<region>/<cc>_<rr>.tscn` is written only when it does not exist (layers Backdrop, Ground, Objects, Occluders, Effects, Lights, CellOverlay), so your edits are never lost. With errors nothing is written.
+- Run: `godot --headless --path . --script res://tools/maps/generate.gd`. After adding a new script class run `godot --headless --path . --import` once, or the editor, so Godot learns the class name.
+- The blockout is 2560 x 1344 px for a 10 x 20 map: cells as coloured blocks raised by level, rocks, trees and buildings as taller blocks, letters E (exit), D (door), S (stairs), L (ladder), a white dot for the spawn. It is a layout guide for the image AI, not art.
+
+Not done yet (G5 and G6): the two start maps as text files, the world loading maps through the catalog, removing `DIAMOND`, camera limits widened by the highest level.

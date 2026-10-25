@@ -5,6 +5,7 @@ extends SceneTree
 ##   godot --headless --path . --script res://tools/maps/generate.gd
 ##
 ## Writes (always): content/maps/<region>/<cc>_<rr>.tres for every map and content/maps/catalog.tres.
+## Writes (always): art_source/maps/<id>/blockout.png and prompt.md for the image AI.
 ## Writes (only when missing): scenes/world/maps/<region>/<cc>_<rr>.tscn, the scene you edit by
 ## hand. An existing scene is never touched.
 ## With errors nothing is written and the exit code is 1.
@@ -12,6 +13,7 @@ extends SceneTree
 const SPECS_DIR: String = "res://content/map_specs"
 const CATALOG_PATH: String = "res://content/maps/catalog.tres"
 const LANGUAGES: Array[String] = ["en", "pl"]
+const ART_DIR: String = "res://art_source/maps/"
 
 
 func _init() -> void:
@@ -41,6 +43,8 @@ func _init() -> void:
 			print("kept your scene: " + scene_path)
 		elif not _write_scene(map, tile_set, scene_path):
 			return
+		if not _write_art_helpers(generator.specs[map_id] as MapSpec, generator.specs):
+			return
 	if not _save(generator.build_catalog(), CATALOG_PATH):
 		return
 	print("Generated %d map(s)." % generator.maps.size())
@@ -55,6 +59,27 @@ func _save(resource: Resource, path: String) -> bool:
 		quit(1)
 		return false
 	print("wrote " + path)
+	return true
+
+
+## The blockout picture and the prompt for the image AI. Always rewritten: they come only from
+## the map file.
+func _write_art_helpers(spec: MapSpec, specs: Dictionary) -> bool:
+	var directory: String = ART_DIR + spec.id
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
+	var error: Error = MapBlockout.render(spec).save_png(ProjectSettings.globalize_path(directory + "/blockout.png"))
+	if error != OK:
+		printerr("Cannot save the blockout of %s: %s" % [spec.id, error_string(error)])
+		quit(1)
+		return false
+	var prompt: FileAccess = FileAccess.open(directory + "/prompt.md", FileAccess.WRITE)
+	if prompt == null:
+		printerr("Cannot save the prompt of %s" % spec.id)
+		quit(1)
+		return false
+	prompt.store_string(MapPrompt.build(spec, specs))
+	prompt.close()
+	print("wrote " + directory + "/blockout.png and prompt.md")
 	return true
 
 

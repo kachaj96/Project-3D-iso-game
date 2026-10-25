@@ -97,7 +97,7 @@ func _add_links(spec: MapSpec, specs: Dictionary) -> void:
 func _add_edge_exits(spec: MapSpec, specs: Dictionary) -> void:
 	for where: Vector2i in spec.find_symbol(">"):
 		var edge: String = MapLayout.edges_of(spec.columns, spec.rows, where.x, where.y)[0]
-		var target_id: String = _neighbour_id(spec.id, edge)
+		var target_id: String = neighbour_id(spec.id, edge)
 		if target_id.is_empty():
 			errors.append("%s: the exit at row %d column %d needs an id like map.region.04_07 to find its neighbour" % [spec.id, where.x, where.y])
 			continue
@@ -126,7 +126,7 @@ func _entry_cell(spec: MapSpec, entry_name: String) -> Variant:
 
 
 ## The id of the neighbouring map across an edge, or "" when the id has no coordinates.
-static func _neighbour_id(map_id: String, edge: String) -> String:
+static func neighbour_id(map_id: String, edge: String) -> String:
 	var found: RegExMatch = RegEx.create_from_string(COORDINATE_ID_PATTERN).search(map_id)
 	if found == null:
 		return ""

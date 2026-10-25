@@ -31,7 +31,7 @@ static func missing_translations(map_id: String, keys: Array[String], keys_by_la
 
 
 ## Warnings for one map: walkable cells that a higher platform in front of them hides on
-## screen. A hidden place needs the platform to fade out or an occluder (MAP_FORMAT 2.3).
+## screen. Stairs and ladders are left out: they are meant to be seen climbing. A hidden place needs the platform to fade out or an occluder (MAP_FORMAT 2.3).
 static func hidden_cells(map: MapDef) -> Array[String]:
 	var warnings: Array[String] = []
 	var grid: GridMath = GridMath.new()
@@ -40,13 +40,14 @@ static func hidden_cells(map: MapDef) -> Array[String]:
 		if map.height_at(cell) > 0 and map.is_in_bounds(cell):
 			platforms.append(cell)
 	for cell: Vector2i in map.all_cells():
-		if map.is_blocked(cell):
+		if map.is_blocked(cell) or map.kind_at(cell) != "":
 			continue
 		var centre: Vector2 = grid.cell_to_pixel(cell) - Vector2(0.0, grid.level_lift(map.height_at(cell)))
 		for platform: Vector2i in platforms:
 			if _hides(grid, map, platform, cell, centre):
 				var row_col: Vector2i = MapLayout.row_col_from_cell(cell)
-				warnings.append("%s: the walkable cell at row %d column %d is hidden behind the platform at %s" % [map.id, row_col.x, row_col.y, platform])
+				var front: Vector2i = MapLayout.row_col_from_cell(platform)
+				warnings.append("%s: the walkable cell at row %d column %d is hidden behind the platform at row %d column %d" % [map.id, row_col.x, row_col.y, front.x, front.y])
 				break
 	return warnings
 
@@ -63,7 +64,7 @@ static func check_set(maps: Dictionary) -> Array[String]:
 ## True when the wall of `platform` (a prism from the ground up to its level) is drawn in
 ## front of the point `centre` and covers it.
 static func _hides(grid: GridMath, map: MapDef, platform: Vector2i, cell: Vector2i, centre: Vector2) -> bool:
-	if map.height_at(platform) <= map.height_at(cell) or platform == cell:
+	if map.height_at(platform) <= map.height_at(cell) or platform == cell or map.kind_at(platform) != "":
 		return false
 	var ground: Vector2 = grid.cell_to_pixel(platform)
 	if ground.y <= grid.cell_to_pixel(cell).y:
