@@ -109,3 +109,36 @@ static func _along(spec: MapSpec, edge: String, where: Vector2i) -> float:
 	if edge == "top" or edge == "bottom":
 		return where.y / float(maxi(spec.columns - 1, 1))
 	return where.x / float(maxi(spec.rows - 1, 1))
+
+
+## The layered experiment: instead of one backdrop with everything painted in, the ground and
+## the tall objects are painted as separate pictures. Objects come on a flat magenta background
+## that is removed afterwards, so they need no cutting and can be reused on other maps.
+## `style_reference` is the name of the picture you attach for the look.
+static func build_layered(spec: MapSpec) -> String:
+	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * MapBlockout.SCALE
+	var canvas: String = "%d x %d px" % [int(size.x), int(size.y)]
+	var lines: Array[String] = []
+	lines.append("# Layered prompts: %s" % spec.id)
+	lines.append("")
+	lines.append("Four pictures, one prompt each. Attach the blockout named in the heading and also the style reference (the first concept picture, `backdrop_source.png`) so the look stays the same. Paint every picture at the exact size given. Suggested test order: 1, 2 and 4. Picture 3 is the hardest for the image AI (a dense wall of trees); try it last.")
+	lines.append("")
+	lines.append("Rules for all four: strict 2:1 isometric projection exactly like the blockout (a cell is a 2:1 diamond, 256 x 128 px), key light from the top left, thin dark outlines tinted with the object's colour, cel shading in 2 to 3 tones, no text, no hero, no monsters.")
+	lines.append("")
+	lines.append("## 1. Ground (`ground_blockout.png`, %s)" % canvas)
+	lines.append("")
+	lines.append("*Paint only the ground of this map, filling the whole canvas, following the blockout. Light green cells are grass you walk on, tan cells are the path, the dark green cells are forest floor (moss, roots, fallen needles, shadow). No trees, rocks, buildings, signs or any object standing on the ground: those are painted separately. Calm, readable walkable ground. Raised cells (if any) must look raised.*")
+	lines.append("")
+	lines.append("## 2. Buildings in place (`objects_B_blockout.png`, %s)" % canvas)
+	lines.append("")
+	lines.append("*Paint the building shown by the brown blocks, exactly where and as large as the blocks are, on a flat pure magenta background (#FF00FF) that fills everything else. The building stands on the ground, so the bottom edge must follow the base of the blocks. Do not paint ground, grass, shadows on the ground or anything outside the building.*")
+	lines.append("")
+	lines.append("## 3. Trees in place (`objects_T_blockout.png`, %s)" % canvas)
+	lines.append("")
+	lines.append("*Paint conifer trees, one tree on each dark green block, exactly where the blocks are, on a flat pure magenta background (#FF00FF). Trees overlap like a dense forest edge but each trunk stands on its block's base. Vary the trees. No ground, no grass, no ground shadows.*")
+	lines.append("")
+	lines.append("## 4. One tree to reuse (`single_T_blockout.png`, %d x %d px)" % [MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"]).get_width(), MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"]).get_height()])
+	lines.append("")
+	lines.append("*Paint one conifer tree standing on the diamond at the bottom of the blockout, its trunk base at the centre of the diamond, on a flat pure magenta background (#FF00FF). No ground, no shadow on the ground.*")
+	lines.append("")
+	return "\n".join(lines)

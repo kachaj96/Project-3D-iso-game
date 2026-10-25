@@ -79,7 +79,35 @@ func _write_art_helpers(spec: MapSpec, specs: Dictionary) -> bool:
 		return false
 	prompt.store_string(MapPrompt.build(spec, specs))
 	prompt.close()
+	if not _write_layered(spec, directory + "/layered"):
+		return false
 	print("wrote " + directory + "/blockout.png and prompt.md")
+	return true
+
+
+## The layered experiment: ground and objects as separate pictures (see MapPrompt.build_layered).
+func _write_layered(spec: MapSpec, directory: String) -> bool:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
+	var pictures: Dictionary = {
+		"ground_blockout.png": MapBlockout.render_ground(spec),
+		"objects_B_blockout.png": MapBlockout.render_in_place(spec, "B"),
+		"objects_T_blockout.png": MapBlockout.render_in_place(spec, "T"),
+		"single_T_blockout.png": MapBlockout.render_single("T", MapBlockout.OBSTACLE_HEIGHT["T"]),
+	}
+	for file_name: String in pictures:
+		var error: Error = (pictures[file_name] as Image).save_png(ProjectSettings.globalize_path(directory + "/" + file_name))
+		if error != OK:
+			printerr("Cannot save %s: %s" % [file_name, error_string(error)])
+			quit(1)
+			return false
+	var prompt: FileAccess = FileAccess.open(directory + "/layered_prompt.md", FileAccess.WRITE)
+	if prompt == null:
+		printerr("Cannot save the layered prompt of %s" % spec.id)
+		quit(1)
+		return false
+	prompt.store_string(MapPrompt.build_layered(spec))
+	prompt.close()
+	print("wrote " + directory)
 	return true
 
 

@@ -104,3 +104,27 @@ func test_the_prompt_knows_when_the_neighbour_exists() -> void:
 ## Pictures store 8 bits per colour, so compare with a small tolerance.
 func _same(a: Color, b: Color) -> bool:
 	return absf(a.r - b.r) < 0.01 and absf(a.g - b.g) < 0.01 and absf(a.b - b.b) < 0.01
+
+
+func test_the_ground_picture_shows_forest_floor_where_things_stand() -> void:
+	var image: Image = MapBlockout.render_ground(_spec())
+	assert_int(image.get_width()).is_equal(1024)
+	# Row 5 column 1 is a rock: ground only, so forest floor, flat.
+	assert_bool(_same(_pixel(image, 5, 1), MapBlockout.FOREST_FLOOR)).is_true()
+	assert_bool(_same(_pixel(image, 2, 2), MapBlockout.PATH)).is_true()
+
+
+func test_the_objects_in_place_sit_on_a_key_colour_and_only_show_the_asked_symbols() -> void:
+	var image: Image = MapBlockout.render_in_place(_spec(), "#")
+	assert_bool(_same(_pixel(image, 2, 2), MapBlockout.KEY_COLOUR)).is_true()
+	var obstacle_top: int = -MapBlockout.OBSTACLE_HEIGHT["#"] * MapBlockout.SCALE
+	assert_bool(_same(_pixel(image, 5, 1, 0, obstacle_top), MapBlockout.ROCK)).is_true()
+	assert_bool(_same(_pixel(image, 5, 2, 0, -MapBlockout.PROP_HEIGHT * MapBlockout.SCALE), MapBlockout.KEY_COLOUR)).is_true()
+
+
+func test_a_single_object_stands_on_the_bottom_diamond() -> void:
+	var image: Image = MapBlockout.render_single("T", 128)
+	assert_int(image.get_width()).is_equal(256 + 128)
+	assert_int(image.get_height()).is_equal(256 + 128 + 128)
+	assert_bool(_same(image.get_pixel(0, 0), MapBlockout.KEY_COLOUR)).is_true()
+	assert_bool(_same(image.get_pixel(image.get_width() / 2, image.get_height() - 64 - 64 - 256 + 10), MapBlockout.TREE)).is_true()

@@ -30,6 +30,11 @@ const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 ## Heights in project pixels (before SCALE) of obstacle blocks standing on a cell.
 const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
 const PROP_HEIGHT: int = 64
+
+## Layered experiment: the ground picture shows this where obstacles stand, and objects are
+## drawn on this flat key colour so the background can be removed afterwards.
+const FOREST_FLOOR: Color = Color(0.28, 0.4, 0.25, 1.0)
+const KEY_COLOUR: Color = Color(1.0, 0.0, 1.0, 1.0)
 const LABEL_PIXEL: int = 8
 
 ## 3 x 5 pixel letters, one string of 15 characters per glyph (row by row, "#" is ink).
@@ -43,19 +48,71 @@ const GLYPHS: Dictionary = {
 
 ## The picture of one map.
 static func render(spec: MapSpec) -> Image:
+	var image: Image = _canvas(spec, BACKGROUND)
+	for entry: Vector3i in _back_to_front(spec):
+		_draw_cell(image, spec, entry.x, entry.y)
+	return image
+
+
+## Layered experiment, picture 1: the ground only. Cells where something tall stands (rocks,
+## trees, buildings, props) show forest floor, because the objects come as separate pictures.
+## Levels still raise their cells.
+static func render_ground(spec: MapSpec) -> Image:
+	var image: Image = _canvas(spec, BACKGROUND)
+	for entry: Vector3i in _back_to_front(spec):
+		var symbol: String = spec.symbol_at(entry.x, entry.y)
+		var solid: bool = OBSTACLE_HEIGHT.has(symbol) or _is_prop(spec, symbol)
+		var colour: Color = FOREST_FLOOR if solid else _floor_colour(spec, symbol)
+		var level: float = spec.height_at(entry.x, entry.y) * GridMath.LEVEL_HEIGHT * SCALE
+		_draw_block(image, MapLayout.pixel_center(entry.x, entry.y) * SCALE, level, colour.lightened(0.07 * spec.height_at(entry.x, entry.y)))
+	return image
+
+
+## Layered experiment, picture 2: the objects of one kind in place, on a flat key colour.
+## `symbols` are the grid symbols to draw, for example "B" for buildings. The picture has the
+## same size as the ground picture, so what the image AI paints lines up with the map.
+static func render_in_place(spec: MapSpec, symbols: String) -> Image:
+	var image: Image = _canvas(spec, KEY_COLOUR)
+	for entry: Vector3i in _back_to_front(spec):
+		var symbol: String = spec.symbol_at(entry.x, entry.y)
+		if symbols.contains(symbol):
+			var level: float = spec.height_at(entry.x, entry.y) * GridMath.LEVEL_HEIGHT * SCALE
+			var top: Vector2 = MapLayout.pixel_center(entry.x, entry.y) * SCALE - Vector2(0.0, level)
+			_draw_block(image, top, _obstacle_height(spec, symbol) * SCALE, _obstacle_colour(spec, symbol))
+	return image
+
+
+## Layered experiment, picture 3: one object alone on a flat key colour, standing on one cell,
+## for a tree or a rock that is placed many times. `height` is in project pixels.
+static func render_single(symbol: String, height: int) -> Image:
+	var tile_width: int = GridMath.DEFAULT_TILE_WIDTH * SCALE
+	var tile_height: int = GridMath.DEFAULT_TILE_HEIGHT * SCALE
+	var margin: int = 64
+	var image: Image = Image.create(tile_width + 2 * margin, height * SCALE + tile_height + 2 * margin, false, Image.FORMAT_RGBA8)
+	image.fill(KEY_COLOUR)
+	var base: Vector2 = Vector2(image.get_width() / 2.0, image.get_height() - margin - tile_height / 2.0)
+	var colour: Color = TREE if symbol == "T" else (BUILDING if symbol == "B" else ROCK)
+	_draw_block(image, base, height * SCALE, colour)
+	return image
+
+
+static func _canvas(spec: MapSpec, colour: Color) -> Image:
 	var size: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * SCALE
 	var image: Image = Image.create(int(size.x), int(size.y), false, Image.FORMAT_RGBA8)
-	image.fill(BACKGROUND)
+	image.fill(colour)
+	return image
+
+
+## Every cell as Vector3i(row, column, depth), back to front: the cells lowest on the screen
+## are drawn last.
+static func _back_to_front(spec: MapSpec) -> Array[Vector3i]:
 	var cells: Array[Vector3i] = []
 	for row: int in spec.rows:
 		for col: int in spec.grid[row].length():
 			var cell: Vector2i = MapLayout.cell_from_row_col(row, col)
 			cells.append(Vector3i(row, col, cell.x + cell.y))
-	# Back to front: the cells lowest on the screen are drawn last.
 	cells.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return a.z < b.z or (a.z == b.z and a.y < b.y))
-	for entry: Vector3i in cells:
-		_draw_cell(image, spec, entry.x, entry.y)
-	return image
+	return cells
 
 
 static func _draw_cell(image: Image, spec: MapSpec, row: int, col: int) -> void:
