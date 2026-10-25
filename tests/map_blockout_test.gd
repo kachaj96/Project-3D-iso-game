@@ -140,8 +140,9 @@ func test_the_layered_prompts_name_what_to_attach_and_are_ready_to_paste() -> vo
 	assert_str(text).contains("1024 x 448 px")
 	assert_str(text).contains("## 4. Mist")
 	assert_str(text).contains("## 5. Light shafts")
-	# Five prompts, each in its own box.
-	assert_int(text.count("```")).is_equal(10)
+	# Eight prompts, each in its own box.
+	assert_str(text).contains("### 6. Plants sheet").contains("### 7. Rocks and wood sheet").contains("### 8. Ground patches sheet")
+	assert_int(text.count("```")).is_equal(16)
 
 
 func test_the_crypt_cluster_is_cropped_with_headroom_for_the_roof() -> void:
