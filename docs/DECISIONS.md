@@ -157,6 +157,8 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
   - Ladders weigh 3 in the path search, so a route prefers stairs unless a ladder is much shorter or the only way.
   - The character node stays on the ground position and only its picture is raised, so Y-sorting is unchanged. Taps try the highest level first.
   - Using an object (a sign) needs a level difference of at most 1.
+  - A diagonal step may not cut the corner of an obstacle or of a higher cell; a lower cell beside it is fine (Opus review).
+  - Stairs and ladders climb only along the isometric axes (toward the row above or below on screen), because a diagonal step never changes level.
 - **Alternatives:** raise the whole character node (breaks the drawing order behind obstacles); a height number on every cell in `MapDef` (large files, no benefit).
 - **Consequences:** nothing visual changes on the two M1 maps. New behaviour appears only on maps that use heights.
 - **Revisit if:** tall platforms hide walkable cells (the generator will warn), or ladders need a different cost.

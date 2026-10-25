@@ -199,3 +199,28 @@ func test_a_screen_map_uses_the_screen_layout_for_bounds() -> void:
 
 func test_a_diamond_map_lists_all_its_cells() -> void:
 	assert_int(_make_map("map.test.01").all_cells().size()).is_equal(36)
+
+
+func test_a_diagonal_step_cannot_squeeze_between_two_platform_corners() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(2, 1): 3, Vector2i(1, 2): 3}
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_false()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_false()
+
+
+func test_a_diagonal_step_cannot_cut_the_corner_of_a_platform_wall() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(2, 1): 1}
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_false()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_false()
+
+
+func test_a_diagonal_step_along_the_edge_of_a_drop_is_allowed() -> void:
+	# On a level 2 platform, walking diagonally past the corner of a lower cell.
+	var map: MapDef = _make_map("map.test.01")
+	for x: int in 6:
+		for y: int in 6:
+			map.heights[Vector2i(x, y)] = 2
+	map.heights[Vector2i(2, 1)] = 0
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_true()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_true()

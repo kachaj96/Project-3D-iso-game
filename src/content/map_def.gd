@@ -67,16 +67,23 @@ func kind_at(cell: Vector2i) -> String:
 
 ## True when a character may step from a cell to a neighbouring cell (including the diagonal
 ## neighbours). Both cells must be walkable. A diagonal step may not cut the corner of an
-## obstacle: both cells beside the step must be free of obstacles (a cell outside the map
-## does not count as an obstacle, because on a screen-shaped map a step along the top or
-## bottom row is a diagonal step too). Changes of level follow LevelRules.
+## obstacle or of a higher cell (the wall of a platform): both cells beside the step must
+## be free and no higher than the step. A lower cell beside the step (the edge of a drop) is
+## fine, and a cell outside the map does not count, because on a screen-shaped map a step
+## along the top or bottom row is a diagonal step too. Changes of level follow LevelRules.
 func can_step(from: Vector2i, to: Vector2i) -> bool:
 	if not is_walkable(from) or not is_walkable(to):
 		return false
 	var diagonal: bool = from.x != to.x and from.y != to.y
-	if diagonal and (is_blocked(Vector2i(from.x, to.y)) or is_blocked(Vector2i(to.x, from.y))):
+	if diagonal and (_blocks_corner(Vector2i(from.x, to.y), from) or _blocks_corner(Vector2i(to.x, from.y), from)):
 		return false
 	return LevelRules.can_step(height_at(from), kind_at(from), height_at(to), kind_at(to), diagonal)
+
+
+## A cell beside a diagonal step blocks it when it is an obstacle or stands higher than the
+## step. A diagonal step never changes level, so `from` gives the level of the whole step.
+func _blocks_corner(side: Vector2i, from: Vector2i) -> bool:
+	return is_blocked(side) or height_at(side) > height_at(from)
 
 
 ## The exit that contains this cell, or null.
