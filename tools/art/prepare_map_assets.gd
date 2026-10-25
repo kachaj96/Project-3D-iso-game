@@ -40,7 +40,11 @@ func _init() -> void:
 	var kit_dir: String = "res://assets/art/kits/%s/" % kit_name
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(map_dir))
 	var ok: bool = true
-	ok = ok and _write(_load(source_dir + manifest["ground"]), map_dir + "ground.png")
+	var ground: Image = _load(source_dir + (manifest["ground"] as String))
+	if manifest.get("fit_floor", false):
+		ground = _fit_floor(ground, map_id)
+	ok = ok and _write(ground, map_dir + "ground.png")
+	var windows: Dictionary = {}
 	for key: String in manifest:
 		if key.begins_with("building_"):
 			var symbol: String = key.trim_prefix("building_")
@@ -50,11 +54,20 @@ func _init() -> void:
 			if manifest.get("flip_" + key, false):
 				building.flip_x()
 			ok = ok and _write(building, "%sbuilding_%s.png" % [map_dir, symbol])
+			var glass: Array[Vector2] = SpriteCleanup.glass_centres(building)
+			if not glass.is_empty():
+				windows[symbol] = glass.map(func(point: Vector2) -> Array: return [snappedf(point.x, 0.1), snappedf(point.y, 0.1)])
 			# Only things that stand in daylight cast a shadow on the ground; walls of a dark room do not.
 			if SHADOWED_SYMBOLS.contains(symbol):
 				ok = ok and _write(SpriteCleanup.make_shadow(building), "%sbuilding_%s_shadow.png" % [map_dir, symbol])
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["mist"] as String)), MapTheme.mist_tint(theme)), map_dir + "mist.png")
-	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["light"] as String)), MapTheme.light_tint(theme)), map_dir + "light.png")
+	if manifest.has("light"):
+		ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["light"] as String)), MapTheme.light_tint(theme)), map_dir + "light.png")
+	if not windows.is_empty():
+		var file: FileAccess = FileAccess.open(map_dir + "windows.json", FileAccess.WRITE)
+		file.store_string(JSON.stringify(windows))
+		file.close()
+		print("windows: ", windows)
 	var kit: MapKit = MapKit.new()
 	kit.region = kit_name
 	if theme == MapTheme.DARK_INTERIOR:
@@ -109,3 +122,53 @@ func _write(image: Image, path: String) -> bool:
 		return false
 	print("wrote " + path)
 	return true
+
+
+## The AI draws a room floor at its own size and place. This scales and moves the picture so that the lit
+## floor fills exactly the cells of the map that can be walked on, on a canvas of the map's size. The
+## outside is filled with the dark colour of the picture's border.
+func _fit_floor(picture: Image, map_id: String) -> Image:
+	var spec: MapSpec = MapSpec.parse(FileAccess.get_file_as_string("res://content/map_specs/%s.txt" % MapGenerator.relative_path(map_id)))
+	var scale: int = MapBlockout.SCALE
+	var low: Vector2 = Vector2(INF, INF)
+	var high: Vector2 = Vector2(-INF, -INF)
+	for row: int in spec.rows:
+		for col: int in spec.grid[row].length():
+			if spec.is_walkable(row, col):
+				var centre: Vector2 = MapLayout.pixel_center(row, col) * scale
+				low = Vector2(minf(low.x, centre.x - 64.0 * scale), minf(low.y, centre.y - 32.0 * scale))
+				high = Vector2(maxf(high.x, centre.x + 64.0 * scale), maxf(high.y, centre.y + 32.0 * scale))
+	var wanted: Rect2 = Rect2(low, high - low)
+	var found: Rect2i = SpriteCleanup.bright_bounds(picture)
+	var canvas: Vector2 = MapLayout.pixel_size(spec.columns, spec.rows) * scale
+	var result: Image = Image.create(int(canvas.x), int(canvas.y), false, Image.FORMAT_RGBA8)
+	if found.size.x <= 0 or wanted.size.x <= 0.0:
+		printerr("Cannot fit the floor: no lit floor found in the picture")
+		result.fill(Color.BLACK)
+		return result
+	var factor: float = (wanted.size.x / found.size.x + wanted.size.y / found.size.y) / 2.0
+	print("floor fit: found %s, wanted %s, scale %.3f" % [found, wanted, factor])
+	result.fill(_border_colour(picture))
+	var scaled: Image = picture.duplicate()
+	scaled.resize(int(picture.get_width() * factor), int(picture.get_height() * factor), Image.INTERPOLATE_LANCZOS)
+	var found_centre: Vector2 = (Vector2(found.position) + Vector2(found.size) / 2.0) * factor
+	var offset: Vector2i = Vector2i(wanted.get_center() - found_centre)
+	var target: Rect2i = Rect2i(Vector2i.ZERO, result.get_size()).intersection(Rect2i(offset, scaled.get_size()))
+	if target.size.x > 0 and target.size.y > 0:
+		result.blit_rect(scaled, Rect2i(target.position - offset, target.size), target.position)
+	return result
+
+
+## The average colour of the outermost pixels of a picture.
+func _border_colour(picture: Image) -> Color:
+	var sum: Color = Color(0, 0, 0, 0)
+	var count: int = 0
+	for x: int in range(0, picture.get_width(), 8):
+		for y: int in [2, picture.get_height() - 3]:
+			sum += picture.get_pixel(x, y)
+			count += 1
+	for y: int in range(0, picture.get_height(), 8):
+		for x: int in [2, picture.get_width() - 3]:
+			sum += picture.get_pixel(x, y)
+			count += 1
+	return Color(sum.r / count, sum.g / count, sum.b / count, 1.0)

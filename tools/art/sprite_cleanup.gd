@@ -218,3 +218,68 @@ static func make_shadow(image: Image, strength: float = 0.45) -> Image:
 	small.resize(maxi(out_width / 10, 1), maxi(flat / 3, 1), Image.INTERPOLATE_BILINEAR)
 	small.resize(out_width, flat, Image.INTERPOLATE_BILINEAR)
 	return small
+
+
+## The rectangle that holds everything brighter than `threshold` (0 to 1) in at least `min_pixels`
+## pixels of its row and of its column. Used to find the lit floor of a room in a dark picture, so
+## that single bright specks do not count. Looks at every `step`-th pixel.
+static func bright_bounds(image: Image, threshold: float = 0.07, min_pixels: int = 6, step: int = 3) -> Rect2i:
+	_to_rgba8(image)
+	var width: int = image.get_width()
+	var height: int = image.get_height()
+	var data: PackedByteArray = image.get_data()
+	var limit: int = roundi(threshold * 255.0)
+	var rows: PackedInt32Array = PackedInt32Array()
+	rows.resize(height)
+	var columns: PackedInt32Array = PackedInt32Array()
+	columns.resize(width)
+	for y: int in range(0, height, step):
+		for x: int in range(0, width, step):
+			var index: int = (y * width + x) * 4
+			if maxi(data[index], maxi(data[index + 1], data[index + 2])) > limit:
+				rows[y] += 1
+				columns[x] += 1
+	var low: Vector2i = Vector2i(width, height)
+	var high: Vector2i = Vector2i(-1, -1)
+	for y: int in range(0, height, step):
+		if rows[y] >= min_pixels:
+			low.y = mini(low.y, y)
+			high.y = maxi(high.y, y)
+	for x: int in range(0, width, step):
+		if columns[x] >= min_pixels:
+			low.x = mini(low.x, x)
+			high.x = maxi(high.x, x)
+	if high.x < 0 or high.y < 0:
+		return Rect2i()
+	return Rect2i(low, high - low + Vector2i.ONE)
+
+
+## The centres of the lit window panes of a wall picture: blobs of bright, bluish pixels. Panes
+## whose centres are closer than `merge` pixels in x count as one. Sorted from left to right.
+static func glass_centres(image: Image, merge: int = 60) -> Array[Vector2]:
+	_to_rgba8(image)
+	var width: int = image.get_width()
+	var data: PackedByteArray = image.get_data()
+	var points: Array[Vector2] = []
+	for y: int in range(0, image.get_height(), 2):
+		for x: int in range(0, width, 2):
+			var index: int = (y * width + x) * 4
+			var red: int = data[index]
+			var blue: int = data[index + 2]
+			if data[index + 3] > 200 and blue > 190 and blue > red + 25:
+				points.append(Vector2(x, y))
+	points.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.x < b.x)
+	var groups: Array[Array] = []
+	for point: Vector2 in points:
+		if groups.is_empty() or point.x - (groups.back() as Array).back().x > merge:
+			groups.append([])
+		groups.back().append(point)
+	var centres: Array[Vector2] = []
+	for group: Array in groups:
+		if group.size() < 12:
+			continue
+		var sum: Vector2 = Vector2.ZERO
+		for point: Vector2 in group:
+			sum += point
+		centres.append(sum / group.size())
+	return centres

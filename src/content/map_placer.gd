@@ -250,3 +250,17 @@ static func torch_positions(spec: MapSpec) -> Array[Vector2]:
 		if light["kind"] == "torch":
 			positions.append(MapLayout.pixel_center(light["row"] as int, light["col"] as int) + Vector2(0.0, TORCH_HEIGHT))
 	return positions
+
+
+## Where the window panes of a building picture are on the map, in project pixels. `panes` are the
+## centres of the panes in the trimmed picture (written by prepare_map_assets.gd as windows.json).
+static func window_positions(spec: MapSpec, symbol: String, picture_size: Vector2i, panes: Array[Vector2]) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	var cluster: Rect2 = MapFootprint.cluster_rect(spec, symbol)
+	if picture_size.x <= 0 or cluster.size == Vector2.ZERO:
+		return positions
+	var scale: float = cluster.size.x / picture_size.x
+	var top: float = cluster.end.y - picture_size.y * scale
+	for pane: Vector2 in panes:
+		positions.append(Vector2(cluster.position.x + pane.x * scale, top + pane.y * scale))
+	return positions

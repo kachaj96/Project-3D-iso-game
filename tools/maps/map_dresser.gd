@@ -48,7 +48,8 @@ static func dress(root: Node2D, spec: MapSpec, placements: Array[MapPlacer.Place
 		counts[placement.kind] = index
 		_sprite(root, parent, "%s_%03d" % [placement.kind, index], placement)
 	_effect(root, "Effects", MIST, assets_dir + "mist.png", canvas_width, MapTheme.mist_opacity(spec.theme), false)
-	_effect(root, "Lights", LIGHT, assets_dir + "light.png", canvas_width, MapTheme.light_opacity(spec.theme), true)
+	if FileAccess.file_exists(assets_dir + "light.png"):
+		_effect(root, "Lights", LIGHT, assets_dir + "light.png", canvas_width, MapTheme.light_opacity(spec.theme), true)
 
 
 ## Removes every node of the group "generated" from the scene (and only those).
@@ -140,7 +141,8 @@ static func _effect(root: Node2D, layer_name: String, node_name: String, texture
 ## The mood of the scene: darkness over everything and the flickering torches. Done once, also when the
 ## pictures are not there yet, so that the placeholder room is already dark. Everything is in the group
 ## "generated". `torches` are positions in project pixels (see MapPlacer.torch_positions).
-static func dress_mood(root: Node2D, theme: String, torches: Array[Vector2]) -> void:
+static func dress_mood(root: Node2D, theme: String, torches: Array[Vector2], windows: Array[Vector2] = []) -> void:
+	_remove_beams(root)
 	for node: Node in root.get_children():
 		if node.is_in_group(GENERATED_GROUP) and (node is CanvasModulate):
 			root.remove_child(node)
@@ -159,6 +161,7 @@ static func dress_mood(root: Node2D, theme: String, torches: Array[Vector2]) -> 
 	darkness.add_to_group(GENERATED_GROUP, true)
 	root.add_child(darkness)
 	darkness.owner = root
+	_beams(root, windows)
 	if lights_layer == null:
 		return
 	var index: int = 0
@@ -174,3 +177,40 @@ static func dress_mood(root: Node2D, theme: String, torches: Array[Vector2]) -> 
 		torch.add_to_group(GENERATED_GROUP, true)
 		lights_layer.add_child(torch)
 		torch.owner = root
+
+
+## A shaft of window light under each window, falling to the lower right. In the group "generated".
+static func _beams(root: Node2D, windows: Array[Vector2]) -> void:
+	var layer: Node2D = root.get_node_or_null("Effects")
+	if layer == null:
+		return
+	var texture: Texture2D = LightTextures.beam()
+	var size: Vector2 = MapTheme.beam_size()
+	var index: int = 0
+	for window: Vector2 in windows:
+		index += 1
+		var beam: Sprite2D = Sprite2D.new()
+		beam.name = "Beam_%02d" % index
+		beam.texture = texture
+		beam.centered = false
+		beam.offset = Vector2(-texture.get_width() / 2.0, 0.0)
+		beam.scale = Vector2(size.x / texture.get_width(), size.y / texture.get_height())
+		beam.rotation_degrees = MapTheme.beam_turn()
+		beam.position = window
+		beam.modulate = Color(MapTheme.beam_color(), MapTheme.beam_opacity())
+		var material: CanvasItemMaterial = CanvasItemMaterial.new()
+		material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		beam.material = material
+		beam.add_to_group(GENERATED_GROUP, true)
+		layer.add_child(beam)
+		beam.owner = root
+
+
+static func _remove_beams(root: Node2D) -> void:
+	var layer: Node2D = root.get_node_or_null("Effects")
+	if layer == null:
+		return
+	for node: Node in layer.get_children():
+		if node.is_in_group(GENERATED_GROUP) and node.name.begins_with("Beam_"):
+			layer.remove_child(node)
+			node.free()
