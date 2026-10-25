@@ -46,7 +46,7 @@ Row 0 column 0 is cell (0, 0). Some cells get negative y, which `GridMath`, `Til
 
 ### 2.2 One text file per map is the only source
 
-`content/map_specs/<region>/<cc>_<rr>.txt`, excluded from the Android export. Example (shortened):
+`content/map_specs/<region>/<cc>_<rr>.txt`, excluded from the Android export. Example (the real example with comments is in `src/content/map_spec.gd`):
 
 ```
 id: map.hollow.04_07
@@ -54,22 +54,23 @@ region: hollow
 title_key: map.hollow.04_07.title
 size: 10x20
 grid:
-TT..===..T
-T.....=..
-..##..=...
-......=..
->.....=...
-...
+. . = >
+ . = 1
+. @ = .
+ . 2 .
 heights:
-0000000000
-000000000
-0011100000
-...
-props:
-P1 sign prop.hollow.04_07.sign sign.hollow.04_07.sign
-links:
-D1 door map.hollow.04_07.in01 entry E1
+0 0 1 1
+ 0 1 2
+0 0 1 1
+ 0 0 0
+markers:
+1 prop sign prop.hollow.04_07.sign sign.hollow.04_07.sign
+2 link door map.hollow.04_07.in01 front_door
+entries:
+from_inside 3 1
 ```
+
+Rules of the file: a line starting with `//` is a comment; spaces inside grid and heights rows are ignored, so odd rows can be indented to show the half-cell shift; a row has `columns` cells (even rows) or `columns - 1` cells (odd rows). **Digits 1 to 9 in the grid are markers** (each declared once under `markers:`, either a prop or a link to another map). `entries:` names the cells where a character appears when arriving from another map (`name row column`).
 
 **Grid symbols** (one character per cell; every row has W or W - 1 characters):
 
@@ -86,8 +87,7 @@ D1 door map.hollow.04_07.in01 entry E1
 | `~` | water or pit | no |
 | `S` | stairs between two height levels | yes |
 | `L` | ladder | yes, with the climb rule |
-| `D` | door or entrance to another map (crypt, house) | yes |
-| `P` | prop that can be used (sign, chest), listed under `props` | no |
+| `1` to `9` | marker: a prop (not walkable) or a link to another map such as a door (walkable), declared under `markers:` | see left |
 
 **Heights** are optional (missing means 0). One level is 32 px on screen, the height of one row. Allowed levels 0 to 7; a full storey (a gallery, a loft) is about 4 levels, 128 px, the height of the hero.
 
