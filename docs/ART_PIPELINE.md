@@ -166,3 +166,17 @@ Brief for the next hero concept (readability rules, to be confirmed by you):
 5. Slimmer silhouette than the first concept: short cloak, no big mass above the shoulders.
 
 Hero concept v2 (2026-10-25): young adventurer with a hair bun, cream shirt, navy vest, orange scarf, navy trousers and boots with cream cuffs, fingerless gloves, small backpack with bedroll, A-pose, legs apart, empty hands. Checked at 120 px next to a Dofus class sprite, normally and with the daylight glare: face readable, three brightness levels, clearly different from the ground, still readable in daylight. Accepted as the base for the 3D model. The image itself stays in `art_source/` once you decide to keep it there (not committed yet).
+
+## Hero v2 on the pipeline (2026-10-25)
+
+The Tripo model of concept v2 was rigged in Mixamo (41 bones, 34 weight groups) and all five clips (idle 301 frames, walking 32, attack 73, reaction 56, death backward 110) import and render without errors. The facing is correct without any extra turn.
+
+Production look parameters used so far:
+`--size 320 --scale 2 --height 1.5 --in-place 1 --saturation 1.2 --value 1.08 --shadow 0.58 --outline 0.03 --outline-color 0.06,0.09,0.11 --anchor 0.82`
+
+Corrections to the spec above:
+- **Anchor is (160, 262) in a 320 px frame**, not (160, 240). At 75% the bun was cut off at the top of the frame. 82% leaves about 27 px of headroom and 58 px below the feet.
+- Saturation 1.4 turned the hair and skin orange. 1.2 keeps the scarf as the only strong orange.
+- Death needs most of its frames in the fall (the last 40% of the clip); idle is a slow weight shift and needs a short segment or a hand-made loop.
+
+Known flaws of this model to judge on the phone: small grey speckles in the hair and bun texture (side and back views), thin legs and small hands at 120 px.

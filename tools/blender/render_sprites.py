@@ -21,6 +21,8 @@ Options (all after the "--"):
   --saturation N      color saturation of the whole character (default 1, try 1.3)
   --value N           brightness of the whole character (default 1)
   --shadow N          brightness of the shadow tone, 0.5 strong shadow to 1 none (default 0.76)
+  --yaw N             extra turn of the model in degrees, for a model that comes out facing away (try 180)
+  --anchor N          where the feet are, as a fraction of the frame height from the top (default 0.75; use 0.82 when the frame is 320 px at scale 2)
   --only S,E          render only these facings, for quick checks
   --outline UNITS     outline thickness in world units (default 0.015)
   --outline-color R,G,B   outline color, 0-1 (default 0.12,0.09,0.07: dark warm brown, not black)
@@ -59,7 +61,7 @@ def parse_args():
     argv = argv[argv.index("--") + 1:] if "--" in argv else []
     opts = {
         "input": "demo", "out": "build/sprites", "name": "sprite", "size": 256,
-        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "", "frame_start": 0, "frame_end": 0, "only": "", "in_place": "", "scale": 1.0, "saturation": 1.0, "value": 1.0, "shadow": 0.76,
+        "height": 1.5, "directions": 8, "frames": 1, "action": "", "procedural": "", "frame_start": 0, "frame_end": 0, "only": "", "in_place": "", "scale": 1.0, "saturation": 1.0, "value": 1.0, "shadow": 0.76, "yaw": 0.0, "anchor": 0.75,
         "outline": 0.015, "outline_color": (0.12, 0.09, 0.07),
     }
     i = 0
@@ -68,7 +70,7 @@ def parse_args():
         value = argv[i + 1]
         if key in ("size", "directions", "frames", "frame_start", "frame_end"):
             opts[key] = int(value)
-        elif key in ("height", "outline", "scale", "saturation", "value", "shadow"):
+        elif key in ("height", "outline", "scale", "saturation", "value", "shadow", "yaw", "anchor"):
             opts[key] = float(value)
         elif key == "outline_color":
             opts[key] = tuple(float(v) for v in value.split(","))
@@ -305,7 +307,7 @@ def setup_render(size):
     scene.world = world
 
 
-def setup_camera_and_light(size, scale=1.0):
+def setup_camera_and_light(size, scale=1.0, anchor=ANCHOR_FROM_TOP):
     scene = bpy.context.scene
     elevation = math.radians(CAMERA_ELEVATION_DEG)
     distance = 30.0
@@ -313,7 +315,7 @@ def setup_camera_and_light(size, scale=1.0):
     cam_data = bpy.data.cameras.new("Camera")
     cam_data.type = "ORTHO"
     cam_data.ortho_scale = size / (PX_PER_UNIT * scale)
-    cam_data.shift_y = ANCHOR_FROM_TOP - 0.5  # moves the ground point down to 75% of the frame
+    cam_data.shift_y = anchor - 0.5  # moves the ground point down to 75% of the frame
     cam_data.clip_start = 0.1
     cam_data.clip_end = 100.0
     cam = bpy.data.objects.new("Camera", cam_data)
@@ -444,7 +446,7 @@ def render_all(root, opts):
     for k, direction in enumerate(names):
         if opts["only"] and direction not in opts["only"].split(","):
             continue
-        theta = math.radians(FACING_S_DEG - step_deg * k)
+        theta = math.radians(FACING_S_DEG + opts["yaw"] - step_deg * k)
         root.rotation_euler.z = base_z + theta
         reference = None
         if hips is not None:
@@ -475,7 +477,7 @@ def main():
         pick_action(root, opts["action"], opts["frame_start"], opts["frame_end"])
     normalize_model(root, opts["height"])
     apply_toon(root, opts["outline"], opts["outline_color"], opts["saturation"], opts["value"], opts["shadow"])
-    setup_camera_and_light(opts["size"], opts["scale"])
+    setup_camera_and_light(opts["size"], opts["scale"], opts["anchor"])
     render_all(root, opts)
 
 

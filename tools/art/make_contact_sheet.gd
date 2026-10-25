@@ -52,7 +52,8 @@ func _sorted_files(folder: String) -> Array[String]:
 
 func _rank(path: String) -> String:
 	var parts: PackedStringArray = path.get_file().get_basename().split("_")
-	var index: int = DIRECTION_ORDER.find(parts[1]) if parts.size() > 2 else -1
+	# File names end with <direction>_<frame>, whatever is in front of them.
+	var index: int = DIRECTION_ORDER.find(parts[parts.size() - 2]) if parts.size() > 2 else -1
 	return "%02d_%s" % [index if index >= 0 else 99, path]
 
 
