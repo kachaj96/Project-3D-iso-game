@@ -148,14 +148,9 @@ func test_the_strips_in_front_of_the_gate_gap_sort_behind_the_wings() -> void:
 	var strips: Array[MapPlacer.Placement] = _of_kind(_build(), "building")
 	var gate_x: float = MapLayout.pixel_center(10, 3).x
 	var wing_x: float = MapLayout.pixel_center(10, 1).x
-	var gate_key: float = INF
-	var wing_key: float = -INF
-	for strip: MapPlacer.Placement in strips:
-		var centre_x: float = strip.position.x + strip.region.size.x * strip.scale / 2.0
-		if absf(centre_x - gate_x) < 20.0:
-			gate_key = minf(gate_key, strip.position.y)
-		if absf(centre_x - wing_x) < 20.0:
-			wing_key = maxf(wing_key, strip.position.y)
+	# The strip nearest to the middle of the gate gap and the strip nearest to the middle of a wing.
+	var gate_key: float = _key_of_nearest_strip(strips, gate_x)
+	var wing_key: float = _key_of_nearest_strip(strips, wing_x)
 	assert_float(gate_key).is_less(wing_key)
 
 
@@ -204,3 +199,15 @@ func test_plants_of_trees_beside_the_building_are_not_cut_by_a_taller_strip() ->
 	assert_bool(plants.is_empty()).is_false()
 	for plant: MapPlacer.Placement in plants:
 		assert_bool(MapPlacer._is_clear(plant, _sizes(), strips)).is_true()
+
+
+## The sort key (position.y) of the strip whose middle is nearest to x.
+func _key_of_nearest_strip(strips: Array[MapPlacer.Placement], x: float) -> float:
+	var best: float = INF
+	var best_distance: float = INF
+	for strip: MapPlacer.Placement in strips:
+		var distance: float = absf(strip.position.x + strip.region.size.x * strip.scale / 2.0 - x)
+		if distance < best_distance:
+			best_distance = distance
+			best = strip.position.y
+	return best
