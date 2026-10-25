@@ -160,7 +160,9 @@ Result: **the technique passes, the current character does not.**
 
 Brief for the next hero concept (readability rules, to be confirmed by you):
 1. Face visible in every view: hood down on the shoulders, or a small hood that leaves the whole face in light.
-2. Head at least 35% of the height, large simple eyes (6 project px or more).
+2. Head about 20 to 25% of the height (the same family as the Dofus classes), dark clear eyes with good contrast. The 35% rule in the first brief was stricter than the reference and is dropped.
 3. At least three clearly different brightness levels: one light (cream or white tunic), one mid (the accent colors), one dark (boots, gloves, belt).
 4. No brown on brown, no grey trousers: lower body in a color that differs from the ground in both hue and brightness.
 5. Slimmer silhouette than the first concept: short cloak, no big mass above the shoulders.
+
+Hero concept v2 (2026-10-25): young adventurer with a hair bun, cream shirt, navy vest, orange scarf, navy trousers and boots with cream cuffs, fingerless gloves, small backpack with bedroll, A-pose, legs apart, empty hands. Checked at 120 px next to a Dofus class sprite, normally and with the daylight glare: face readable, three brightness levels, clearly different from the ground, still readable in daylight. Accepted as the base for the 3D model. The image itself stays in `art_source/` once you decide to keep it there (not committed yet).
