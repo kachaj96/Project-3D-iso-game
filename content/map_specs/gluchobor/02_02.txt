@@ -1,6 +1,6 @@
 // Gluchobor, Lesna Krypta: the entrance to the crypt (first sequence, map 1, docs/FIRST_SEQUENCE.md).
 // The player arrives from the south on the forest path and walks north to the crypt gate.
-// The gate cell (row 10, column 4) gets its door link to the main chamber (.in01) together with map 2.
+// The gate cell (marker 1, row 10, column 4) is the door to the main chamber (.in01).
 // The crypt stands in rows 8 to 10 so that its roof fits on the screen: a building is five rows high
 // on screen plus its roof, so it must not stand in the first rows of a map. The rows above it are
 // forest. The crypt picture has its own two stone blocks beside the gate, so there are no rock
@@ -20,7 +20,7 @@ T T T T T T T T T T
  T T T T T T T T T
 T T T B B B B T T T
  T T B B B B B T T
-T . B B = B B . T T
+T . B B 1 B B . T T
  T . . = . . . . T
 T . . . = . . . . T
  . . . = = . . , T
@@ -30,3 +30,7 @@ T . . . = . . , . T
  T . . @ . . . . T
 T T . . . . . . T T
  T T T . . . T T T
+markers:
+1 link door map.gluchobor.02_02.in01 from_gate
+entries:
+from_crypt 11 3
