@@ -10,6 +10,9 @@ extends RefCounted
 const DEFAULT_TILE_WIDTH: int = 128
 const DEFAULT_TILE_HEIGHT: int = 64
 
+## One level of a map is this many pixels high on screen (D-020).
+const LEVEL_HEIGHT: int = 32
+
 var tile_width: int
 var tile_height: int
 
@@ -45,3 +48,22 @@ func pixel_to_cell(pixel: Vector2) -> Vector2i:
 	var a: float = pixel.x / (tile_width / 2.0) - 1.0
 	var b: float = pixel.y / (tile_height / 2.0) - 1.0
 	return Vector2i(floori((a + b) / 2.0 + 0.5), floori((b - a) / 2.0 + 0.5))
+
+
+## How many pixels a cell on this level is drawn above the ground.
+func level_lift(level: int) -> float:
+	return float(level * LEVEL_HEIGHT)
+
+
+## The cell a tap hits on a map with levels. The surface of a higher cell is drawn higher
+## up, so the tap is tried from the highest level down and the first cell whose own level
+## matches wins. A tap that hits no raised surface counts as a tap on the ground.
+func pick_cell(pixel: Vector2, map: MapDef) -> Vector2i:
+	var top_level: int = 0
+	for level: int in map.heights.values():
+		top_level = maxi(top_level, level)
+	for level: int in range(top_level, 0, -1):
+		var candidate: Vector2i = pixel_to_cell(pixel + Vector2(0.0, level_lift(level)))
+		if map.is_in_bounds(candidate) and map.height_at(candidate) == level:
+			return candidate
+	return pixel_to_cell(pixel)

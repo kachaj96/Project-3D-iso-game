@@ -59,3 +59,44 @@ func test_custom_tile_size_is_respected() -> void:
 	var small := GridMath.new(64, 32)
 	assert_vector(small.cell_to_pixel(Vector2i(1, 0))).is_equal(Vector2(64, 32))
 	assert_vector(small.pixel_to_cell(Vector2(64, 32))).is_equal(Vector2i(1, 0))
+
+
+func _platform_map() -> MapDef:
+	# Cells (4,4) and (5,4) form a platform on level 2 (64 px up) on an otherwise flat 8x8 map.
+	var map: MapDef = MapDef.new()
+	map.id = "map.test.01"
+	map.size = Vector2i(8, 8)
+	map.heights = {Vector2i(4, 4): 2, Vector2i(5, 4): 2}
+	return map
+
+
+func test_a_level_is_32_pixels_high() -> void:
+	assert_float(_grid.level_lift(0)).is_equal(0.0)
+	assert_float(_grid.level_lift(1)).is_equal(32.0)
+	assert_float(_grid.level_lift(7)).is_equal(224.0)
+
+
+func test_a_tap_on_a_flat_map_picks_the_ground_cell() -> void:
+	var map: MapDef = MapDef.new()
+	map.size = Vector2i(8, 8)
+	assert_vector(_grid.pick_cell(_grid.cell_to_pixel(Vector2i(3, 2)), map)).is_equal(Vector2i(3, 2))
+
+
+func test_a_tap_on_the_raised_surface_picks_the_platform_cell() -> void:
+	var map: MapDef = _platform_map()
+	var surface: Vector2 = _grid.cell_to_pixel(Vector2i(4, 4)) - Vector2(0.0, _grid.level_lift(2))
+	assert_vector(_grid.pick_cell(surface, map)).is_equal(Vector2i(4, 4))
+
+
+func test_the_ground_below_a_platform_surface_is_still_tappable_elsewhere() -> void:
+	var map: MapDef = _platform_map()
+	assert_vector(_grid.pick_cell(_grid.cell_to_pixel(Vector2i(1, 1)), map)).is_equal(Vector2i(1, 1))
+
+
+func test_the_higher_surface_wins_where_it_covers_a_lower_cell() -> void:
+	var map: MapDef = _platform_map()
+	# The ground cell under this point is (3,3) on level 0, but the platform surface of (4,4)
+	# is drawn exactly there (lifted by 64 px), so the platform wins.
+	var covered: Vector2 = _grid.cell_to_pixel(Vector2i(4, 4)) - Vector2(0.0, _grid.level_lift(2))
+	assert_vector(_grid.pixel_to_cell(covered)).is_not_equal(Vector2i(4, 4))
+	assert_vector(_grid.pick_cell(covered, map)).is_equal(Vector2i(4, 4))

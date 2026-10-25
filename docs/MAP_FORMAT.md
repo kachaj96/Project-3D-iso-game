@@ -96,7 +96,7 @@ Rules of the file: a line starting with `//` is a comment; spaces inside grid an
 1. A step between two walkable neighbours is allowed when both have the same height.
 2. A stairs cell connects its own level with the level above in the one direction where the neighbour is exactly one level higher. The generator finds that direction and rejects stairs that touch zero or more than one higher neighbour.
 3. A ladder cell connects to a neighbour up to 4 levels higher (one storey). Moving over it plays a climb animation and costs more time.
-4. Diagonal steps never change height, and never cut the corner of an obstacle (as today).
+4. Diagonal steps never change height, and never cut the corner of an obstacle (as today) or of a higher cell (the wall of a platform). A lower cell beside a diagonal step (the edge of a drop) does not stop it.
 5. Combat keeps the four-direction mode (D-008); the same height rules apply.
 6. A higher platform can hide walkable cells behind it on screen. The generator warns about every hidden walkable cell; such a place needs a fade of the platform or an occluder.
 
@@ -165,3 +165,20 @@ The original questions:
 2. **Default size 10 x 20** (fits one screen)? Bigger maps allowed when needed?
 3. **One height level = 32 px**, levels 0 to 3?
 4. **Interiors and floors as separate maps** (`.in01`, `.up01`, `.dn01`)?
+
+## 4. Implementation status: step 2 (2026-10-25, branch `feature/map-format`)
+
+Done, with tests:
+
+- `LevelRules` (`src/content/level_rules.gd`) is the one place for the level rules: same level always passes; stairs lead up 1 level, a ladder up to 4; a diagonal step never changes level; every step is allowed exactly when the step back is. A stairs or ladder cell has the level of its lower end. Ladders weigh 3, everything else 1.
+- `MapDef` has a `shape` (`DIAMOND` for the two M1 maps, `SCREEN` for new maps), sparse `heights` (cell to level, default 0) and `cell_kinds` (cell to "stairs" or "ladder"), `height_at`, `kind_at`, `all_cells` and `can_step`. `validate` checks levels 0 to 7, exit kinds, and that each stairs or ladder cell leads up to exactly one of its four neighbours. `MapExit` has a `kind` (edge, door, stairs, ladder).
+- `Pathfinder` is an `AStar2D` graph built from `MapDef.can_step`. `find_path(start, goal)` and both movement modes are unchanged.
+- `GridMath` knows the level height (32 px) and picks a tapped cell from the highest level down. The character picture is drawn raised by its level while the character node stays on the ground position, so drawing order still uses the feet on the ground. The camera follows the raised picture.
+- The Authority's "beside" rule for using objects also requires a level difference of at most 1.
+
+Things to know when drawing a map (from the Opus review of step 2):
+
+- **Stairs and ladders climb only along the isometric axes.** On a screen-shaped map the neighbour in the same row (left or right on screen) is a diagonal step, and so is the cell two rows up or down. Diagonal steps never change level, so the cell a stairs or ladder leads up to is always in the row directly above or below it, toward the upper-left, upper-right, lower-left or lower-right on screen. Draw stairs that way in the backdrop and in image prompts.
+- **The camera does not yet know about levels.** Its limits come from the map on the ground, so a character on a high level at the top edge of a map can be drawn above the camera limit. The generator fixes this by widening the limits by the highest level on the map (7 levels = 224 px).
+
+Still open: the generator (data, catalog, scene stub, blockout picture, prompt), warnings for walkable cells hidden behind high platforms, rewriting the two M1 maps as text files (this removes `DIAMOND`), and the test map.

@@ -97,3 +97,130 @@ func test_a_prop_of_unknown_kind_is_reported() -> void:
 	typo.kind = "sing"
 	map.props = [typo]
 	assert_int(map.validate().size()).is_equal(1)
+
+
+func _make_stairs_map() -> MapDef:
+	# Stairs at (2,2) on level 0 lead up to (3,2) on level 1.
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(3, 2): 1, Vector2i(4, 2): 1}
+	map.cell_kinds = {Vector2i(2, 2): "stairs"}
+	return map
+
+
+func test_cells_without_a_height_or_kind_are_plain_level_zero() -> void:
+	var map: MapDef = _make_stairs_map()
+	assert_int(map.height_at(Vector2i(0, 0))).is_equal(0)
+	assert_int(map.height_at(Vector2i(3, 2))).is_equal(1)
+	assert_str(map.kind_at(Vector2i(0, 0))).is_equal("")
+	assert_str(map.kind_at(Vector2i(2, 2))).is_equal("stairs")
+
+
+func test_a_map_with_valid_stairs_has_no_problems() -> void:
+	assert_array(_make_stairs_map().validate()).is_empty()
+
+
+func test_stairs_without_a_higher_neighbour_are_reported() -> void:
+	var map: MapDef = _make_stairs_map()
+	map.heights = {}
+	assert_int(map.validate().size()).is_equal(1)
+
+
+func test_stairs_leading_to_two_neighbours_are_reported() -> void:
+	var map: MapDef = _make_stairs_map()
+	map.heights[Vector2i(1, 2)] = 1
+	assert_int(map.validate().size()).is_equal(1)
+
+
+func test_a_ladder_may_lead_up_several_levels() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(3, 2): 4}
+	map.cell_kinds = {Vector2i(2, 2): "ladder"}
+	assert_array(map.validate()).is_empty()
+	map.heights = {Vector2i(3, 2): 5}
+	assert_int(map.validate().size()).is_equal(1)
+
+
+func test_levels_outside_zero_to_seven_are_reported() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(1, 3): 8, Vector2i(2, 3): -1}
+	assert_int(map.validate().size()).is_equal(2)
+
+
+func test_unknown_cell_kind_and_blocked_stairs_are_reported() -> void:
+	var map: MapDef = _make_stairs_map()
+	map.cell_kinds[Vector2i(0, 5)] = "elevator"
+	map.blocked_cells = [Vector2i(2, 2)]
+	assert_int(map.validate().size()).is_equal(2)
+
+
+func test_unknown_exit_kind_is_reported() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	var exit: MapExit = _make_exit(Vector2i(5, 2), "map.test.02", Vector2i(0, 2))
+	exit.kind = "portal"
+	map.exits = [exit]
+	assert_int(map.validate().size()).is_equal(1)
+	exit.kind = "stairs"
+	assert_array(map.validate()).is_empty()
+
+
+func test_can_step_follows_the_level_rules() -> void:
+	var map: MapDef = _make_stairs_map()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(3, 2))).is_true()
+	assert_bool(map.can_step(Vector2i(3, 2), Vector2i(2, 2))).is_true()
+	assert_bool(map.can_step(Vector2i(1, 2), Vector2i(2, 2))).is_true()
+	# A plain cell never climbs: (4,2) is level 1 and (4,3) level 0.
+	assert_bool(map.can_step(Vector2i(4, 2), Vector2i(4, 3))).is_false()
+	# A diagonal step off the stairs never changes level, even toward a cell one level higher.
+	map.heights[Vector2i(3, 3)] = 1
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(3, 3))).is_false()
+
+
+func test_can_step_refuses_blocked_cells_and_cut_corners() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.blocked_cells = [Vector2i(2, 1)]
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 1))).is_false()
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_false()
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(1, 2))).is_true()
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(9, 9))).is_false()
+
+
+func test_a_screen_map_uses_the_screen_layout_for_bounds() -> void:
+	var map: MapDef = MapDef.new()
+	map.id = "map.test.screen"
+	map.shape = MapDef.Shape.SCREEN
+	map.size = Vector2i(10, 20)
+	map.spawn_cell = MapLayout.cell_from_row_col(5, 4)
+	assert_array(map.validate()).is_empty()
+	assert_int(map.all_cells().size()).is_equal(190)
+	assert_bool(map.is_in_bounds(MapLayout.cell_from_row_col(0, 0))).is_true()
+	assert_bool(map.is_in_bounds(MapLayout.cell_from_row_col(1, 9))).is_false()
+	assert_bool(map.is_in_bounds(Vector2i(-50, 50))).is_false()
+
+
+func test_a_diamond_map_lists_all_its_cells() -> void:
+	assert_int(_make_map("map.test.01").all_cells().size()).is_equal(36)
+
+
+func test_a_diagonal_step_cannot_squeeze_between_two_platform_corners() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(2, 1): 3, Vector2i(1, 2): 3}
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_false()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_false()
+
+
+func test_a_diagonal_step_cannot_cut_the_corner_of_a_platform_wall() -> void:
+	var map: MapDef = _make_map("map.test.01")
+	map.heights = {Vector2i(2, 1): 1}
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_false()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_false()
+
+
+func test_a_diagonal_step_along_the_edge_of_a_drop_is_allowed() -> void:
+	# On a level 2 platform, walking diagonally past the corner of a lower cell.
+	var map: MapDef = _make_map("map.test.01")
+	for x: int in 6:
+		for y: int in 6:
+			map.heights[Vector2i(x, y)] = 2
+	map.heights[Vector2i(2, 1)] = 0
+	assert_bool(map.can_step(Vector2i(1, 1), Vector2i(2, 2))).is_true()
+	assert_bool(map.can_step(Vector2i(2, 2), Vector2i(1, 1))).is_true()
