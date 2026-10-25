@@ -146,7 +146,7 @@ func _on_events(events: Array[GameEvent]) -> void:
 		elif event is InteractedEvent:
 			var interacted: InteractedEvent = event as InteractedEvent
 			_marker.show_at(_marker_position(_last_tapped_cell), true)
-			if interacted.kind == "sign":
+			if interacted.kind == "sign" or interacted.kind == "inspect":
 				_popup.show_key(interacted.text_key)
 		elif event is CommandRejectedEvent:
 			if _current_map_id.is_empty():

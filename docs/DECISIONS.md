@@ -170,3 +170,11 @@ One entry per decision that would be costly to reverse. Newest at the bottom. Fo
 - **Alternatives:** one painted backdrop with occluders cut out of it (the cut never follows the shape of a tree); magenta key colour instead of real alpha (not needed, but the fallback if a tool cannot do alpha).
 - **Consequences:** more files per map (about 16 MB of PNG for the first map before compression), a clean-up tool, and the rule that anything tall stands in a footprint. In return objects can be moved, scaled and removed in the editor, reused on other maps and sorted with the hero.
 - **Revisit if:** memory or load time on the phone is too high, or the kit looks repetitive on bigger maps.
+
+## D-023 Interiors: darkness in the engine, horror mood (2026-10-25)
+
+- **Context:** map 2 (the main chamber of the crypt) must be much darker and more frightening than the forest (developer's wish: "big darkness, horror").
+- **Decision:** the darkness is made by the engine, not painted into the pictures: a `CanvasModulate` over the whole scene, flickering `PointLight2D` torches placed from the map file, and a faint light around the hero. The pictures (walls, floor, coffin, debris) are painted in a dark horror style so that they hold up under the engine light. Mood parameters live in `MapTheme`, so a new mood is a new theme, not new code.
+- **Alternatives:** paint all darkness into the pictures (no flicker, no light that follows the hero, and every change of mood means new pictures); a shader for the darkness (more work, no gain over the built-in lights).
+- **Consequences:** `PointLight2D` costs performance on the phone, so the number of lights is kept small (4 torches + the hero) and has to be measured. Dark scenes are hard to read in sunlight: the hero light and a lighter floor are the first remedy, found in the M2 phone test.
+- **Revisit if:** the phone test shows the room is unreadable outdoors or the lights are too slow.

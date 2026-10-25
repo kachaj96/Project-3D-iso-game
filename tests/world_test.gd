@@ -228,3 +228,40 @@ func test_the_hero_carries_a_faint_light_only_in_dark_rooms() -> void:
 	add_child(forest)
 	var none: Node = forest.get_node("Camera").target.get_node_or_null("Aura")
 	assert_bool(none == null or not (none as PointLight2D).enabled).is_true()
+
+
+func test_tapping_the_blood_traces_shows_the_heros_comment_in_both_languages() -> void:
+	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	world.start_map_id = "map.gluchobor.02_02.in01"
+	world.walk_speed = 1000000.0
+	add_child(world)
+	var map: MapDef = (load("res://content/maps/catalog.tres") as MapCatalog).load_maps()["map.gluchobor.02_02.in01"]
+	var blood: MapProp = map.props[0]
+	world.tap_at(_grid.cell_to_pixel(blood.cell))
+	await world.walk_finished
+	assert_bool(world.popup().is_open()).is_true()
+	TranslationServer.set_locale("pl")
+	assert_str(tr(blood.text_key)).is_equal("Czyli to prawda…")
+	TranslationServer.set_locale("en")
+	assert_str(tr(blood.text_key)).is_equal("So it is true...")
+
+
+func test_walking_into_the_gate_of_the_crypt_leads_to_the_chamber_and_back() -> void:
+	var world: World = auto_free((load("res://scenes/world/world.tscn") as PackedScene).instantiate())
+	world.walk_speed = 1000000.0
+	add_child(world)
+	var maps: Dictionary = (load("res://content/maps/catalog.tres") as MapCatalog).load_maps()
+	var outside: MapDef = maps["map.gluchobor.02_02"]
+	var gate: MapExit = outside.find_exit_at(MapLayout.cell_from_row_col(10, 4))
+	assert_object(gate).is_not_null()
+	world.tap_at(_grid.cell_to_pixel(gate.cells[0]))
+	await world.walk_finished
+	assert_str(world.current_map_id()).is_equal("map.gluchobor.02_02.in01")
+	var chamber: MapDef = maps["map.gluchobor.02_02.in01"]
+	assert_vector(world.player_position()).is_equal(_grid.cell_to_pixel(gate.target_entry_cell))
+	# And out again through the door in the front corner.
+	var door: MapExit = chamber.find_exit_at(MapLayout.cell_from_row_col(19, 4))
+	assert_object(door).is_not_null()
+	world.tap_at(_grid.cell_to_pixel(door.cells[0]))
+	await world.walk_finished
+	assert_str(world.current_map_id()).is_equal("map.gluchobor.02_02")
