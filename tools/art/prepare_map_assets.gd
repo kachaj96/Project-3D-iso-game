@@ -3,10 +3,11 @@ extends SceneTree
 ## art_source/maps/<id>/layered/assets_manifest.json (which picture file is the ground, the crypt
 ## and so on), cleans every picture (see SpriteCleanup) and writes:
 ##
-##   assets/art/maps/<id>/ground.png, crypt.png, mist.png, light.png
+##   assets/art/maps/<id>/ground.png, building_B.png, mist.png, light.png
+##   content/kits/<region>.tres (a MapKit that lists the kit pieces)
 ##   assets/art/kits/<region>/trees|plants|rocks|patches/<kind>_<nn>.png
 ##
-## The crypt keeps the size of its picture (it is placed by the map footprint, so its empty
+## The building (symbol B) keeps the size of its picture (it is placed by the map footprint, so its empty
 ## border matters). Kit pieces are cut out of their sheets and trimmed. Mist and light are
 ## one-colour pictures whose opacity is the brightness of the AI picture.
 ##
@@ -38,16 +39,27 @@ func _init() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(map_dir))
 	var ok: bool = true
 	ok = ok and _write(_load(source_dir + manifest["ground"]), map_dir + "ground.png")
-	ok = ok and _write(_cleaned(_load(source_dir + manifest["crypt"])), map_dir + "crypt.png")
+	ok = ok and _write(_cleaned(_load(source_dir + manifest["building_B"])), map_dir + "building_B.png")
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["mist"]), MIST_TINT), map_dir + "mist.png")
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["light"]), LIGHT_TINT), map_dir + "light.png")
+	var kit: MapKit = MapKit.new()
+	kit.region = region
 	for sheet_key: String in SHEETS:
 		var sheet: Image = _cleaned(_load(source_dir + manifest[sheet_key]))
 		var rects: Array[Rect2i] = SpriteCleanup.split_items(sheet)
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(kit_dir + sheet_key))
+		var paths: Array[String] = []
 		for index: int in rects.size():
-			ok = ok and _write(sheet.get_region(rects[index]), "%s%s/%s_%02d.png" % [kit_dir, sheet_key, SHEETS[sheet_key], index + 1])
+			var path: String = "%s%s/%s_%02d.png" % [kit_dir, sheet_key, SHEETS[sheet_key], index + 1]
+			ok = ok and _write(sheet.get_region(rects[index]), path)
+			paths.append(path)
 		print("%s: %d pieces" % [sheet_key, rects.size()])
+		kit.set(sheet_key, paths)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://content/kits"))
+	var save_error: Error = ResourceSaver.save(kit, "res://content/kits/%s.tres" % region)
+	if save_error != OK:
+		printerr("Cannot save the kit: " + error_string(save_error))
+		ok = false
 	quit(0 if ok else 1)
 
 
