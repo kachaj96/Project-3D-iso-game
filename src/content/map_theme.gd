@@ -50,3 +50,21 @@ static func torch_energy() -> float:
 ## Radius of the pool of torch light on the floor in project pixels.
 static func torch_radius() -> float:
 	return 330.0
+
+
+## A shaft of window light: colour, opacity, and its size on screen in project pixels. It falls from the
+## window to the lower right (the light of the north-west wall), `beam_turn` degrees from straight down.
+static func beam_color() -> Color:
+	return Color(0.7, 0.82, 1.0, 1.0)
+
+
+static func beam_opacity() -> float:
+	return 0.9
+
+
+static func beam_size() -> Vector2:
+	return Vector2(190.0, 520.0)
+
+
+static func beam_turn() -> float:
+	return -32.0

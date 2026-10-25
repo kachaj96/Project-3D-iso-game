@@ -190,3 +190,27 @@ func test_a_torch_flickers_between_its_base_and_a_dimmer_light() -> void:
 	assert_float(highest).is_less_equal(1.0)
 	assert_float(lowest).is_greater_equal(0.69)
 	assert_float(highest - lowest).is_greater(0.1)
+
+
+func test_window_positions_follow_the_wall_picture_fitted_to_its_footprint() -> void:
+	var spec: MapSpec = _chamber()
+	var cluster: Rect2 = MapFootprint.cluster_rect(spec, "W")
+	var panes: Array[Vector2] = [Vector2(0.0, 0.0), Vector2(1000.0, 500.0)]
+	var positions: Array[Vector2] = MapPlacer.window_positions(spec, "W", Vector2i(1000, 500), panes)
+	var scale: float = cluster.size.x / 1000.0
+	assert_vector(positions[0]).is_equal(Vector2(cluster.position.x, cluster.end.y - 500.0 * scale))
+	assert_vector(positions[1]).is_equal(Vector2(cluster.end.x, cluster.end.y))
+
+
+func test_each_window_gets_a_shaft_of_light_that_is_replaced_when_dressed_again() -> void:
+	var spec: MapSpec = _chamber()
+	var root: Node2D = _stub(spec)
+	var windows: Array[Vector2] = [Vector2(100.0, 100.0), Vector2(300.0, 140.0), Vector2(500.0, 180.0)]
+	for round_number: int in 2:
+		MapDresser.dress_mood(root, spec.theme, [], windows)
+	var beams: Array[Node] = root.get_node("Effects").get_children().filter(func(node: Node) -> bool: return node.name.begins_with("Beam_"))
+	assert_int(beams.size()).is_equal(3)
+	var beam: Sprite2D = beams[1]
+	assert_vector(beam.position).is_equal(Vector2(300.0, 140.0))
+	assert_float(beam.rotation_degrees).is_equal_approx(MapTheme.beam_turn(), 0.01)
+	assert_int((beam.material as CanvasItemMaterial).blend_mode).is_equal(CanvasItemMaterial.BLEND_MODE_ADD)

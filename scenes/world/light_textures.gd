@@ -25,3 +25,20 @@ static func radial() -> Texture2D:
 ## The scale that gives a light of this radius in pixels.
 static func scale_for_radius(radius: float) -> float:
 	return radius / (SIZE / 2.0)
+
+
+## A soft shaft of light: bright and narrow at the top (the window), widening and fading to nothing
+## at the bottom. Size 96 x 512 pixels; stretch and turn it with the sprite's scale and rotation.
+static func beam() -> Texture2D:
+	var width: int = 96
+	var height: int = 512
+	var image: Image = Image.create(width, height, false, Image.FORMAT_RGBA8)
+	for y: int in height:
+		var along: float = y / float(height - 1)
+		var half: float = 0.25 + 0.75 * along
+		var strength: float = pow(1.0 - along, 1.7)
+		for x: int in width:
+			var across: float = absf(2.0 * x / float(width - 1) - 1.0) / half
+			var edge: float = pow(clampf(1.0 - across, 0.0, 1.0), 1.4)
+			image.set_pixel(x, y, Color(1.0, 1.0, 1.0, strength * edge))
+	return ImageTexture.create_from_image(image)

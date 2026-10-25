@@ -124,3 +124,28 @@ func test_a_shadow_is_flat_wider_than_the_object_and_soft() -> void:
 				right += shadow.get_pixel(x, y).a
 	assert_float(right).is_greater(left)
 	assert_float(sum).is_greater(0.0)
+
+
+func test_bright_bounds_finds_the_lit_floor_and_ignores_single_specks() -> void:
+	var picture: Image = _blank(300, 200)
+	picture.fill(Color(0.02, 0.02, 0.03, 1.0))
+	_square(picture, Rect2i(60, 40, 150, 90), Color(0.3, 0.3, 0.25, 1.0))
+	picture.set_pixel(290, 190, Color.WHITE)
+	var found: Rect2i = SpriteCleanup.bright_bounds(picture)
+	assert_int(found.position.x).is_between(57, 63)
+	assert_int(found.position.y).is_between(37, 43)
+	assert_int(found.size.x).is_between(144, 156)
+	assert_int(found.size.y).is_between(84, 96)
+	assert_object(SpriteCleanup.bright_bounds(_blank(50, 50))).is_equal(Rect2i())
+
+
+func test_glass_centres_finds_each_lit_pane_from_left_to_right() -> void:
+	var wall: Image = _blank(600, 300)
+	_square(wall, Rect2i(0, 0, 600, 300), Color(0.3, 0.28, 0.25, 1.0))
+	_square(wall, Rect2i(400, 100, 40, 80), Color(0.7, 0.85, 1.0, 1.0))
+	_square(wall, Rect2i(100, 60, 40, 80), Color(0.7, 0.85, 1.0, 1.0))
+	var panes: Array[Vector2] = SpriteCleanup.glass_centres(wall)
+	assert_int(panes.size()).is_equal(2)
+	assert_float(panes[0].x).is_equal_approx(120.0, 3.0)
+	assert_float(panes[0].y).is_equal_approx(100.0, 3.0)
+	assert_float(panes[1].x).is_equal_approx(420.0, 3.0)

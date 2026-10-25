@@ -170,7 +170,7 @@ func _dress(spec: MapSpec, scene_path: String, force: bool) -> bool:
 	if has_pictures:
 		placements = _place(spec, kit_path, assets_dir)
 		MapDresser.dress(root, spec, placements, assets_dir)
-	MapDresser.dress_mood(root, spec.theme, MapPlacer.torch_positions(spec))
+	MapDresser.dress_mood(root, spec.theme, MapPlacer.torch_positions(spec), _windows(spec, assets_dir))
 	var result: PackedScene = PackedScene.new()
 	result.pack(root)
 	root.free()
@@ -204,3 +204,22 @@ func _picture_sizes(kit: MapKit, buildings: Dictionary) -> Dictionary:
 				if image != null:
 					sizes[candidate] = Vector2i(image.get_width(), image.get_height())
 	return sizes
+
+
+## Where the windows of the walls are on the map, from windows.json (written by prepare_map_assets.gd).
+func _windows(spec: MapSpec, assets_dir: String) -> Array[Vector2]:
+	var found: Array[Vector2] = []
+	if not FileAccess.file_exists(assets_dir + "windows.json"):
+		return found
+	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(assets_dir + "windows.json"))
+	if not data is Dictionary:
+		return found
+	for symbol: String in data:
+		var picture: Image = Image.load_from_file(ProjectSettings.globalize_path("%sbuilding_%s.png" % [assets_dir, symbol]))
+		if picture == null:
+			continue
+		var panes: Array[Vector2] = []
+		for pair: Array in data[symbol]:
+			panes.append(Vector2(pair[0] as float, pair[1] as float))
+		found.append_array(MapPlacer.window_positions(spec, symbol, picture.get_size(), panes))
+	return found
