@@ -44,7 +44,11 @@ func _init() -> void:
 	for key: String in manifest:
 		if key.begins_with("building_"):
 			var symbol: String = key.trim_prefix("building_")
-			var building: Image = _cleaned(_load(source_dir + (manifest[key] as String)))
+			# Trimmed to its content: the map placer fits the picture to its footprint by it.
+			var building: Image = SpriteCleanup.trimmed(_cleaned(_load(source_dir + (manifest[key] as String))))
+			# The AI sometimes paints a wall at the other slant than the blockout: "flip_building_X": true mirrors it.
+			if manifest.get("flip_" + key, false):
+				building.flip_x()
 			ok = ok and _write(building, "%sbuilding_%s.png" % [map_dir, symbol])
 			# Only things that stand in daylight cast a shadow on the ground; walls of a dark room do not.
 			if SHADOWED_SYMBOLS.contains(symbol):
@@ -53,6 +57,11 @@ func _init() -> void:
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + (manifest["light"] as String)), MapTheme.light_tint(theme)), map_dir + "light.png")
 	var kit: MapKit = MapKit.new()
 	kit.region = kit_name
+	if theme == MapTheme.DARK_INTERIOR:
+		# Pillars instead of boulders, small debris instead of plants.
+		kit.cell_rocks = 3
+		kit.rock_width = Vector2(95.0, 125.0)
+		kit.plant_width = Vector2(40.0, 85.0)
 	for sheet_key: String in SHEETS:
 		if not manifest.has(sheet_key):
 			continue

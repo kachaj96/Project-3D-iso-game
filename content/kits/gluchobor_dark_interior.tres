@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="MapKit" format=3]
+
+[ext_resource type="Script" path="res://src/content/map_kit.gd" id="1_monpx"]
+
+[resource]
+script = ExtResource("1_monpx")
+region = "gluchobor_dark_interior"
+plants = Array[String](["res://assets/art/kits/gluchobor_dark_interior/plants/plant_01.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_02.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_03.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_04.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_05.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_06.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_07.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_08.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_09.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_10.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_11.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_12.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_13.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_14.png", "res://assets/art/kits/gluchobor_dark_interior/plants/plant_15.png"])
+rocks = Array[String](["res://assets/art/kits/gluchobor_dark_interior/rocks/rock_01.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_02.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_03.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_04.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_05.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_06.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_07.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_08.png", "res://assets/art/kits/gluchobor_dark_interior/rocks/rock_09.png"])
+patches = Array[String](["res://assets/art/kits/gluchobor_dark_interior/patches/patch_01.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_02.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_03.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_04.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_05.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_06.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_07.png", "res://assets/art/kits/gluchobor_dark_interior/patches/patch_08.png"])
+plant_width = Vector2(40, 85)
+rock_width = Vector2(95, 125)
+cell_rocks = 3
