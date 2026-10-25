@@ -26,8 +26,20 @@
 [ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02.in01/building_W.png" id="25_kpw6y"]
 [ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02.in01/building_V.png" id="26_j85y0"]
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_yoj8k"]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_es13b"]
 blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_hotqq"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_yoj8k"]
+gradient = SubResource("Gradient_hotqq")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [sub_resource type="Gradient" id="Gradient_5ww3d"]
 offsets = PackedFloat32Array(0, 0.45, 1)
@@ -65,18 +77,6 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[sub_resource type="Gradient" id="Gradient_kkq8u"]
-offsets = PackedFloat32Array(0, 0.45, 1)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0411k"]
-gradient = SubResource("Gradient_kkq8u")
-width = 256
-height = 256
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 0.5)
-
 [node name="Map" type="Node2D" unique_id=1438102025]
 
 [node name="Backdrop" type="Sprite2D" parent="." unique_id=1922577499]
@@ -101,7 +101,7 @@ tile_set = ExtResource("1_0m0vl")
 [node name="Effects" type="Node2D" parent="." unique_id=984292532]
 z_index = 50
 
-[node name="Mist" type="Sprite2D" parent="Effects" unique_id=1869179053 groups=["generated"]]
+[node name="Mist" type="Sprite2D" parent="Effects" unique_id=869230534 groups=["generated"]]
 modulate = Color(1, 1, 1, 0.55)
 scale = Vector2(0.73903, 0.73903)
 texture = ExtResource("3_yoj8k")
@@ -110,38 +110,38 @@ centered = false
 [node name="Lights" type="Node2D" parent="." unique_id=1992549887]
 z_index = 50
 
-[node name="Light" type="Sprite2D" parent="Lights" unique_id=368106578 groups=["generated"]]
+[node name="Light" type="Sprite2D" parent="Lights" unique_id=1499572029 groups=["generated"]]
 modulate = Color(1, 1, 1, 0.5)
-material = SubResource("CanvasItemMaterial_yoj8k")
+material = SubResource("CanvasItemMaterial_es13b")
 scale = Vector2(0.7386036, 0.7386036)
 texture = ExtResource("4_5ww3d")
 centered = false
 
-[node name="Torch_01" type="PointLight2D" parent="Lights" unique_id=886037285 groups=["generated"]]
+[node name="Torch_01" type="PointLight2D" parent="Lights" unique_id=1982081178 groups=["generated"]]
 position = Vector2(832, 218)
+color = Color(1, 0.55, 0.2, 1)
+texture = SubResource("GradientTexture2D_yoj8k")
+texture_scale = 2.578125
+script = ExtResource("2_qijtl")
+
+[node name="Torch_02" type="PointLight2D" parent="Lights" unique_id=652709705 groups=["generated"]]
+position = Vector2(1024, 314)
 color = Color(1, 0.55, 0.2, 1)
 texture = SubResource("GradientTexture2D_30l2g")
 texture_scale = 2.578125
 script = ExtResource("2_qijtl")
 
-[node name="Torch_02" type="PointLight2D" parent="Lights" unique_id=457161296 groups=["generated"]]
-position = Vector2(1024, 314)
+[node name="Torch_03" type="PointLight2D" parent="Lights" unique_id=1615890724 groups=["generated"]]
+position = Vector2(448, 218)
 color = Color(1, 0.55, 0.2, 1)
 texture = SubResource("GradientTexture2D_ejhbe")
 texture_scale = 2.578125
 script = ExtResource("2_qijtl")
 
-[node name="Torch_03" type="PointLight2D" parent="Lights" unique_id=240494341 groups=["generated"]]
-position = Vector2(448, 218)
-color = Color(1, 0.55, 0.2, 1)
-texture = SubResource("GradientTexture2D_xtnju")
-texture_scale = 2.578125
-script = ExtResource("2_qijtl")
-
-[node name="Torch_04" type="PointLight2D" parent="Lights" unique_id=1128179932 groups=["generated"]]
+[node name="Torch_04" type="PointLight2D" parent="Lights" unique_id=908837018 groups=["generated"]]
 position = Vector2(320, 282)
 color = Color(1, 0.55, 0.2, 1)
-texture = SubResource("GradientTexture2D_0411k")
+texture = SubResource("GradientTexture2D_xtnju")
 texture_scale = 2.578125
 script = ExtResource("2_qijtl")
 
@@ -154,28 +154,28 @@ map_path = "res://content/maps/gluchobor/02_02.in01.tres"
 [node name="GroundDecor" type="Node2D" parent="." unique_id=520157549]
 z_index = -1
 
-[node name="shadow_001" type="Sprite2D" parent="GroundDecor" unique_id=316039822 groups=["generated"]]
+[node name="shadow_001" type="Sprite2D" parent="GroundDecor" unique_id=1149966111 groups=["generated"]]
 position = Vector2(608, 480)
 scale = Vector2(0.15165877, 0.15165877)
 texture = ExtResource("7_30l2g")
 centered = false
 offset = Vector2(-1012, -121)
 
-[node name="shadow_002" type="Sprite2D" parent="GroundDecor" unique_id=1882154344 groups=["generated"]]
+[node name="shadow_002" type="Sprite2D" parent="GroundDecor" unique_id=670220871 groups=["generated"]]
 position = Vector2(384, 463)
 scale = Vector2(0.5195995, 0.5195995)
 texture = ExtResource("8_vxttq")
 centered = false
 offset = Vector2(-160.5, -48)
 
-[node name="shadow_003" type="Sprite2D" parent="GroundDecor" unique_id=1499760136 groups=["generated"]]
+[node name="shadow_003" type="Sprite2D" parent="GroundDecor" unique_id=789362538 groups=["generated"]]
 position = Vector2(640, 591)
 scale = Vector2(0.42827392, 0.42827392)
 texture = ExtResource("9_ejhbe")
 centered = false
 offset = Vector2(-189.5, -37)
 
-[node name="patch_001" type="Sprite2D" parent="GroundDecor" unique_id=1506022635 groups=["generated"]]
+[node name="patch_001" type="Sprite2D" parent="GroundDecor" unique_id=28205226 groups=["generated"]]
 position = Vector2(586.63696, 430.68152)
 scale = Vector2(0.39270794, 0.39270794)
 texture = ExtResource("10_f1ufd")
@@ -183,7 +183,7 @@ centered = false
 offset = Vector2(-154.5, -159.5)
 flip_h = true
 
-[node name="patch_002" type="Sprite2D" parent="GroundDecor" unique_id=1971983661 groups=["generated"]]
+[node name="patch_002" type="Sprite2D" parent="GroundDecor" unique_id=898439781 groups=["generated"]]
 position = Vector2(594.2788, 445.1394)
 scale = Vector2(0.4533171, 0.4533171)
 texture = ExtResource("11_xtnju")
@@ -191,7 +191,7 @@ centered = false
 offset = Vector2(-140.5, -71.5)
 flip_h = true
 
-[node name="patch_003" type="Sprite2D" parent="GroundDecor" unique_id=2008475996 groups=["generated"]]
+[node name="patch_003" type="Sprite2D" parent="GroundDecor" unique_id=812094507 groups=["generated"]]
 position = Vector2(516.92755, 273.53622)
 scale = Vector2(0.46904334, 0.46904334)
 texture = ExtResource("11_xtnju")
@@ -199,7 +199,7 @@ centered = false
 offset = Vector2(-140.5, -71.5)
 flip_h = true
 
-[node name="patch_004" type="Sprite2D" parent="GroundDecor" unique_id=2050793545 groups=["generated"]]
+[node name="patch_004" type="Sprite2D" parent="GroundDecor" unique_id=2048389564 groups=["generated"]]
 position = Vector2(373.87195, 334.93597)
 scale = Vector2(0.38068795, 0.38068795)
 texture = ExtResource("12_kkq8u")
@@ -207,14 +207,14 @@ centered = false
 offset = Vector2(-145.5, -68)
 flip_h = true
 
-[node name="patch_005" type="Sprite2D" parent="GroundDecor" unique_id=904955103 groups=["generated"]]
+[node name="patch_005" type="Sprite2D" parent="GroundDecor" unique_id=1499877445 groups=["generated"]]
 position = Vector2(194.14014, 434.92993)
 scale = Vector2(0.48357916, 0.48357916)
 texture = ExtResource("13_0411k")
 centered = false
 offset = Vector2(-185.5, -180.5)
 
-[node name="patch_006" type="Sprite2D" parent="GroundDecor" unique_id=1494209920 groups=["generated"]]
+[node name="patch_006" type="Sprite2D" parent="GroundDecor" unique_id=842752944 groups=["generated"]]
 position = Vector2(626.10724, 205.05362)
 scale = Vector2(0.48493937, 0.48493937)
 texture = ExtResource("14_yxq7c")
@@ -222,14 +222,14 @@ centered = false
 offset = Vector2(-153, -60.5)
 flip_h = true
 
-[node name="patch_007" type="Sprite2D" parent="GroundDecor" unique_id=43294651 groups=["generated"]]
+[node name="patch_007" type="Sprite2D" parent="GroundDecor" unique_id=2145592137 groups=["generated"]]
 position = Vector2(651.99744, 206.00127)
 scale = Vector2(0.4337831, 0.4337831)
 texture = ExtResource("15_ch8k0")
 centered = false
 offset = Vector2(-205, -182)
 
-[node name="patch_008" type="Sprite2D" parent="GroundDecor" unique_id=695096937 groups=["generated"]]
+[node name="patch_008" type="Sprite2D" parent="GroundDecor" unique_id=1509851885 groups=["generated"]]
 position = Vector2(641.792, 212.896)
 scale = Vector2(0.39054406, 0.39054406)
 texture = ExtResource("13_0411k")
@@ -237,14 +237,14 @@ centered = false
 offset = Vector2(-185.5, -180.5)
 flip_h = true
 
-[node name="patch_009" type="Sprite2D" parent="GroundDecor" unique_id=723295738 groups=["generated"]]
+[node name="patch_009" type="Sprite2D" parent="GroundDecor" unique_id=800147012 groups=["generated"]]
 position = Vector2(808.773, 255.6135)
 scale = Vector2(0.33760998, 0.33760998)
 texture = ExtResource("16_h1prd")
 centered = false
 offset = Vector2(-164, -171)
 
-[node name="patch_010" type="Sprite2D" parent="GroundDecor" unique_id=837088955 groups=["generated"]]
+[node name="patch_010" type="Sprite2D" parent="GroundDecor" unique_id=1196700024 groups=["generated"]]
 position = Vector2(777.79144, 280.89572)
 scale = Vector2(0.52080715, 0.52080715)
 texture = ExtResource("16_h1prd")
@@ -252,14 +252,14 @@ centered = false
 offset = Vector2(-164, -171)
 flip_h = true
 
-[node name="patch_011" type="Sprite2D" parent="GroundDecor" unique_id=1322635013 groups=["generated"]]
+[node name="patch_011" type="Sprite2D" parent="GroundDecor" unique_id=1548686922 groups=["generated"]]
 position = Vector2(819.49384, 301.74692)
 scale = Vector2(0.4047597, 0.4047597)
 texture = ExtResource("15_ch8k0")
 centered = false
 offset = Vector2(-205, -182)
 
-[node name="patch_012" type="Sprite2D" parent="GroundDecor" unique_id=207206395 groups=["generated"]]
+[node name="patch_012" type="Sprite2D" parent="GroundDecor" unique_id=402368598 groups=["generated"]]
 position = Vector2(1007.1202, 348.4399)
 scale = Vector2(0.43523103, 0.43523103)
 texture = ExtResource("14_yxq7c")
@@ -267,7 +267,7 @@ centered = false
 offset = Vector2(-153, -60.5)
 flip_h = true
 
-[node name="patch_013" type="Sprite2D" parent="GroundDecor" unique_id=1183918839 groups=["generated"]]
+[node name="patch_013" type="Sprite2D" parent="GroundDecor" unique_id=675753075 groups=["generated"]]
 position = Vector2(931.5989, 357.79944)
 scale = Vector2(0.5220791, 0.5220791)
 texture = ExtResource("11_xtnju")
@@ -275,7 +275,7 @@ centered = false
 offset = Vector2(-140.5, -71.5)
 flip_h = true
 
-[node name="patch_014" type="Sprite2D" parent="GroundDecor" unique_id=729361402 groups=["generated"]]
+[node name="patch_014" type="Sprite2D" parent="GroundDecor" unique_id=1544456791 groups=["generated"]]
 position = Vector2(980.77673, 382.38837)
 scale = Vector2(0.41903916, 0.41903916)
 texture = ExtResource("13_0411k")
@@ -285,21 +285,21 @@ offset = Vector2(-185.5, -180.5)
 [node name="Dressing" type="Node2D" parent="." unique_id=330258925]
 y_sort_enabled = true
 
-[node name="rock_001" type="Sprite2D" parent="Dressing" unique_id=48580312 groups=["generated"]]
+[node name="rock_001" type="Sprite2D" parent="Dressing" unique_id=1245551259 groups=["generated"]]
 position = Vector2(384, 463)
 scale = Vector2(0.5195995, 0.5195995)
 texture = ExtResource("17_jotrm")
 centered = false
 offset = Vector2(-100.5, -361.8)
 
-[node name="rock_002" type="Sprite2D" parent="Dressing" unique_id=292114864 groups=["generated"]]
+[node name="rock_002" type="Sprite2D" parent="Dressing" unique_id=1619883013 groups=["generated"]]
 position = Vector2(640, 591)
 scale = Vector2(0.42827392, 0.42827392)
 texture = ExtResource("18_6xtdv")
 centered = false
 offset = Vector2(-118.5, -278.1)
 
-[node name="plant_001" type="Sprite2D" parent="Dressing" unique_id=1327539753 groups=["generated"]]
+[node name="plant_001" type="Sprite2D" parent="Dressing" unique_id=1649071685 groups=["generated"]]
 position = Vector2(673.9487, 464.02563)
 scale = Vector2(0.19598402, 0.19598402)
 texture = ExtResource("19_es13b")
@@ -307,7 +307,7 @@ centered = false
 offset = Vector2(-147, -186)
 flip_h = true
 
-[node name="plant_002" type="Sprite2D" parent="Dressing" unique_id=25214133 groups=["generated"]]
+[node name="plant_002" type="Sprite2D" parent="Dressing" unique_id=1001183994 groups=["generated"]]
 position = Vector2(291.22998, 399.385)
 scale = Vector2(0.22042449, 0.22042449)
 texture = ExtResource("20_hotqq")
@@ -315,21 +315,21 @@ centered = false
 offset = Vector2(-138, -189)
 flip_h = true
 
-[node name="plant_003" type="Sprite2D" parent="Dressing" unique_id=1142531182 groups=["generated"]]
+[node name="plant_003" type="Sprite2D" parent="Dressing" unique_id=257708739 groups=["generated"]]
 position = Vector2(194.14014, 447.92993)
 scale = Vector2(0.27580196, 0.27580196)
 texture = ExtResource("20_hi8hu")
 centered = false
 offset = Vector2(-154, -209)
 
-[node name="plant_004" type="Sprite2D" parent="Dressing" unique_id=338920358 groups=["generated"]]
+[node name="plant_004" type="Sprite2D" parent="Dressing" unique_id=532088096 groups=["generated"]]
 position = Vector2(1057.9502, 433.97513)
 scale = Vector2(0.2061434, 0.2061434)
 texture = ExtResource("21_hsm60")
 centered = false
 offset = Vector2(-138, -196)
 
-[node name="building_001" type="Sprite2D" parent="Dressing" unique_id=841355320 groups=["generated"]]
+[node name="building_001" type="Sprite2D" parent="Dressing" unique_id=720739232 groups=["generated"]]
 position = Vector2(512, 432)
 scale = Vector2(0.15165877, 0.15165877)
 texture = ExtResource("24_ttj76")
@@ -338,7 +338,7 @@ offset = Vector2(0, -698.50006)
 region_enabled = true
 region_rect = Rect2(0, 0, 422, 1015)
 
-[node name="building_002" type="Sprite2D" parent="Dressing" unique_id=1061045596 groups=["generated"]]
+[node name="building_002" type="Sprite2D" parent="Dressing" unique_id=202638160 groups=["generated"]]
 position = Vector2(576, 464)
 scale = Vector2(0.15165877, 0.15165877)
 texture = ExtResource("24_ttj76")
@@ -347,7 +347,7 @@ offset = Vector2(0, -909.50006)
 region_enabled = true
 region_rect = Rect2(422, 0, 422, 1015)
 
-[node name="building_003" type="Sprite2D" parent="Dressing" unique_id=812931717 groups=["generated"]]
+[node name="building_003" type="Sprite2D" parent="Dressing" unique_id=2130280308 groups=["generated"]]
 position = Vector2(640, 464)
 scale = Vector2(0.15165877, 0.15165877)
 texture = ExtResource("24_ttj76")
@@ -356,7 +356,7 @@ offset = Vector2(0, -909.50006)
 region_enabled = true
 region_rect = Rect2(844, 0, 422, 1015)
 
-[node name="building_004" type="Sprite2D" parent="Dressing" unique_id=670863659 groups=["generated"]]
+[node name="building_004" type="Sprite2D" parent="Dressing" unique_id=1806978110 groups=["generated"]]
 position = Vector2(128, 431.97534)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -365,7 +365,7 @@ offset = Vector2(0, -1124.375)
 region_enabled = true
 region_rect = Rect2(0, 0, 162, 1165)
 
-[node name="building_005" type="Sprite2D" parent="Dressing" unique_id=328847709 groups=["generated"]]
+[node name="building_005" type="Sprite2D" parent="Dressing" unique_id=852743411 groups=["generated"]]
 position = Vector2(191.90138, 431.97534)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -374,7 +374,7 @@ offset = Vector2(0, -1124.375)
 region_enabled = true
 region_rect = Rect2(162, 0, 163, 1165)
 
-[node name="building_006" type="Sprite2D" parent="Dressing" unique_id=266851439 groups=["generated"]]
+[node name="building_006" type="Sprite2D" parent="Dressing" unique_id=1334580190 groups=["generated"]]
 position = Vector2(256.19724, 399.92603)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -383,7 +383,7 @@ offset = Vector2(0, -1043.125)
 region_enabled = true
 region_rect = Rect2(325, 0, 162, 1165)
 
-[node name="building_007" type="Sprite2D" parent="Dressing" unique_id=1369445360 groups=["generated"]]
+[node name="building_007" type="Sprite2D" parent="Dressing" unique_id=532426190 groups=["generated"]]
 position = Vector2(320.0986, 367.97534)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -392,7 +392,7 @@ offset = Vector2(0, -962.125)
 region_enabled = true
 region_rect = Rect2(487, 0, 162, 1165)
 
-[node name="building_008" type="Sprite2D" parent="Dressing" unique_id=372107605 groups=["generated"]]
+[node name="building_008" type="Sprite2D" parent="Dressing" unique_id=350740916 groups=["generated"]]
 position = Vector2(384, 336.02466)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -401,7 +401,7 @@ offset = Vector2(0, -881.125)
 region_enabled = true
 region_rect = Rect2(649, 0, 162, 1165)
 
-[node name="building_009" type="Sprite2D" parent="Dressing" unique_id=415393932 groups=["generated"]]
+[node name="building_009" type="Sprite2D" parent="Dressing" unique_id=384552995 groups=["generated"]]
 position = Vector2(447.9014, 303.97534)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -410,7 +410,7 @@ offset = Vector2(0, -799.875)
 region_enabled = true
 region_rect = Rect2(811, 0, 163, 1165)
 
-[node name="building_010" type="Sprite2D" parent="Dressing" unique_id=1703422530 groups=["generated"]]
+[node name="building_010" type="Sprite2D" parent="Dressing" unique_id=717744534 groups=["generated"]]
 position = Vector2(512.1972, 271.92603)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -419,7 +419,7 @@ offset = Vector2(0, -718.625)
 region_enabled = true
 region_rect = Rect2(974, 0, 162, 1165)
 
-[node name="building_011" type="Sprite2D" parent="Dressing" unique_id=1588028346 groups=["generated"]]
+[node name="building_011" type="Sprite2D" parent="Dressing" unique_id=1026158803 groups=["generated"]]
 position = Vector2(576.09863, 239.97534)
 scale = Vector2(0.39445302, 0.39445302)
 texture = ExtResource("25_kpw6y")
@@ -428,7 +428,7 @@ offset = Vector2(0, -637.625)
 region_enabled = true
 region_rect = Rect2(1136, 0, 162, 1165)
 
-[node name="building_012" type="Sprite2D" parent="Dressing" unique_id=341231062 groups=["generated"]]
+[node name="building_012" type="Sprite2D" parent="Dressing" unique_id=572800127 groups=["generated"]]
 position = Vector2(576, 208)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -437,7 +437,7 @@ offset = Vector2(0, -553.5)
 region_enabled = true
 region_rect = Rect2(0, 0, 150, 1116)
 
-[node name="building_013" type="Sprite2D" parent="Dressing" unique_id=522486949 groups=["generated"]]
+[node name="building_013" type="Sprite2D" parent="Dressing" unique_id=236391182 groups=["generated"]]
 position = Vector2(640, 240)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -446,7 +446,7 @@ offset = Vector2(0, -628.5)
 region_enabled = true
 region_rect = Rect2(150, 0, 150, 1116)
 
-[node name="building_014" type="Sprite2D" parent="Dressing" unique_id=108048101 groups=["generated"]]
+[node name="building_014" type="Sprite2D" parent="Dressing" unique_id=1930478279 groups=["generated"]]
 position = Vector2(704, 272)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -455,7 +455,7 @@ offset = Vector2(0, -703.5)
 region_enabled = true
 region_rect = Rect2(300, 0, 150, 1116)
 
-[node name="building_015" type="Sprite2D" parent="Dressing" unique_id=1775896259 groups=["generated"]]
+[node name="building_015" type="Sprite2D" parent="Dressing" unique_id=1287547983 groups=["generated"]]
 position = Vector2(768, 304)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -464,7 +464,7 @@ offset = Vector2(0, -778.5)
 region_enabled = true
 region_rect = Rect2(450, 0, 150, 1116)
 
-[node name="building_016" type="Sprite2D" parent="Dressing" unique_id=365497173 groups=["generated"]]
+[node name="building_016" type="Sprite2D" parent="Dressing" unique_id=526469066 groups=["generated"]]
 position = Vector2(832, 336)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -473,7 +473,7 @@ offset = Vector2(0, -853.5)
 region_enabled = true
 region_rect = Rect2(600, 0, 150, 1116)
 
-[node name="building_017" type="Sprite2D" parent="Dressing" unique_id=538534053 groups=["generated"]]
+[node name="building_017" type="Sprite2D" parent="Dressing" unique_id=1404169853 groups=["generated"]]
 position = Vector2(896, 368)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -482,7 +482,7 @@ offset = Vector2(0, -928.5)
 region_enabled = true
 region_rect = Rect2(750, 0, 150, 1116)
 
-[node name="building_018" type="Sprite2D" parent="Dressing" unique_id=75926085 groups=["generated"]]
+[node name="building_018" type="Sprite2D" parent="Dressing" unique_id=1526155348 groups=["generated"]]
 position = Vector2(960, 400)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -491,7 +491,7 @@ offset = Vector2(0, -1003.5)
 region_enabled = true
 region_rect = Rect2(900, 0, 150, 1116)
 
-[node name="building_019" type="Sprite2D" parent="Dressing" unique_id=1740436878 groups=["generated"]]
+[node name="building_019" type="Sprite2D" parent="Dressing" unique_id=148677917 groups=["generated"]]
 position = Vector2(1024, 432)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -500,7 +500,7 @@ offset = Vector2(0, -1078.5)
 region_enabled = true
 region_rect = Rect2(1050, 0, 150, 1116)
 
-[node name="building_020" type="Sprite2D" parent="Dressing" unique_id=432407100 groups=["generated"]]
+[node name="building_020" type="Sprite2D" parent="Dressing" unique_id=1654733493 groups=["generated"]]
 position = Vector2(1088, 432)
 scale = Vector2(0.42666668, 0.42666668)
 texture = ExtResource("26_j85y0")
@@ -509,5 +509,5 @@ offset = Vector2(0, -1078.5)
 region_enabled = true
 region_rect = Rect2(1200, 0, 150, 1116)
 
-[node name="Darkness" type="CanvasModulate" parent="." unique_id=402458950 groups=["generated"]]
+[node name="Darkness" type="CanvasModulate" parent="." unique_id=758810508 groups=["generated"]]
 color = Color(0.2, 0.22, 0.3, 1)

@@ -31,5 +31,5 @@ z_index = 100
 script = ExtResource("2_ecjpr")
 map_path = "res://content/maps/gluchobor/02_02.dn01.tres"
 
-[node name="Darkness" type="CanvasModulate" parent="." unique_id=434387078 groups=["generated"]]
+[node name="Darkness" type="CanvasModulate" parent="." unique_id=36915136 groups=["generated"]]
 color = Color(0.2, 0.22, 0.3, 1)
