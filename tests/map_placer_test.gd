@@ -189,3 +189,16 @@ func test_a_missing_picture_size_leaves_that_piece_out_instead_of_failing() -> v
 
 func test_a_map_without_a_building_has_no_strips() -> void:
 	assert_int(_of_kind(_build(false), "building").size()).is_equal(0)
+
+
+func test_plants_of_trees_beside_the_building_are_not_cut_by_a_taller_strip() -> void:
+	# Trees right next to both wings: their plants overlap the building strips.
+	var text: String = TEXT.replace(". . B B B B . .\n . B B B B B .\n. B B = B B . .", "T T B B B B T T\n T B B B B B T\n. B B = B B T T")
+	var spec: MapSpec = MapSpec.parse(text)
+	assert_array(spec.errors).is_empty()
+	var placements: Array[MapPlacer.Placement] = MapPlacer.build(spec, _kit(), {"B": BUILDING}, _sizes())
+	var strips: Array[MapPlacer.Placement] = _of_kind(placements, "building")
+	var plants: Array[MapPlacer.Placement] = _of_kind(placements, "plant")
+	assert_bool(plants.is_empty()).is_false()
+	for plant: MapPlacer.Placement in plants:
+		assert_bool(MapPlacer._is_clear(plant, _sizes(), strips)).is_true()

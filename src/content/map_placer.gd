@@ -53,7 +53,7 @@ static func build(spec: MapSpec, kit: MapKit, building_pictures: Dictionary, siz
 			var symbol: String = spec.symbol_at(row, col)
 			var feet: Vector2 = MapLayout.pixel_center(row, col)
 			if symbol == "T" and not kit.trees.is_empty():
-				_tree(kit, feet, rng, sizes, placements)
+				_tree(kit, feet, rng, sizes, placements, strips)
 			elif symbol == "#" and kit.cell_rocks > 0 and kit.rocks.size() > 0:
 				_rock(kit, feet, rng, sizes, placements)
 	_plants_along_buildings(spec, kit, building_pictures, rng, sizes, placements, strips)
@@ -77,7 +77,7 @@ static func _random_width(range: Vector2, rng: RandomNumberGenerator) -> float:
 	return rng.randf_range(range.x, range.y)
 
 
-static func _tree(kit: MapKit, feet: Vector2, rng: RandomNumberGenerator, sizes: Dictionary, placements: Array[Placement]) -> void:
+static func _tree(kit: MapKit, feet: Vector2, rng: RandomNumberGenerator, sizes: Dictionary, placements: Array[Placement], strips: Array[Placement]) -> void:
 	var base: Vector2 = feet + Vector2(0.0, 20.0)
 	var path: String = kit.trees[rng.randi_range(0, kit.trees.size() - 1)]
 	var width: float = _random_width(kit.tree_width, rng)
@@ -96,7 +96,9 @@ static func _tree(kit: MapKit, feet: Vector2, rng: RandomNumberGenerator, sizes:
 			plant.position = spot
 			plant.flip_h = rng.randf() < 0.5
 			plants_in_front(plant)
-			placements.append(plant)
+			# Like the plants at the building: a plant that a taller strip would cut is left out.
+			if _is_clear(plant, sizes, strips):
+				placements.append(plant)
 
 
 static func _rock(kit: MapKit, feet: Vector2, rng: RandomNumberGenerator, sizes: Dictionary, placements: Array[Placement]) -> void:
