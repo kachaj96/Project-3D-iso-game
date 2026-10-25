@@ -30,8 +30,8 @@ const LABEL_COLOR: Color = Color(0.05, 0.05, 0.08, 1.0)
 ## Heights in project pixels (before SCALE) of obstacle blocks standing on a cell.
 const OBSTACLE_HEIGHT: Dictionary = {"#": 64, "T": 128, "B": 160}
 const PROP_HEIGHT: int = 64
-const CLUSTER_MARGIN: int = 64
-const CLUSTER_HEADROOM: int = 240
+const CLUSTER_MARGIN: int = int(MapFootprint.CLUSTER_MARGIN) * SCALE
+const CLUSTER_HEADROOM: int = int(MapFootprint.CLUSTER_HEADROOM) * SCALE
 
 ## Layered experiment: the ground picture shows this where obstacles stand.
 const FOREST_FLOOR: Color = Color(0.28, 0.4, 0.25, 1.0)

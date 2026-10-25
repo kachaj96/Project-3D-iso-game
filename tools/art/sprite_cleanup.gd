@@ -184,3 +184,37 @@ static func luminance_to_alpha(image: Image, tint: Color) -> Image:
 static func _to_rgba8(image: Image) -> void:
 	if image.get_format() != Image.FORMAT_RGBA8:
 		image.convert(Image.FORMAT_RGBA8)
+
+
+## A soft ground shadow for an object picture: the silhouette flattened to about a eighth of
+## its height, slanted toward the lower right (the key light is at the top left), blurred. The
+## result is dark with partial opacity, wider than the object so the slant has room, and hangs
+## on the bottom centre like the object (so it scales and flips with it).
+static func make_shadow(image: Image, strength: float = 0.45) -> Image:
+	_to_rgba8(image)
+	var width: int = image.get_width()
+	var height: int = image.get_height()
+	var flat: int = maxi(int(height * 0.12), 6)
+	var pad: int = int(width * 0.3)
+	var slant: float = 0.3
+	var source: PackedByteArray = image.get_data()
+	var out_width: int = width + 2 * pad
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(out_width * flat * 4)
+	for y: int in flat:
+		var shift: int = int((flat - y) * slant * (float(height) / flat) * 0.25)
+		var source_row: int = mini(int(float(y) * height / flat), height - 1)
+		for x: int in width:
+			var alpha: int = source[(source_row * width + x) * 4 + 3]
+			var target: int = pad + x + shift
+			if alpha > 25 and target < out_width:
+				var index: int = (y * out_width + target) * 4
+				data[index] = 14
+				data[index + 1] = 18
+				data[index + 2] = 26
+				data[index + 3] = roundi(255.0 * strength)
+	var shadow: Image = Image.create_from_data(out_width, flat, false, Image.FORMAT_RGBA8, data)
+	var small: Image = shadow.duplicate()
+	small.resize(maxi(out_width / 10, 1), maxi(flat / 3, 1), Image.INTERPOLATE_BILINEAR)
+	small.resize(out_width, flat, Image.INTERPOLATE_BILINEAR)
+	return small

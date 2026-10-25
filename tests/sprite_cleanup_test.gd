@@ -97,3 +97,30 @@ func test_luminance_becomes_opacity_in_one_colour() -> void:
 	assert_float(mist.get_pixel(1, 0).a).is_equal_approx(0.5, 0.01)
 	assert_float(mist.get_pixel(2, 0).a).is_equal(1.0)
 	assert_float(mist.get_pixel(2, 0).g).is_equal_approx(0.7, 0.01)
+
+
+func test_a_shadow_is_flat_wider_than_the_object_and_soft() -> void:
+	var tree: Image = _blank(100, 200)
+	_square(tree, Rect2i(30, 0, 40, 200), Color(0.1, 0.4, 0.1, 1.0))
+	var shadow: Image = SpriteCleanup.make_shadow(tree)
+	assert_int(shadow.get_width()).is_equal(100 + 2 * 30)
+	assert_int(shadow.get_height()).is_equal(24)
+	var darkest: float = 0.0
+	var sum: float = 0.0
+	for y: int in shadow.get_height():
+		for x: int in shadow.get_width():
+			darkest = maxf(darkest, shadow.get_pixel(x, y).a)
+			sum += shadow.get_pixel(x, y).a
+	assert_float(darkest).is_greater(0.2)
+	assert_float(darkest).is_less_equal(0.46)
+	# Slanted to the right: more shadow on the right half than on the left half.
+	var left: float = 0.0
+	var right: float = 0.0
+	for y: int in shadow.get_height():
+		for x: int in shadow.get_width():
+			if x < shadow.get_width() / 2:
+				left += shadow.get_pixel(x, y).a
+			else:
+				right += shadow.get_pixel(x, y).a
+	assert_float(right).is_greater(left)
+	assert_float(sum).is_greater(0.0)

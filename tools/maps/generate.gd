@@ -8,6 +8,10 @@ extends SceneTree
 ## Writes (always): art_source/maps/<id>/blockout.png and prompt.md for the image AI.
 ## Writes (only when missing): scenes/world/maps/<region>/<cc>_<rr>.tscn, the scene you edit by
 ## hand. An existing scene is never touched.
+## When the kit and the pictures exist (see tools/art/prepare_map_assets.gd) the scene is also dressed:
+## backdrop, ground decals, objects, mist and light are put in once; add -- --redress to replace the
+## generated nodes (group "generated") again. Your own nodes are never touched. The pictures must
+## be imported first (godot --headless --import).
 ## With errors nothing is written and the exit code is 1.
 
 const SPECS_DIR: String = "res://content/map_specs"
@@ -44,6 +48,8 @@ func _init() -> void:
 		elif not _write_scene(map, tile_set, scene_path):
 			return
 		if not _write_art_helpers(generator.specs[map_id] as MapSpec, generator.specs):
+			return
+		if not _dress(generator.specs[map_id] as MapSpec, scene_path, "--redress" in OS.get_cmdline_user_args()):
 			return
 	if not _save(generator.build_catalog(), CATALOG_PATH):
 		return
@@ -142,3 +148,48 @@ func _translation_keys() -> Dictionary:
 			found.append(match_found.get_string(1))
 		keys[language] = found
 	return keys
+
+
+## Dresses the scene of a map with its pictures (see MapDresser). Done once; `force` dresses again.
+func _dress(spec: MapSpec, scene_path: String, force: bool) -> bool:
+	var region: String = spec.id.split(".")[1]
+	var kit_path: String = "res://content/kits/%s.tres" % region
+	var assets_dir: String = "res://assets/art/maps/%s/" % spec.id
+	if not ResourceLoader.exists(kit_path) or not FileAccess.file_exists(assets_dir + "ground.png"):
+		print("no pictures yet for %s: left undressed" % spec.id)
+		return true
+	var packed: PackedScene = load(scene_path)
+	var root: Node2D = packed.instantiate()
+	if root.has_node(MapDresser.DRESSING) and not force:
+		print("already dressed (use -- --redress to dress again): " + scene_path)
+		root.free()
+		return true
+	var kit: MapKit = load(kit_path)
+	var buildings: Dictionary = {}
+	for symbol: String in "B":
+		if FileAccess.file_exists("%sbuilding_%s.png" % [assets_dir, symbol]) and not spec.find_symbol(symbol).is_empty():
+			buildings[symbol] = "%sbuilding_%s.png" % [assets_dir, symbol]
+	var placements: Array[MapPlacer.Placement] = MapPlacer.build(spec, kit, buildings, _picture_sizes(kit, buildings))
+	MapDresser.dress(root, spec, placements, assets_dir)
+	var result: PackedScene = PackedScene.new()
+	result.pack(root)
+	root.free()
+	print("dressed %s with %d pieces" % [scene_path, placements.size()])
+	return _save(result, scene_path)
+
+
+## Picture path -> size, for every kit piece, shadow and building picture that exists.
+func _picture_sizes(kit: MapKit, buildings: Dictionary) -> Dictionary:
+	var sizes: Dictionary = {}
+	var paths: Array[String] = []
+	for list: Array[String] in [kit.trees, kit.plants, kit.rocks, kit.patches]:
+		paths.append_array(list)
+	for symbol: String in buildings:
+		paths.append(buildings[symbol] as String)
+	for path: String in paths:
+		for candidate: String in [path, path.trim_suffix(".png") + MapPlacer.SHADOW_SUFFIX]:
+			if FileAccess.file_exists(candidate):
+				var image: Image = Image.load_from_file(ProjectSettings.globalize_path(candidate))
+				if image != null:
+					sizes[candidate] = Vector2i(image.get_width(), image.get_height())
+	return sizes

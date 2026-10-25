@@ -1,32 +1,3265 @@
 [gd_scene format=4]
 
+[ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02/ground.png" id="1_2wc8b"]
 [ext_resource type="TileSet" path="res://content/tilesets/placeholder_iso.tres" id="1_itwuh"]
 [ext_resource type="Script" path="res://scenes/world/cell_overlay.gd" id="2_oag1c"]
+[ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02/mist.png" id="3_shytx"]
+[ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02/light.png" id="4_ceaqk"]
+[ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02/building_B_shadow.png" id="6_hwcs6"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_10.png" id="7_xb6l5"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_03_shadow.png" id="8_5ca32"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_09.png" id="9_3xrmi"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_01_shadow.png" id="10_1v2pq"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_08.png" id="11_bdkv4"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_06.png" id="12_17hlw"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_04.png" id="13_qocq1"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_02_shadow.png" id="14_6apx4"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_07.png" id="15_abjim"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_01.png" id="16_ru86d"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_03.png" id="17_rw6j8"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_05.png" id="18_2u7ax"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/patches/patch_02.png" id="19_lvklg"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/rocks/rock_02_shadow.png" id="20_fbqr3"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/rocks/rock_01_shadow.png" id="21_45yd2"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_03.png" id="22_6qkqi"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_10.png" id="23_idugf"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_03.png" id="24_e6252"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_01.png" id="25_apjrl"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_01.png" id="26_2mc50"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_12.png" id="27_uknk8"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_05.png" id="28_cnw2x"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_08.png" id="29_qgwf7"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/trees/tree_02.png" id="30_wayee"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_07.png" id="31_ayq2m"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_06.png" id="32_myn4y"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_11.png" id="33_6sc2o"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_09.png" id="34_4hffc"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_02.png" id="35_lrr11"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/plants/plant_04.png" id="36_o533l"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/rocks/rock_02.png" id="37_jnao7"]
+[ext_resource type="Texture2D" path="res://assets/art/kits/gluchobor/rocks/rock_01.png" id="38_bkqac"]
+[ext_resource type="Texture2D" path="res://assets/art/maps/map.gluchobor.02_02/building_B.png" id="39_gsm3b"]
 
-[node name="Map" type="Node2D" unique_id=1528857108]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wp3i8"]
+blend_mode = 1
 
-[node name="Backdrop" type="Sprite2D" parent="." unique_id=1877069160]
+[node name="Map" type="Node2D" unique_id=452073223]
+
+[node name="Backdrop" type="Sprite2D" parent="." unique_id=267329649]
 z_index = -2
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.7398844, 0.7398844)
+texture = ExtResource("1_2wc8b")
 centered = false
 
-[node name="Ground" type="TileMapLayer" parent="." unique_id=1527711586]
+[node name="Ground" type="TileMapLayer" parent="." unique_id=2071594631]
+visible = false
 tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAP//AAAAAAAAAAACAP7/AAAAAAAAAAADAP3/AAAAAAAAAAAEAPz/AAAAAAAAAAAFAPv/AAAAAAAAAAAGAPr/AAAAAAAAAAAHAPn/AAAAAAAAAAAIAPj/AAAAAAAAAAAJAPf/AAAAAAAAAAABAAAAAAABAAAAAAACAP//AAABAAAAAAADAP7/AAABAAAAAAAEAP3/AAABAAAAAAAFAPz/AAABAAAAAAAGAPv/AAABAAAAAAAHAPr/AAABAAAAAAAIAPn/AAABAAAAAAAJAPj/AAABAAAAAAABAAEAAAAAAAAAAAACAAAAAAAAAAAAAAADAP//AAAAAAAAAAAEAP7/AAAAAAAAAAAFAP3/AAAAAAAAAAAGAPz/AAAAAAAAAAAHAPv/AAAAAAAAAAAIAPr/AAAAAAAAAAAJAPn/AAAAAAAAAAAKAPj/AAAAAAAAAAACAAEAAAABAAAAAAADAAAAAAABAAAAAAAEAP//AAABAAAAAAAFAP7/AAABAAAAAAAGAP3/AAABAAAAAAAHAPz/AAABAAAAAAAIAPv/AAABAAAAAAAJAPr/AAABAAAAAAAKAPn/AAABAAAAAAACAAIAAAAAAAAAAAADAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAP//AAAAAAAAAAAGAP7/AAAAAAAAAAAHAP3/AAAAAAAAAAAIAPz/AAAAAAAAAAAJAPv/AAAAAAAAAAAKAPr/AAAAAAAAAAALAPn/AAAAAAAAAAADAAIAAAABAAAAAAAEAAEAAAABAAAAAAAFAAAAAAABAAAAAAAGAP//AAABAAAAAAAHAP7/AAABAAAAAAAIAP3/AAABAAAAAAAJAPz/AAABAAAAAAAKAPv/AAABAAAAAAALAPr/AAABAAAAAAADAAMAAAAAAAAAAAAEAAIAAAAAAAAAAAAFAAEAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAP//AAAAAAAAAAAIAP7/AAAAAAAAAAAJAP3/AAAAAAAAAAAKAPz/AAAAAAAAAAALAPv/AAAAAAAAAAAMAPr/AAAAAAAAAAAEAAMAAAABAAAAAAAFAAIAAAABAAAAAAAGAAEAAAABAAAAAAAHAAAAAAABAAAAAAAIAP//AAABAAAAAAAJAP7/AAABAAAAAAAKAP3/AAABAAAAAAALAPz/AAABAAAAAAAMAPv/AAABAAAAAAAEAAQAAAAAAAAAAAAFAAMAAAAAAAAAAAAGAAIAAAAAAAAAAAAHAAEAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAP//AAAAAAAAAAAKAP7/AAAAAAAAAAALAP3/AAAAAAAAAAAMAPz/AAAAAAAAAAANAPv/AAAAAAAAAAAFAAQAAAABAAAAAAAGAAMAAAABAAAAAAAHAAIAAAABAAAAAAAIAAEAAAABAAAAAAAJAAAAAAABAAAAAAAKAP//AAABAAAAAAALAP7/AAABAAAAAAAMAP3/AAABAAAAAAANAPz/AAABAAAAAAAFAAUAAAAAAAAAAAAGAAQAAAAAAAAAAAAHAAMAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAEAAAAAAAAAAAAKAAAAAAAAAAAAAAALAP//AAAAAAAAAAAMAP7/AAAAAAAAAAANAP3/AAAAAAAAAAAOAPz/AAAAAAAAAAAGAAUAAAABAAAAAAAHAAQAAAABAAAAAAAIAAMAAAABAAAAAAAJAAIAAAABAAAAAAAKAAEAAAABAAAAAAALAAAAAAABAAAAAAAMAP//AAABAAAAAAANAP7/AAABAAAAAAAOAP3/AAABAAAAAAAGAAYAAAAAAAAAAAAHAAUAAAAAAAAAAAAIAAQAAAAAAAAAAAAJAAMAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAEAAAAAAAAAAAAMAAAAAAAAAAAAAAANAP//AAAAAAAAAAAOAP7/AAAAAAAAAAAPAP3/AAAAAAAAAAAHAAYAAAABAAAAAAAIAAUAAAABAAAAAAAJAAQAAAABAAAAAAAKAAMAAAABAAAAAAALAAIAAAABAAAAAAAMAAEAAAABAAAAAAANAAAAAAABAAAAAAAOAP//AAABAAAAAAAPAP7/AAABAAAAAAAHAAcAAAAAAAAAAAAIAAYAAAAAAAAAAAAJAAUAAAAAAAAAAAAKAAQAAAAAAAAAAAALAAMAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAEAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAP//AAAAAAAAAAAQAP7/AAAAAAAAAAAIAAcAAAABAAAAAAAJAAYAAAABAAAAAAAKAAUAAAABAAAAAAALAAQAAAABAAAAAAAMAAMAAAABAAAAAAANAAIAAAABAAAAAAAOAAEAAAABAAAAAAAPAAAAAAABAAAAAAAQAP//AAABAAAAAAAIAAgAAAAAAAAAAAAJAAcAAAAAAAAAAAAKAAYAAAAAAAAAAAALAAUAAAAAAAAAAAAMAAQAAAAAAAAAAAANAAMAAAAAAAAAAAAOAAIAAAAAAAAAAAAPAAEAAAAAAAAAAAAQAAAAAAAAAAAAAAARAP//AAAAAAAAAAAJAAgAAAABAAAAAAAKAAcAAAABAAAAAAALAAYAAAABAAAAAAAMAAUAAAABAAAAAAANAAQAAAABAAAAAAAOAAMAAAABAAAAAAAPAAIAAAABAAAAAAAQAAEAAAABAAAAAAARAAAAAAABAAAAAAAJAAkAAAAAAAAAAAAKAAgAAAAAAAAAAAALAAcAAAAAAAAAAAAMAAYAAAAAAAAAAAANAAUAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAMAAAAAAAAAAAAQAAIAAAAAAAAAAAARAAEAAAAAAAAAAAASAAAAAAAAAAAAAAAKAAkAAAABAAAAAAALAAgAAAABAAAAAAAMAAcAAAABAAAAAAANAAYAAAABAAAAAAAOAAUAAAABAAAAAAAPAAQAAAABAAAAAAAQAAMAAAABAAAAAAARAAIAAAABAAAAAAASAAEAAAABAAAAAAA=")
 tile_set = ExtResource("1_itwuh")
 
-[node name="Objects" type="TileMapLayer" parent="." unique_id=1921506935]
+[node name="Objects" type="TileMapLayer" parent="." unique_id=948571204]
+visible = false
 position = Vector2(0, -64)
 tile_map_data = PackedByteArray("AAAAAAAAAAADAAAAAAABAP//AAAEAAAAAAACAP7/AAADAAAAAAADAP3/AAAEAAAAAAAEAPz/AAADAAAAAAAFAPv/AAAEAAAAAAAGAPr/AAADAAAAAAAHAPn/AAAEAAAAAAAIAPj/AAADAAAAAAAJAPf/AAAEAAAAAAABAAAAAAAEAAAAAAACAP//AAADAAAAAAADAP7/AAAEAAAAAAAEAP3/AAADAAAAAAAFAPz/AAAEAAAAAAAGAPv/AAADAAAAAAAHAPr/AAAEAAAAAAAIAPn/AAADAAAAAAAJAPj/AAAEAAAAAAABAAEAAAAEAAAAAAACAAAAAAADAAAAAAADAP//AAAEAAAAAAAEAP7/AAADAAAAAAAFAP3/AAAEAAAAAAAGAPz/AAADAAAAAAAHAPv/AAAEAAAAAAAIAPr/AAADAAAAAAAJAPn/AAAEAAAAAAAKAPj/AAADAAAAAAACAAEAAAADAAAAAAADAAAAAAAEAAAAAAAEAP//AAADAAAAAAAFAP7/AAAEAAAAAAAGAP3/AAADAAAAAAAHAPz/AAAEAAAAAAAIAPv/AAADAAAAAAAJAPr/AAAEAAAAAAAKAPn/AAADAAAAAAACAAIAAAADAAAAAAADAAEAAAAEAAAAAAAEAAAAAAADAAAAAAAFAP//AAAEAAAAAAAGAP7/AAADAAAAAAAHAP3/AAAEAAAAAAAIAPz/AAADAAAAAAAJAPv/AAAEAAAAAAAKAPr/AAADAAAAAAALAPn/AAAEAAAAAAADAAIAAAAEAAAAAAAEAAEAAAADAAAAAAAFAAAAAAAEAAAAAAAGAP//AAADAAAAAAAHAP7/AAAEAAAAAAAIAP3/AAADAAAAAAAJAPz/AAAEAAAAAAAKAPv/AAADAAAAAAALAPr/AAAEAAAAAAADAAMAAAAEAAAAAAAFAAEAAAAEAAAAAAAGAAAAAAADAAAAAAAIAP7/AAADAAAAAAAJAP3/AAAEAAAAAAALAPv/AAAEAAAAAAAMAPr/AAADAAAAAAAEAAMAAAADAAAAAAAGAAEAAAADAAAAAAAKAP3/AAADAAAAAAAMAPv/AAADAAAAAAAEAAQAAAADAAAAAAANAPv/AAAEAAAAAAANAPz/AAAEAAAAAAAGAAYAAAADAAAAAAAPAP3/AAAEAAAAAAAHAAYAAAAEAAAAAAAPAP7/AAAEAAAAAAAHAAcAAAAEAAAAAAAQAP7/AAADAAAAAAAIAAcAAAADAAAAAAAQAP//AAADAAAAAAAIAAgAAAADAAAAAAARAP//AAAEAAAAAAAJAAgAAAAEAAAAAAARAAAAAAAEAAAAAAAJAAkAAAAEAAAAAAAKAAgAAAADAAAAAAARAAEAAAAEAAAAAAASAAAAAAADAAAAAAAKAAkAAAADAAAAAAALAAgAAAAEAAAAAAAMAAcAAAADAAAAAAAQAAMAAAADAAAAAAARAAIAAAAEAAAAAAASAAEAAAADAAAAAAA=")
 tile_set = ExtResource("1_itwuh")
 
-[node name="Occluders" type="Node2D" parent="." unique_id=220352337]
+[node name="Occluders" type="Node2D" parent="." unique_id=568765148]
 
-[node name="Effects" type="Node2D" parent="." unique_id=1214543067]
+[node name="Effects" type="Node2D" parent="." unique_id=840459445]
+z_index = 50
 
-[node name="Lights" type="Node2D" parent="." unique_id=620163157]
+[node name="Mist" type="Sprite2D" parent="Effects" unique_id=93500069 groups=["generated"]]
+modulate = Color(1, 1, 1, 0.4)
+scale = Vector2(0.73903, 0.73903)
+texture = ExtResource("3_shytx")
+centered = false
 
-[node name="CellOverlay" type="Node2D" parent="." unique_id=608973146]
+[node name="Lights" type="Node2D" parent="." unique_id=1815292471]
+z_index = 50
+
+[node name="Light" type="Sprite2D" parent="Lights" unique_id=1986106286 groups=["generated"]]
+modulate = Color(1, 1, 1, 0.45)
+material = SubResource("CanvasItemMaterial_wp3i8")
+scale = Vector2(0.7386036, 0.7386036)
+texture = ExtResource("4_ceaqk")
+centered = false
+
+[node name="CellOverlay" type="Node2D" parent="." unique_id=423388788]
 visible = false
 z_index = 100
 script = ExtResource("2_oag1c")
 map_path = "res://content/maps/gluchobor/02_02.tres"
+
+[node name="GroundDecor" type="Node2D" parent="." unique_id=54007213]
+z_index = -1
+
+[node name="shadow_001" type="Sprite2D" parent="GroundDecor" unique_id=1169186374 groups=["generated"]]
+position = Vector2(608, 256)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("6_hwcs6")
+centered = false
+offset = Vector2(-1376, -109)
+
+[node name="patch_001" type="Sprite2D" parent="GroundDecor" unique_id=1948630813 groups=["generated"]]
+position = Vector2(64, 40)
+scale = Vector2(0.38213572, 0.38213572)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+
+[node name="shadow_002" type="Sprite2D" parent="GroundDecor" unique_id=1449392965 groups=["generated"]]
+position = Vector2(64, 52)
+scale = Vector2(0.6239704, 0.6239704)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_002" type="Sprite2D" parent="GroundDecor" unique_id=1038702532 groups=["generated"]]
+position = Vector2(192, 40)
+scale = Vector2(0.39539844, 0.39539844)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+
+[node name="shadow_003" type="Sprite2D" parent="GroundDecor" unique_id=1215408286 groups=["generated"]]
+position = Vector2(192, 52)
+scale = Vector2(0.40869793, 0.40869793)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_003" type="Sprite2D" parent="GroundDecor" unique_id=532834424 groups=["generated"]]
+position = Vector2(320, 40)
+scale = Vector2(0.5148982, 0.5148982)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="shadow_004" type="Sprite2D" parent="GroundDecor" unique_id=568991577 groups=["generated"]]
+position = Vector2(320, 52)
+scale = Vector2(0.40378445, 0.40378445)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_004" type="Sprite2D" parent="GroundDecor" unique_id=1937481511 groups=["generated"]]
+position = Vector2(448, 40)
+scale = Vector2(0.31693718, 0.31693718)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_005" type="Sprite2D" parent="GroundDecor" unique_id=1331690636 groups=["generated"]]
+position = Vector2(448, 52)
+scale = Vector2(0.2701033, 0.2701033)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_005" type="Sprite2D" parent="GroundDecor" unique_id=1538321639 groups=["generated"]]
+position = Vector2(576, 40)
+scale = Vector2(0.45870817, 0.45870817)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="shadow_006" type="Sprite2D" parent="GroundDecor" unique_id=1355677612 groups=["generated"]]
+position = Vector2(576, 52)
+scale = Vector2(0.6130882, 0.6130882)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_006" type="Sprite2D" parent="GroundDecor" unique_id=356605107 groups=["generated"]]
+position = Vector2(704, 40)
+scale = Vector2(0.7703437, 0.7703437)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+flip_h = true
+
+[node name="shadow_007" type="Sprite2D" parent="GroundDecor" unique_id=545704024 groups=["generated"]]
+position = Vector2(704, 52)
+scale = Vector2(0.5031766, 0.5031766)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_007" type="Sprite2D" parent="GroundDecor" unique_id=61828539 groups=["generated"]]
+position = Vector2(832, 40)
+scale = Vector2(0.41776824, 0.41776824)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_008" type="Sprite2D" parent="GroundDecor" unique_id=1650504346 groups=["generated"]]
+position = Vector2(832, 52)
+scale = Vector2(0.53119296, 0.53119296)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_008" type="Sprite2D" parent="GroundDecor" unique_id=2083904800 groups=["generated"]]
+position = Vector2(960, 40)
+scale = Vector2(0.7263018, 0.7263018)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+flip_h = true
+
+[node name="shadow_009" type="Sprite2D" parent="GroundDecor" unique_id=1936461741 groups=["generated"]]
+position = Vector2(960, 52)
+scale = Vector2(0.38565913, 0.38565913)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_009" type="Sprite2D" parent="GroundDecor" unique_id=640461714 groups=["generated"]]
+position = Vector2(1088, 40)
+scale = Vector2(0.5624583, 0.5624583)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="shadow_010" type="Sprite2D" parent="GroundDecor" unique_id=1627978346 groups=["generated"]]
+position = Vector2(1088, 52)
+scale = Vector2(0.5425853, 0.5425853)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_010" type="Sprite2D" parent="GroundDecor" unique_id=715434262 groups=["generated"]]
+position = Vector2(1216, 40)
+scale = Vector2(0.5065817, 0.5065817)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_011" type="Sprite2D" parent="GroundDecor" unique_id=230716961 groups=["generated"]]
+position = Vector2(1216, 52)
+scale = Vector2(0.34148932, 0.34148932)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_011" type="Sprite2D" parent="GroundDecor" unique_id=1685755983 groups=["generated"]]
+position = Vector2(128, 72)
+scale = Vector2(0.40200287, 0.40200287)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_012" type="Sprite2D" parent="GroundDecor" unique_id=1370650236 groups=["generated"]]
+position = Vector2(128, 84)
+scale = Vector2(0.7081983, 0.7081983)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_012" type="Sprite2D" parent="GroundDecor" unique_id=1399488256 groups=["generated"]]
+position = Vector2(256, 72)
+scale = Vector2(0.5355045, 0.5355045)
+texture = ExtResource("16_ru86d")
+centered = false
+offset = Vector2(-187.5, -101.5)
+flip_h = true
+
+[node name="shadow_013" type="Sprite2D" parent="GroundDecor" unique_id=1685746878 groups=["generated"]]
+position = Vector2(256, 84)
+scale = Vector2(0.37946752, 0.37946752)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_013" type="Sprite2D" parent="GroundDecor" unique_id=1828069808 groups=["generated"]]
+position = Vector2(384, 72)
+scale = Vector2(0.27653995, 0.27653995)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_014" type="Sprite2D" parent="GroundDecor" unique_id=404492087 groups=["generated"]]
+position = Vector2(384, 84)
+scale = Vector2(0.32590833, 0.32590833)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_014" type="Sprite2D" parent="GroundDecor" unique_id=93563602 groups=["generated"]]
+position = Vector2(512, 72)
+scale = Vector2(0.5501397, 0.5501397)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+flip_h = true
+
+[node name="shadow_015" type="Sprite2D" parent="GroundDecor" unique_id=1495286024 groups=["generated"]]
+position = Vector2(512, 84)
+scale = Vector2(0.5524416, 0.5524416)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_015" type="Sprite2D" parent="GroundDecor" unique_id=1228905955 groups=["generated"]]
+position = Vector2(640, 72)
+scale = Vector2(0.4665841, 0.4665841)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+
+[node name="shadow_016" type="Sprite2D" parent="GroundDecor" unique_id=2089627861 groups=["generated"]]
+position = Vector2(640, 84)
+scale = Vector2(0.64916044, 0.64916044)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_016" type="Sprite2D" parent="GroundDecor" unique_id=701009149 groups=["generated"]]
+position = Vector2(768, 72)
+scale = Vector2(0.44326222, 0.44326222)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_017" type="Sprite2D" parent="GroundDecor" unique_id=1643283810 groups=["generated"]]
+position = Vector2(768, 84)
+scale = Vector2(0.5223941, 0.5223941)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_017" type="Sprite2D" parent="GroundDecor" unique_id=1700110728 groups=["generated"]]
+position = Vector2(896, 72)
+scale = Vector2(0.3028156, 0.3028156)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+
+[node name="shadow_018" type="Sprite2D" parent="GroundDecor" unique_id=704928239 groups=["generated"]]
+position = Vector2(896, 84)
+scale = Vector2(0.3850305, 0.3850305)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_018" type="Sprite2D" parent="GroundDecor" unique_id=129212474 groups=["generated"]]
+position = Vector2(1024, 72)
+scale = Vector2(0.41246158, 0.41246158)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+
+[node name="shadow_019" type="Sprite2D" parent="GroundDecor" unique_id=1009968285 groups=["generated"]]
+position = Vector2(1024, 84)
+scale = Vector2(0.43240395, 0.43240395)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_019" type="Sprite2D" parent="GroundDecor" unique_id=14052807 groups=["generated"]]
+position = Vector2(1152, 72)
+scale = Vector2(0.7053109, 0.7053109)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_020" type="Sprite2D" parent="GroundDecor" unique_id=528462180 groups=["generated"]]
+position = Vector2(1152, 84)
+scale = Vector2(0.65874445, 0.65874445)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_020" type="Sprite2D" parent="GroundDecor" unique_id=1309739212 groups=["generated"]]
+position = Vector2(64, 104)
+scale = Vector2(0.5071951, 0.5071951)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_021" type="Sprite2D" parent="GroundDecor" unique_id=937884463 groups=["generated"]]
+position = Vector2(64, 116)
+scale = Vector2(0.73669887, 0.73669887)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_021" type="Sprite2D" parent="GroundDecor" unique_id=249057285 groups=["generated"]]
+position = Vector2(192, 104)
+scale = Vector2(0.31001383, 0.31001383)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_022" type="Sprite2D" parent="GroundDecor" unique_id=1707519872 groups=["generated"]]
+position = Vector2(192, 116)
+scale = Vector2(0.3941831, 0.3941831)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_022" type="Sprite2D" parent="GroundDecor" unique_id=329835635 groups=["generated"]]
+position = Vector2(320, 104)
+scale = Vector2(0.40105125, 0.40105125)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+flip_h = true
+
+[node name="shadow_023" type="Sprite2D" parent="GroundDecor" unique_id=1141085234 groups=["generated"]]
+position = Vector2(320, 116)
+scale = Vector2(0.55798435, 0.55798435)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_023" type="Sprite2D" parent="GroundDecor" unique_id=1735169044 groups=["generated"]]
+position = Vector2(448, 104)
+scale = Vector2(0.3824261, 0.3824261)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_024" type="Sprite2D" parent="GroundDecor" unique_id=1021476048 groups=["generated"]]
+position = Vector2(448, 116)
+scale = Vector2(0.32591492, 0.32591492)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_024" type="Sprite2D" parent="GroundDecor" unique_id=8057548 groups=["generated"]]
+position = Vector2(576, 104)
+scale = Vector2(0.8161267, 0.8161267)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_025" type="Sprite2D" parent="GroundDecor" unique_id=1970149818 groups=["generated"]]
+position = Vector2(576, 116)
+scale = Vector2(0.44723496, 0.44723496)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_025" type="Sprite2D" parent="GroundDecor" unique_id=619811456 groups=["generated"]]
+position = Vector2(704, 104)
+scale = Vector2(0.37500998, 0.37500998)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+flip_h = true
+
+[node name="shadow_026" type="Sprite2D" parent="GroundDecor" unique_id=234328729 groups=["generated"]]
+position = Vector2(704, 116)
+scale = Vector2(0.36001658, 0.36001658)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_026" type="Sprite2D" parent="GroundDecor" unique_id=2120230959 groups=["generated"]]
+position = Vector2(832, 104)
+scale = Vector2(0.7138755, 0.7138755)
+texture = ExtResource("19_lvklg")
+centered = false
+offset = Vector2(-128.5, -88.5)
+flip_h = true
+
+[node name="shadow_027" type="Sprite2D" parent="GroundDecor" unique_id=1286192062 groups=["generated"]]
+position = Vector2(832, 116)
+scale = Vector2(0.42646673, 0.42646673)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_027" type="Sprite2D" parent="GroundDecor" unique_id=976281299 groups=["generated"]]
+position = Vector2(960, 104)
+scale = Vector2(0.4676422, 0.4676422)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_028" type="Sprite2D" parent="GroundDecor" unique_id=1394791323 groups=["generated"]]
+position = Vector2(960, 116)
+scale = Vector2(0.6792484, 0.6792484)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+flip_h = true
+
+[node name="patch_028" type="Sprite2D" parent="GroundDecor" unique_id=1749480066 groups=["generated"]]
+position = Vector2(1088, 104)
+scale = Vector2(0.35743165, 0.35743165)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_029" type="Sprite2D" parent="GroundDecor" unique_id=786200058 groups=["generated"]]
+position = Vector2(1088, 116)
+scale = Vector2(0.36945412, 0.36945412)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_029" type="Sprite2D" parent="GroundDecor" unique_id=2083712584 groups=["generated"]]
+position = Vector2(1216, 104)
+scale = Vector2(0.5168917, 0.5168917)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_030" type="Sprite2D" parent="GroundDecor" unique_id=1907407921 groups=["generated"]]
+position = Vector2(1216, 116)
+scale = Vector2(0.48276523, 0.48276523)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+flip_h = true
+
+[node name="patch_030" type="Sprite2D" parent="GroundDecor" unique_id=1837819262 groups=["generated"]]
+position = Vector2(128, 136)
+scale = Vector2(0.33429477, 0.33429477)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+
+[node name="shadow_031" type="Sprite2D" parent="GroundDecor" unique_id=1282054388 groups=["generated"]]
+position = Vector2(128, 148)
+scale = Vector2(0.3939736, 0.3939736)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_031" type="Sprite2D" parent="GroundDecor" unique_id=1124310210 groups=["generated"]]
+position = Vector2(256, 136)
+scale = Vector2(0.28872287, 0.28872287)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_032" type="Sprite2D" parent="GroundDecor" unique_id=490693437 groups=["generated"]]
+position = Vector2(256, 148)
+scale = Vector2(0.34026614, 0.34026614)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_032" type="Sprite2D" parent="GroundDecor" unique_id=1430122728 groups=["generated"]]
+position = Vector2(384, 136)
+scale = Vector2(0.39336246, 0.39336246)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+
+[node name="shadow_033" type="Sprite2D" parent="GroundDecor" unique_id=768042640 groups=["generated"]]
+position = Vector2(384, 148)
+scale = Vector2(0.30698922, 0.30698922)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_033" type="Sprite2D" parent="GroundDecor" unique_id=1324450011 groups=["generated"]]
+position = Vector2(512, 136)
+scale = Vector2(0.39774585, 0.39774585)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_034" type="Sprite2D" parent="GroundDecor" unique_id=1295909379 groups=["generated"]]
+position = Vector2(512, 148)
+scale = Vector2(0.7006988, 0.7006988)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_034" type="Sprite2D" parent="GroundDecor" unique_id=1767592880 groups=["generated"]]
+position = Vector2(640, 136)
+scale = Vector2(0.50033706, 0.50033706)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_035" type="Sprite2D" parent="GroundDecor" unique_id=1828845371 groups=["generated"]]
+position = Vector2(640, 148)
+scale = Vector2(0.52452815, 0.52452815)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_035" type="Sprite2D" parent="GroundDecor" unique_id=1231335664 groups=["generated"]]
+position = Vector2(768, 136)
+scale = Vector2(0.41436154, 0.41436154)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+flip_h = true
+
+[node name="shadow_036" type="Sprite2D" parent="GroundDecor" unique_id=1782140875 groups=["generated"]]
+position = Vector2(768, 148)
+scale = Vector2(0.39779478, 0.39779478)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_036" type="Sprite2D" parent="GroundDecor" unique_id=2014743362 groups=["generated"]]
+position = Vector2(896, 136)
+scale = Vector2(0.9216748, 0.9216748)
+texture = ExtResource("19_lvklg")
+centered = false
+offset = Vector2(-128.5, -88.5)
+
+[node name="shadow_037" type="Sprite2D" parent="GroundDecor" unique_id=2106209219 groups=["generated"]]
+position = Vector2(896, 148)
+scale = Vector2(0.7628677, 0.7628677)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_037" type="Sprite2D" parent="GroundDecor" unique_id=262095882 groups=["generated"]]
+position = Vector2(1024, 136)
+scale = Vector2(0.39715093, 0.39715093)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+
+[node name="shadow_038" type="Sprite2D" parent="GroundDecor" unique_id=1072557548 groups=["generated"]]
+position = Vector2(1024, 148)
+scale = Vector2(0.30994585, 0.30994585)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_038" type="Sprite2D" parent="GroundDecor" unique_id=1814210525 groups=["generated"]]
+position = Vector2(1152, 136)
+scale = Vector2(0.3025469, 0.3025469)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+
+[node name="shadow_039" type="Sprite2D" parent="GroundDecor" unique_id=1956202075 groups=["generated"]]
+position = Vector2(1152, 148)
+scale = Vector2(0.4940138, 0.4940138)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+flip_h = true
+
+[node name="patch_039" type="Sprite2D" parent="GroundDecor" unique_id=862747287 groups=["generated"]]
+position = Vector2(64, 168)
+scale = Vector2(0.5306028, 0.5306028)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+flip_h = true
+
+[node name="shadow_040" type="Sprite2D" parent="GroundDecor" unique_id=718047722 groups=["generated"]]
+position = Vector2(64, 180)
+scale = Vector2(0.29076874, 0.29076874)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_040" type="Sprite2D" parent="GroundDecor" unique_id=1920311021 groups=["generated"]]
+position = Vector2(192, 168)
+scale = Vector2(0.5575162, 0.5575162)
+texture = ExtResource("16_ru86d")
+centered = false
+offset = Vector2(-187.5, -101.5)
+flip_h = true
+
+[node name="shadow_041" type="Sprite2D" parent="GroundDecor" unique_id=1105555980 groups=["generated"]]
+position = Vector2(192, 180)
+scale = Vector2(0.48597997, 0.48597997)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_041" type="Sprite2D" parent="GroundDecor" unique_id=1655158298 groups=["generated"]]
+position = Vector2(320, 168)
+scale = Vector2(0.7437739, 0.7437739)
+texture = ExtResource("19_lvklg")
+centered = false
+offset = Vector2(-128.5, -88.5)
+
+[node name="shadow_042" type="Sprite2D" parent="GroundDecor" unique_id=1927579455 groups=["generated"]]
+position = Vector2(320, 180)
+scale = Vector2(0.44432795, 0.44432795)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_042" type="Sprite2D" parent="GroundDecor" unique_id=484231212 groups=["generated"]]
+position = Vector2(960, 168)
+scale = Vector2(0.6096109, 0.6096109)
+texture = ExtResource("16_ru86d")
+centered = false
+offset = Vector2(-187.5, -101.5)
+
+[node name="shadow_043" type="Sprite2D" parent="GroundDecor" unique_id=642633862 groups=["generated"]]
+position = Vector2(960, 180)
+scale = Vector2(0.43198052, 0.43198052)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_043" type="Sprite2D" parent="GroundDecor" unique_id=1532795117 groups=["generated"]]
+position = Vector2(1088, 168)
+scale = Vector2(0.52680725, 0.52680725)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_044" type="Sprite2D" parent="GroundDecor" unique_id=1012074825 groups=["generated"]]
+position = Vector2(1088, 180)
+scale = Vector2(0.28868878, 0.28868878)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_044" type="Sprite2D" parent="GroundDecor" unique_id=1052993762 groups=["generated"]]
+position = Vector2(1216, 168)
+scale = Vector2(0.6544486, 0.6544486)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+flip_h = true
+
+[node name="shadow_045" type="Sprite2D" parent="GroundDecor" unique_id=1113122104 groups=["generated"]]
+position = Vector2(1216, 180)
+scale = Vector2(0.35863587, 0.35863587)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_045" type="Sprite2D" parent="GroundDecor" unique_id=102889643 groups=["generated"]]
+position = Vector2(128, 200)
+scale = Vector2(0.42341486, 0.42341486)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+
+[node name="shadow_046" type="Sprite2D" parent="GroundDecor" unique_id=1546015100 groups=["generated"]]
+position = Vector2(128, 212)
+scale = Vector2(0.36084676, 0.36084676)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_046" type="Sprite2D" parent="GroundDecor" unique_id=185610304 groups=["generated"]]
+position = Vector2(256, 200)
+scale = Vector2(0.64189154, 0.64189154)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+
+[node name="shadow_047" type="Sprite2D" parent="GroundDecor" unique_id=1965333554 groups=["generated"]]
+position = Vector2(256, 212)
+scale = Vector2(0.41927364, 0.41927364)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_047" type="Sprite2D" parent="GroundDecor" unique_id=1433891064 groups=["generated"]]
+position = Vector2(1024, 200)
+scale = Vector2(0.46233538, 0.46233538)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_048" type="Sprite2D" parent="GroundDecor" unique_id=1633301102 groups=["generated"]]
+position = Vector2(1024, 212)
+scale = Vector2(0.48468912, 0.48468912)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_048" type="Sprite2D" parent="GroundDecor" unique_id=24992786 groups=["generated"]]
+position = Vector2(1152, 200)
+scale = Vector2(0.8076958, 0.8076958)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+
+[node name="shadow_049" type="Sprite2D" parent="GroundDecor" unique_id=1435858660 groups=["generated"]]
+position = Vector2(1152, 212)
+scale = Vector2(0.73095816, 0.73095816)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+flip_h = true
+
+[node name="patch_049" type="Sprite2D" parent="GroundDecor" unique_id=726247669 groups=["generated"]]
+position = Vector2(64, 232)
+scale = Vector2(0.88799644, 0.88799644)
+texture = ExtResource("19_lvklg")
+centered = false
+offset = Vector2(-128.5, -88.5)
+flip_h = true
+
+[node name="shadow_050" type="Sprite2D" parent="GroundDecor" unique_id=296728992 groups=["generated"]]
+position = Vector2(64, 244)
+scale = Vector2(0.530486, 0.530486)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_050" type="Sprite2D" parent="GroundDecor" unique_id=1516859935 groups=["generated"]]
+position = Vector2(1088, 232)
+scale = Vector2(0.39113596, 0.39113596)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+flip_h = true
+
+[node name="shadow_051" type="Sprite2D" parent="GroundDecor" unique_id=580618484 groups=["generated"]]
+position = Vector2(1088, 244)
+scale = Vector2(0.3754978, 0.3754978)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_051" type="Sprite2D" parent="GroundDecor" unique_id=231375498 groups=["generated"]]
+position = Vector2(1216, 232)
+scale = Vector2(0.70256, 0.70256)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_052" type="Sprite2D" parent="GroundDecor" unique_id=1906711360 groups=["generated"]]
+position = Vector2(1216, 244)
+scale = Vector2(0.47359926, 0.47359926)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_052" type="Sprite2D" parent="GroundDecor" unique_id=1977272741 groups=["generated"]]
+position = Vector2(128, 264)
+scale = Vector2(0.39400163, 0.39400163)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+flip_h = true
+
+[node name="shadow_053" type="Sprite2D" parent="GroundDecor" unique_id=312716147 groups=["generated"]]
+position = Vector2(128, 276)
+scale = Vector2(0.321634, 0.321634)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="shadow_054" type="Sprite2D" parent="GroundDecor" unique_id=227112479 groups=["generated"]]
+position = Vector2(384, 271)
+scale = Vector2(0.36033294, 0.36033294)
+texture = ExtResource("20_fbqr3")
+centered = false
+offset = Vector2(-315, -39)
+
+[node name="shadow_055" type="Sprite2D" parent="GroundDecor" unique_id=935145312 groups=["generated"]]
+position = Vector2(896, 271)
+scale = Vector2(0.32509384, 0.32509384)
+texture = ExtResource("21_45yd2")
+centered = false
+offset = Vector2(-388, -41)
+
+[node name="patch_053" type="Sprite2D" parent="GroundDecor" unique_id=393584309 groups=["generated"]]
+position = Vector2(1152, 264)
+scale = Vector2(0.50716233, 0.50716233)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+
+[node name="shadow_056" type="Sprite2D" parent="GroundDecor" unique_id=126176676 groups=["generated"]]
+position = Vector2(1152, 276)
+scale = Vector2(0.41401008, 0.41401008)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_054" type="Sprite2D" parent="GroundDecor" unique_id=1260661948 groups=["generated"]]
+position = Vector2(64, 296)
+scale = Vector2(0.5482431, 0.5482431)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="shadow_057" type="Sprite2D" parent="GroundDecor" unique_id=267843506 groups=["generated"]]
+position = Vector2(64, 308)
+scale = Vector2(0.5288724, 0.5288724)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_055" type="Sprite2D" parent="GroundDecor" unique_id=624175192 groups=["generated"]]
+position = Vector2(1216, 296)
+scale = Vector2(0.73765004, 0.73765004)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+flip_h = true
+
+[node name="shadow_058" type="Sprite2D" parent="GroundDecor" unique_id=1290117196 groups=["generated"]]
+position = Vector2(1216, 308)
+scale = Vector2(0.39168492, 0.39168492)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_056" type="Sprite2D" parent="GroundDecor" unique_id=670327378 groups=["generated"]]
+position = Vector2(1152, 328)
+scale = Vector2(0.39774382, 0.39774382)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_059" type="Sprite2D" parent="GroundDecor" unique_id=883323706 groups=["generated"]]
+position = Vector2(1152, 340)
+scale = Vector2(0.46874967, 0.46874967)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_057" type="Sprite2D" parent="GroundDecor" unique_id=1666462748 groups=["generated"]]
+position = Vector2(64, 424)
+scale = Vector2(0.49208394, 0.49208394)
+texture = ExtResource("16_ru86d")
+centered = false
+offset = Vector2(-187.5, -101.5)
+flip_h = true
+
+[node name="shadow_060" type="Sprite2D" parent="GroundDecor" unique_id=1011843881 groups=["generated"]]
+position = Vector2(64, 436)
+scale = Vector2(0.42894346, 0.42894346)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_058" type="Sprite2D" parent="GroundDecor" unique_id=1792622824 groups=["generated"]]
+position = Vector2(1216, 424)
+scale = Vector2(0.571999, 0.571999)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+
+[node name="shadow_061" type="Sprite2D" parent="GroundDecor" unique_id=894696206 groups=["generated"]]
+position = Vector2(1216, 436)
+scale = Vector2(0.5176545, 0.5176545)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_059" type="Sprite2D" parent="GroundDecor" unique_id=1130316956 groups=["generated"]]
+position = Vector2(128, 456)
+scale = Vector2(0.44423038, 0.44423038)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+
+[node name="shadow_062" type="Sprite2D" parent="GroundDecor" unique_id=293557845 groups=["generated"]]
+position = Vector2(128, 468)
+scale = Vector2(0.42559487, 0.42559487)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+flip_h = true
+
+[node name="patch_060" type="Sprite2D" parent="GroundDecor" unique_id=1117321615 groups=["generated"]]
+position = Vector2(1152, 456)
+scale = Vector2(0.3499419, 0.3499419)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_063" type="Sprite2D" parent="GroundDecor" unique_id=995085098 groups=["generated"]]
+position = Vector2(1152, 468)
+scale = Vector2(0.5714027, 0.5714027)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_061" type="Sprite2D" parent="GroundDecor" unique_id=1287332166 groups=["generated"]]
+position = Vector2(64, 488)
+scale = Vector2(0.7927028, 0.7927028)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="shadow_064" type="Sprite2D" parent="GroundDecor" unique_id=1862044773 groups=["generated"]]
+position = Vector2(64, 500)
+scale = Vector2(0.53436494, 0.53436494)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_062" type="Sprite2D" parent="GroundDecor" unique_id=1575341016 groups=["generated"]]
+position = Vector2(1216, 488)
+scale = Vector2(0.44707808, 0.44707808)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_065" type="Sprite2D" parent="GroundDecor" unique_id=2037353689 groups=["generated"]]
+position = Vector2(1216, 500)
+scale = Vector2(0.7300116, 0.7300116)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_063" type="Sprite2D" parent="GroundDecor" unique_id=607048323 groups=["generated"]]
+position = Vector2(128, 520)
+scale = Vector2(0.34128284, 0.34128284)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+
+[node name="shadow_066" type="Sprite2D" parent="GroundDecor" unique_id=1299526322 groups=["generated"]]
+position = Vector2(128, 532)
+scale = Vector2(0.60122937, 0.60122937)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_064" type="Sprite2D" parent="GroundDecor" unique_id=89599450 groups=["generated"]]
+position = Vector2(1152, 520)
+scale = Vector2(0.55312055, 0.55312055)
+texture = ExtResource("19_lvklg")
+centered = false
+offset = Vector2(-128.5, -88.5)
+
+[node name="shadow_067" type="Sprite2D" parent="GroundDecor" unique_id=1814964536 groups=["generated"]]
+position = Vector2(1152, 532)
+scale = Vector2(0.33043233, 0.33043233)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_065" type="Sprite2D" parent="GroundDecor" unique_id=1949825654 groups=["generated"]]
+position = Vector2(64, 552)
+scale = Vector2(0.4851466, 0.4851466)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+flip_h = true
+
+[node name="shadow_068" type="Sprite2D" parent="GroundDecor" unique_id=900688794 groups=["generated"]]
+position = Vector2(64, 564)
+scale = Vector2(0.46574977, 0.46574977)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_066" type="Sprite2D" parent="GroundDecor" unique_id=2091378587 groups=["generated"]]
+position = Vector2(1216, 552)
+scale = Vector2(0.28595442, 0.28595442)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="shadow_069" type="Sprite2D" parent="GroundDecor" unique_id=2080537270 groups=["generated"]]
+position = Vector2(1216, 564)
+scale = Vector2(0.33700344, 0.33700344)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_067" type="Sprite2D" parent="GroundDecor" unique_id=194097770 groups=["generated"]]
+position = Vector2(128, 584)
+scale = Vector2(0.43580276, 0.43580276)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+flip_h = true
+
+[node name="shadow_070" type="Sprite2D" parent="GroundDecor" unique_id=614825718 groups=["generated"]]
+position = Vector2(128, 596)
+scale = Vector2(0.41837877, 0.41837877)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_068" type="Sprite2D" parent="GroundDecor" unique_id=1629862214 groups=["generated"]]
+position = Vector2(1152, 584)
+scale = Vector2(0.37150204, 0.37150204)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_071" type="Sprite2D" parent="GroundDecor" unique_id=1192618167 groups=["generated"]]
+position = Vector2(1152, 596)
+scale = Vector2(0.47236544, 0.47236544)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_069" type="Sprite2D" parent="GroundDecor" unique_id=1264083135 groups=["generated"]]
+position = Vector2(64, 616)
+scale = Vector2(0.35203782, 0.35203782)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="shadow_072" type="Sprite2D" parent="GroundDecor" unique_id=1857588508 groups=["generated"]]
+position = Vector2(64, 628)
+scale = Vector2(0.30001712, 0.30001712)
+texture = ExtResource("10_1v2pq")
+centered = false
+offset = Vector2(-470, -100)
+
+[node name="patch_070" type="Sprite2D" parent="GroundDecor" unique_id=2120165638 groups=["generated"]]
+position = Vector2(192, 616)
+scale = Vector2(0.5904051, 0.5904051)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+
+[node name="shadow_073" type="Sprite2D" parent="GroundDecor" unique_id=63051457 groups=["generated"]]
+position = Vector2(192, 628)
+scale = Vector2(0.38564348, 0.38564348)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_071" type="Sprite2D" parent="GroundDecor" unique_id=2135316717 groups=["generated"]]
+position = Vector2(1088, 616)
+scale = Vector2(0.49966753, 0.49966753)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+flip_h = true
+
+[node name="shadow_074" type="Sprite2D" parent="GroundDecor" unique_id=1235943112 groups=["generated"]]
+position = Vector2(1088, 628)
+scale = Vector2(0.48201308, 0.48201308)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_072" type="Sprite2D" parent="GroundDecor" unique_id=1102325416 groups=["generated"]]
+position = Vector2(1216, 616)
+scale = Vector2(0.35442606, 0.35442606)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="shadow_075" type="Sprite2D" parent="GroundDecor" unique_id=568873223 groups=["generated"]]
+position = Vector2(1216, 628)
+scale = Vector2(0.47370955, 0.47370955)
+texture = ExtResource("8_5ca32")
+centered = false
+offset = Vector2(-275.5, -57)
+
+[node name="patch_073" type="Sprite2D" parent="GroundDecor" unique_id=1597598001 groups=["generated"]]
+position = Vector2(128, 648)
+scale = Vector2(0.5503964, 0.5503964)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+flip_h = true
+
+[node name="shadow_076" type="Sprite2D" parent="GroundDecor" unique_id=1028054455 groups=["generated"]]
+position = Vector2(128, 660)
+scale = Vector2(0.35951042, 0.35951042)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_074" type="Sprite2D" parent="GroundDecor" unique_id=894880308 groups=["generated"]]
+position = Vector2(256, 648)
+scale = Vector2(0.3294049, 0.3294049)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+
+[node name="shadow_077" type="Sprite2D" parent="GroundDecor" unique_id=932003597 groups=["generated"]]
+position = Vector2(256, 660)
+scale = Vector2(0.3882108, 0.3882108)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_075" type="Sprite2D" parent="GroundDecor" unique_id=1608068660 groups=["generated"]]
+position = Vector2(384, 648)
+scale = Vector2(0.2720677, 0.2720677)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="shadow_078" type="Sprite2D" parent="GroundDecor" unique_id=1115670138 groups=["generated"]]
+position = Vector2(384, 660)
+scale = Vector2(0.34593454, 0.34593454)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_076" type="Sprite2D" parent="GroundDecor" unique_id=759426599 groups=["generated"]]
+position = Vector2(896, 648)
+scale = Vector2(0.3505124, 0.3505124)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+
+[node name="shadow_079" type="Sprite2D" parent="GroundDecor" unique_id=1138175269 groups=["generated"]]
+position = Vector2(896, 660)
+scale = Vector2(0.44567707, 0.44567707)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_077" type="Sprite2D" parent="GroundDecor" unique_id=576939241 groups=["generated"]]
+position = Vector2(1024, 648)
+scale = Vector2(0.48353162, 0.48353162)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+flip_h = true
+
+[node name="shadow_080" type="Sprite2D" parent="GroundDecor" unique_id=1715338463 groups=["generated"]]
+position = Vector2(1024, 660)
+scale = Vector2(0.48555478, 0.48555478)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+flip_h = true
+
+[node name="patch_078" type="Sprite2D" parent="GroundDecor" unique_id=948105760 groups=["generated"]]
+position = Vector2(1152, 648)
+scale = Vector2(0.40346298, 0.40346298)
+texture = ExtResource("16_ru86d")
+centered = false
+offset = Vector2(-187.5, -101.5)
+
+[node name="shadow_081" type="Sprite2D" parent="GroundDecor" unique_id=94730345 groups=["generated"]]
+position = Vector2(1152, 660)
+scale = Vector2(0.35169366, 0.35169366)
+texture = ExtResource("14_6apx4")
+centered = false
+offset = Vector2(-382, -79)
+
+[node name="patch_079" type="Sprite2D" parent="GroundDecor" unique_id=1553110274 groups=["generated"]]
+position = Vector2(441.96786, 176.98393)
+scale = Vector2(0.32124084, 0.32124084)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+flip_h = true
+
+[node name="patch_080" type="Sprite2D" parent="GroundDecor" unique_id=1746429824 groups=["generated"]]
+position = Vector2(427.40332, 169.70166)
+scale = Vector2(0.37883693, 0.37883693)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+
+[node name="patch_081" type="Sprite2D" parent="GroundDecor" unique_id=279006267 groups=["generated"]]
+position = Vector2(679.56335, 167.78166)
+scale = Vector2(0.26675224, 0.26675224)
+texture = ExtResource("9_3xrmi")
+centered = false
+offset = Vector2(-273.5, -200.5)
+flip_h = true
+
+[node name="patch_082" type="Sprite2D" parent="GroundDecor" unique_id=1784498552 groups=["generated"]]
+position = Vector2(380.54086, 210.27043)
+scale = Vector2(0.63202006, 0.63202006)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+flip_h = true
+
+[node name="patch_083" type="Sprite2D" parent="GroundDecor" unique_id=527061724 groups=["generated"]]
+position = Vector2(406.71365, 200.64319)
+scale = Vector2(0.611029, 0.611029)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+flip_h = true
+
+[node name="patch_084" type="Sprite2D" parent="GroundDecor" unique_id=612751328 groups=["generated"]]
+position = Vector2(495.09296, 203.54648)
+scale = Vector2(0.31976897, 0.31976897)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="patch_085" type="Sprite2D" parent="GroundDecor" unique_id=8895173 groups=["generated"]]
+position = Vector2(593.2348, 188.61742)
+scale = Vector2(0.4014527, 0.4014527)
+texture = ExtResource("13_qocq1")
+centered = false
+offset = Vector2(-140.5, -83)
+
+[node name="patch_086" type="Sprite2D" parent="GroundDecor" unique_id=2022555078 groups=["generated"]]
+position = Vector2(646.684, 208.658)
+scale = Vector2(0.26306424, 0.26306424)
+texture = ExtResource("17_rw6j8")
+centered = false
+offset = Vector2(-216, -133.5)
+
+[node name="patch_087" type="Sprite2D" parent="GroundDecor" unique_id=288300690 groups=["generated"]]
+position = Vector2(604.05707, 194.02853)
+scale = Vector2(0.29749164, 0.29749164)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+
+[node name="patch_088" type="Sprite2D" parent="GroundDecor" unique_id=1056929562 groups=["generated"]]
+position = Vector2(955.12354, 182.43823)
+scale = Vector2(0.54567, 0.54567)
+texture = ExtResource("15_abjim")
+centered = false
+offset = Vector2(-145, -77.5)
+
+[node name="patch_089" type="Sprite2D" parent="GroundDecor" unique_id=1821699691 groups=["generated"]]
+position = Vector2(389.63715, 214.81857)
+scale = Vector2(0.29267973, 0.29267973)
+texture = ExtResource("11_bdkv4")
+centered = false
+offset = Vector2(-207.5, -222.5)
+
+[node name="patch_090" type="Sprite2D" parent="GroundDecor" unique_id=1529411651 groups=["generated"]]
+position = Vector2(672.4879, 228.24396)
+scale = Vector2(0.32735002, 0.32735002)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+flip_h = true
+
+[node name="patch_091" type="Sprite2D" parent="GroundDecor" unique_id=301261756 groups=["generated"]]
+position = Vector2(649.0906, 216.54527)
+scale = Vector2(0.2631758, 0.2631758)
+texture = ExtResource("12_17hlw")
+centered = false
+offset = Vector2(-225.5, -112)
+
+[node name="patch_092" type="Sprite2D" parent="GroundDecor" unique_id=608870998 groups=["generated"]]
+position = Vector2(871.7054, 224.14731)
+scale = Vector2(0.22130279, 0.22130279)
+texture = ExtResource("7_xb6l5")
+centered = false
+offset = Vector2(-253.5, -221.5)
+flip_h = true
+
+[node name="patch_093" type="Sprite2D" parent="GroundDecor" unique_id=239325374 groups=["generated"]]
+position = Vector2(779.9414, 217.9707)
+scale = Vector2(0.38013914, 0.38013914)
+texture = ExtResource("18_2u7ax")
+centered = false
+offset = Vector2(-206.5, -115.5)
+
+[node name="Dressing" type="Node2D" parent="." unique_id=1500601319]
+y_sort_enabled = true
+
+[node name="tree_001" type="Sprite2D" parent="Dressing" unique_id=145741985 groups=["generated"]]
+position = Vector2(64, 52)
+scale = Vector2(0.6239704, 0.6239704)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_001" type="Sprite2D" parent="Dressing" unique_id=1125274483 groups=["generated"]]
+position = Vector2(83.78316, 49.14965)
+scale = Vector2(0.19895831, 0.19895831)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="plant_002" type="Sprite2D" parent="Dressing" unique_id=21979523 groups=["generated"]]
+position = Vector2(-19.193848, 48.45691)
+scale = Vector2(0.2575271, 0.2575271)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="tree_002" type="Sprite2D" parent="Dressing" unique_id=2065638644 groups=["generated"]]
+position = Vector2(192, 52)
+scale = Vector2(0.40869793, 0.40869793)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_003" type="Sprite2D" parent="Dressing" unique_id=1557919667 groups=["generated"]]
+position = Vector2(222.99101, 55.421818)
+scale = Vector2(0.29930982, 0.29930982)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="plant_004" type="Sprite2D" parent="Dressing" unique_id=1786875403 groups=["generated"]]
+position = Vector2(288.01453, 60.060204)
+scale = Vector2(0.20605311, 0.20605311)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="tree_003" type="Sprite2D" parent="Dressing" unique_id=606742310 groups=["generated"]]
+position = Vector2(320, 52)
+scale = Vector2(0.40378445, 0.40378445)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_005" type="Sprite2D" parent="Dressing" unique_id=828668919 groups=["generated"]]
+position = Vector2(230.4974, 55.05532)
+scale = Vector2(0.067138486, 0.067138486)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="plant_006" type="Sprite2D" parent="Dressing" unique_id=1743976993 groups=["generated"]]
+position = Vector2(397.50998, 55.495945)
+scale = Vector2(0.26770544, 0.26770544)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+flip_h = true
+
+[node name="tree_004" type="Sprite2D" parent="Dressing" unique_id=610803645 groups=["generated"]]
+position = Vector2(448, 52)
+scale = Vector2(0.2701033, 0.2701033)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_007" type="Sprite2D" parent="Dressing" unique_id=482758847 groups=["generated"]]
+position = Vector2(489.22687, 61.97573)
+scale = Vector2(0.17978363, 0.17978363)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_008" type="Sprite2D" parent="Dressing" unique_id=486500989 groups=["generated"]]
+position = Vector2(408.1435, 57.645206)
+scale = Vector2(0.16584906, 0.16584906)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="tree_005" type="Sprite2D" parent="Dressing" unique_id=2001198331 groups=["generated"]]
+position = Vector2(576, 52)
+scale = Vector2(0.6130882, 0.6130882)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_009" type="Sprite2D" parent="Dressing" unique_id=41064333 groups=["generated"]]
+position = Vector2(590.71436, 53.720425)
+scale = Vector2(0.27635026, 0.27635026)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="plant_010" type="Sprite2D" parent="Dressing" unique_id=1132592164 groups=["generated"]]
+position = Vector2(495.77832, 59.62387)
+scale = Vector2(0.20585187, 0.20585187)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+flip_h = true
+
+[node name="tree_006" type="Sprite2D" parent="Dressing" unique_id=418150826 groups=["generated"]]
+position = Vector2(704, 52)
+scale = Vector2(0.5031766, 0.5031766)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_011" type="Sprite2D" parent="Dressing" unique_id=1661264134 groups=["generated"]]
+position = Vector2(756.9087, 50.15854)
+scale = Vector2(0.17058945, 0.17058945)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="plant_012" type="Sprite2D" parent="Dressing" unique_id=743043189 groups=["generated"]]
+position = Vector2(784.3366, 59.428852)
+scale = Vector2(0.27453703, 0.27453703)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="tree_007" type="Sprite2D" parent="Dressing" unique_id=1242822813 groups=["generated"]]
+position = Vector2(832, 52)
+scale = Vector2(0.53119296, 0.53119296)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_013" type="Sprite2D" parent="Dressing" unique_id=62436454 groups=["generated"]]
+position = Vector2(890.10986, 57.1283)
+scale = Vector2(0.15942545, 0.15942545)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="plant_014" type="Sprite2D" parent="Dressing" unique_id=1856999878 groups=["generated"]]
+position = Vector2(929.7823, 55.3591)
+scale = Vector2(0.19987163, 0.19987163)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+
+[node name="tree_008" type="Sprite2D" parent="Dressing" unique_id=427083484 groups=["generated"]]
+position = Vector2(960, 52)
+scale = Vector2(0.38565913, 0.38565913)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_015" type="Sprite2D" parent="Dressing" unique_id=1384152911 groups=["generated"]]
+position = Vector2(965.5964, 62.76103)
+scale = Vector2(0.1838563, 0.1838563)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="plant_016" type="Sprite2D" parent="Dressing" unique_id=225983312 groups=["generated"]]
+position = Vector2(1000.2684, 61.633587)
+scale = Vector2(0.16416651, 0.16416651)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="tree_009" type="Sprite2D" parent="Dressing" unique_id=489502401 groups=["generated"]]
+position = Vector2(1088, 52)
+scale = Vector2(0.5425853, 0.5425853)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_017" type="Sprite2D" parent="Dressing" unique_id=732008103 groups=["generated"]]
+position = Vector2(1030.9349, 58.423485)
+scale = Vector2(0.24581806, 0.24581806)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="plant_018" type="Sprite2D" parent="Dressing" unique_id=1987071462 groups=["generated"]]
+position = Vector2(1099.3081, 58.21537)
+scale = Vector2(0.233259, 0.233259)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+flip_h = true
+
+[node name="tree_010" type="Sprite2D" parent="Dressing" unique_id=1532804598 groups=["generated"]]
+position = Vector2(1216, 52)
+scale = Vector2(0.34148932, 0.34148932)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_019" type="Sprite2D" parent="Dressing" unique_id=576613863 groups=["generated"]]
+position = Vector2(1236.6696, 49.949726)
+scale = Vector2(0.33075723, 0.33075723)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="plant_020" type="Sprite2D" parent="Dressing" unique_id=1807363829 groups=["generated"]]
+position = Vector2(1250.0116, 52.569508)
+scale = Vector2(0.20470148, 0.20470148)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="tree_011" type="Sprite2D" parent="Dressing" unique_id=1213632976 groups=["generated"]]
+position = Vector2(128, 84)
+scale = Vector2(0.7081983, 0.7081983)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_021" type="Sprite2D" parent="Dressing" unique_id=1612324664 groups=["generated"]]
+position = Vector2(191.16632, 91.41175)
+scale = Vector2(0.24864101, 0.24864101)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="plant_022" type="Sprite2D" parent="Dressing" unique_id=1535288356 groups=["generated"]]
+position = Vector2(225.09361, 80.37016)
+scale = Vector2(0.130336, 0.130336)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="tree_012" type="Sprite2D" parent="Dressing" unique_id=1351174017 groups=["generated"]]
+position = Vector2(256, 84)
+scale = Vector2(0.37946752, 0.37946752)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_023" type="Sprite2D" parent="Dressing" unique_id=1395691577 groups=["generated"]]
+position = Vector2(259.3697, 85.53647)
+scale = Vector2(0.2628395, 0.2628395)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="plant_024" type="Sprite2D" parent="Dressing" unique_id=479898970 groups=["generated"]]
+position = Vector2(310.71042, 82.3301)
+scale = Vector2(0.27408728, 0.27408728)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="tree_013" type="Sprite2D" parent="Dressing" unique_id=68463561 groups=["generated"]]
+position = Vector2(384, 84)
+scale = Vector2(0.32590833, 0.32590833)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_025" type="Sprite2D" parent="Dressing" unique_id=1131049550 groups=["generated"]]
+position = Vector2(363.5657, 86.08645)
+scale = Vector2(0.27825767, 0.27825767)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="plant_026" type="Sprite2D" parent="Dressing" unique_id=17877176 groups=["generated"]]
+position = Vector2(322.32635, 85.899506)
+scale = Vector2(0.116682656, 0.116682656)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="tree_014" type="Sprite2D" parent="Dressing" unique_id=128171940 groups=["generated"]]
+position = Vector2(512, 84)
+scale = Vector2(0.5524416, 0.5524416)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_027" type="Sprite2D" parent="Dressing" unique_id=497481845 groups=["generated"]]
+position = Vector2(482.4547, 94.52875)
+scale = Vector2(0.26170832, 0.26170832)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+flip_h = true
+
+[node name="plant_028" type="Sprite2D" parent="Dressing" unique_id=754649095 groups=["generated"]]
+position = Vector2(461.85675, 88.36619)
+scale = Vector2(0.118725024, 0.118725024)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+flip_h = true
+
+[node name="tree_015" type="Sprite2D" parent="Dressing" unique_id=862642166 groups=["generated"]]
+position = Vector2(640, 84)
+scale = Vector2(0.64916044, 0.64916044)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_029" type="Sprite2D" parent="Dressing" unique_id=1480062198 groups=["generated"]]
+position = Vector2(721.655, 94.04506)
+scale = Vector2(0.11036341, 0.11036341)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+
+[node name="plant_030" type="Sprite2D" parent="Dressing" unique_id=1038662984 groups=["generated"]]
+position = Vector2(562.7364, 95.36253)
+scale = Vector2(0.21351974, 0.21351974)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+flip_h = true
+
+[node name="tree_016" type="Sprite2D" parent="Dressing" unique_id=731489444 groups=["generated"]]
+position = Vector2(768, 84)
+scale = Vector2(0.5223941, 0.5223941)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_031" type="Sprite2D" parent="Dressing" unique_id=72891352 groups=["generated"]]
+position = Vector2(691.6697, 96.00914)
+scale = Vector2(0.31058267, 0.31058267)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+flip_h = true
+
+[node name="plant_032" type="Sprite2D" parent="Dressing" unique_id=2044293359 groups=["generated"]]
+position = Vector2(749.78107, 90.64012)
+scale = Vector2(0.31255877, 0.31255877)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="tree_017" type="Sprite2D" parent="Dressing" unique_id=808985429 groups=["generated"]]
+position = Vector2(896, 84)
+scale = Vector2(0.3850305, 0.3850305)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_033" type="Sprite2D" parent="Dressing" unique_id=797029634 groups=["generated"]]
+position = Vector2(884.2017, 92.00411)
+scale = Vector2(0.15689737, 0.15689737)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+
+[node name="plant_034" type="Sprite2D" parent="Dressing" unique_id=740784631 groups=["generated"]]
+position = Vector2(914.27216, 86.0345)
+scale = Vector2(0.20951192, 0.20951192)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="tree_018" type="Sprite2D" parent="Dressing" unique_id=1850388928 groups=["generated"]]
+position = Vector2(1024, 84)
+scale = Vector2(0.43240395, 0.43240395)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_035" type="Sprite2D" parent="Dressing" unique_id=1982256885 groups=["generated"]]
+position = Vector2(991.1537, 89.34383)
+scale = Vector2(0.24411674, 0.24411674)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="plant_036" type="Sprite2D" parent="Dressing" unique_id=761059038 groups=["generated"]]
+position = Vector2(1068.5493, 87.62702)
+scale = Vector2(0.26989934, 0.26989934)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="tree_019" type="Sprite2D" parent="Dressing" unique_id=760274714 groups=["generated"]]
+position = Vector2(1152, 84)
+scale = Vector2(0.65874445, 0.65874445)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_037" type="Sprite2D" parent="Dressing" unique_id=2001822943 groups=["generated"]]
+position = Vector2(1198.3489, 91.62265)
+scale = Vector2(0.19417584, 0.19417584)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="plant_038" type="Sprite2D" parent="Dressing" unique_id=1061519022 groups=["generated"]]
+position = Vector2(1068.6486, 83.61922)
+scale = Vector2(0.21639006, 0.21639006)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="tree_020" type="Sprite2D" parent="Dressing" unique_id=1597149399 groups=["generated"]]
+position = Vector2(64, 116)
+scale = Vector2(0.73669887, 0.73669887)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_039" type="Sprite2D" parent="Dressing" unique_id=1866123916 groups=["generated"]]
+position = Vector2(-31.349274, 121.438736)
+scale = Vector2(0.3001851, 0.3001851)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="plant_040" type="Sprite2D" parent="Dressing" unique_id=1523632546 groups=["generated"]]
+position = Vector2(102.145706, 122.37382)
+scale = Vector2(0.21308875, 0.21308875)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="tree_021" type="Sprite2D" parent="Dressing" unique_id=281455693 groups=["generated"]]
+position = Vector2(192, 116)
+scale = Vector2(0.3941831, 0.3941831)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_041" type="Sprite2D" parent="Dressing" unique_id=1736765726 groups=["generated"]]
+position = Vector2(163.27136, 123.04876)
+scale = Vector2(0.12908925, 0.12908925)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="plant_042" type="Sprite2D" parent="Dressing" unique_id=844328014 groups=["generated"]]
+position = Vector2(170.56612, 113.91229)
+scale = Vector2(0.29633814, 0.29633814)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="tree_022" type="Sprite2D" parent="Dressing" unique_id=493190023 groups=["generated"]]
+position = Vector2(320, 116)
+scale = Vector2(0.55798435, 0.55798435)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_043" type="Sprite2D" parent="Dressing" unique_id=954355823 groups=["generated"]]
+position = Vector2(395.96707, 121.949135)
+scale = Vector2(0.19770516, 0.19770516)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="plant_044" type="Sprite2D" parent="Dressing" unique_id=967214264 groups=["generated"]]
+position = Vector2(269.48663, 117.37684)
+scale = Vector2(0.21648867, 0.21648867)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="tree_023" type="Sprite2D" parent="Dressing" unique_id=805910699 groups=["generated"]]
+position = Vector2(448, 116)
+scale = Vector2(0.32591492, 0.32591492)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_045" type="Sprite2D" parent="Dressing" unique_id=766982247 groups=["generated"]]
+position = Vector2(490.07764, 120.39277)
+scale = Vector2(0.21096383, 0.21096383)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="plant_046" type="Sprite2D" parent="Dressing" unique_id=1495003239 groups=["generated"]]
+position = Vector2(395.36047, 125.25348)
+scale = Vector2(0.2740753, 0.2740753)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="tree_024" type="Sprite2D" parent="Dressing" unique_id=362044763 groups=["generated"]]
+position = Vector2(576, 116)
+scale = Vector2(0.44723496, 0.44723496)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_047" type="Sprite2D" parent="Dressing" unique_id=1503031199 groups=["generated"]]
+position = Vector2(636.9298, 114.34954)
+scale = Vector2(0.278263, 0.278263)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="plant_048" type="Sprite2D" parent="Dressing" unique_id=1400721575 groups=["generated"]]
+position = Vector2(578.8855, 120.44475)
+scale = Vector2(0.20943838, 0.20943838)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+flip_h = true
+
+[node name="tree_025" type="Sprite2D" parent="Dressing" unique_id=624956800 groups=["generated"]]
+position = Vector2(704, 116)
+scale = Vector2(0.36001658, 0.36001658)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_049" type="Sprite2D" parent="Dressing" unique_id=607906947 groups=["generated"]]
+position = Vector2(659.5842, 120.58424)
+scale = Vector2(0.22642922, 0.22642922)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="plant_050" type="Sprite2D" parent="Dressing" unique_id=127567938 groups=["generated"]]
+position = Vector2(680.3673, 125.16843)
+scale = Vector2(0.15707026, 0.15707026)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="tree_026" type="Sprite2D" parent="Dressing" unique_id=600202829 groups=["generated"]]
+position = Vector2(832, 116)
+scale = Vector2(0.42646673, 0.42646673)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_051" type="Sprite2D" parent="Dressing" unique_id=743742336 groups=["generated"]]
+position = Vector2(884.63617, 118.92216)
+scale = Vector2(0.27038392, 0.27038392)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="plant_052" type="Sprite2D" parent="Dressing" unique_id=1302425405 groups=["generated"]]
+position = Vector2(850.8829, 117.79589)
+scale = Vector2(0.36912367, 0.36912367)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+flip_h = true
+
+[node name="tree_027" type="Sprite2D" parent="Dressing" unique_id=1928689422 groups=["generated"]]
+position = Vector2(960, 116)
+scale = Vector2(0.6792484, 0.6792484)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+flip_h = true
+
+[node name="plant_053" type="Sprite2D" parent="Dressing" unique_id=1854857735 groups=["generated"]]
+position = Vector2(948.3345, 124.552666)
+scale = Vector2(0.16666706, 0.16666706)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+flip_h = true
+
+[node name="plant_054" type="Sprite2D" parent="Dressing" unique_id=36525540 groups=["generated"]]
+position = Vector2(963.8387, 114.94604)
+scale = Vector2(0.20530395, 0.20530395)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="tree_028" type="Sprite2D" parent="Dressing" unique_id=973419626 groups=["generated"]]
+position = Vector2(1088, 116)
+scale = Vector2(0.36945412, 0.36945412)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_055" type="Sprite2D" parent="Dressing" unique_id=981729173 groups=["generated"]]
+position = Vector2(1044.2993, 123.69133)
+scale = Vector2(0.27205855, 0.27205855)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="plant_056" type="Sprite2D" parent="Dressing" unique_id=227236531 groups=["generated"]]
+position = Vector2(1029.0656, 125.56751)
+scale = Vector2(0.24089393, 0.24089393)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="tree_029" type="Sprite2D" parent="Dressing" unique_id=800284270 groups=["generated"]]
+position = Vector2(1216, 116)
+scale = Vector2(0.48276523, 0.48276523)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+flip_h = true
+
+[node name="plant_057" type="Sprite2D" parent="Dressing" unique_id=884646959 groups=["generated"]]
+position = Vector2(1165.6921, 120.85473)
+scale = Vector2(0.31272647, 0.31272647)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+flip_h = true
+
+[node name="plant_058" type="Sprite2D" parent="Dressing" unique_id=1149306244 groups=["generated"]]
+position = Vector2(1164.3723, 114.55609)
+scale = Vector2(0.29555938, 0.29555938)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="tree_030" type="Sprite2D" parent="Dressing" unique_id=530795895 groups=["generated"]]
+position = Vector2(128, 148)
+scale = Vector2(0.3939736, 0.3939736)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_059" type="Sprite2D" parent="Dressing" unique_id=1003433132 groups=["generated"]]
+position = Vector2(168.14084, 156.99013)
+scale = Vector2(0.2998518, 0.2998518)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_060" type="Sprite2D" parent="Dressing" unique_id=1675786187 groups=["generated"]]
+position = Vector2(101.47181, 153.80537)
+scale = Vector2(0.3154773, 0.3154773)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="tree_031" type="Sprite2D" parent="Dressing" unique_id=666356901 groups=["generated"]]
+position = Vector2(256, 148)
+scale = Vector2(0.34026614, 0.34026614)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_061" type="Sprite2D" parent="Dressing" unique_id=523060631 groups=["generated"]]
+position = Vector2(319.31836, 155.4915)
+scale = Vector2(0.33294648, 0.33294648)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_062" type="Sprite2D" parent="Dressing" unique_id=878229033 groups=["generated"]]
+position = Vector2(204.27983, 144.47774)
+scale = Vector2(0.23376851, 0.23376851)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="tree_032" type="Sprite2D" parent="Dressing" unique_id=1434045573 groups=["generated"]]
+position = Vector2(384, 148)
+scale = Vector2(0.30698922, 0.30698922)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_063" type="Sprite2D" parent="Dressing" unique_id=1188877777 groups=["generated"]]
+position = Vector2(394.76367, 158.15665)
+scale = Vector2(0.108009964, 0.108009964)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="plant_064" type="Sprite2D" parent="Dressing" unique_id=324137896 groups=["generated"]]
+position = Vector2(339.84964, 148.85654)
+scale = Vector2(0.14444984, 0.14444984)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="tree_033" type="Sprite2D" parent="Dressing" unique_id=1476701596 groups=["generated"]]
+position = Vector2(512, 148)
+scale = Vector2(0.7006988, 0.7006988)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_065" type="Sprite2D" parent="Dressing" unique_id=1218028444 groups=["generated"]]
+position = Vector2(480.762, 145.08524)
+scale = Vector2(0.30047664, 0.30047664)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="plant_066" type="Sprite2D" parent="Dressing" unique_id=1684927513 groups=["generated"]]
+position = Vector2(574.33844, 145.02156)
+scale = Vector2(0.18310513, 0.18310513)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+
+[node name="tree_034" type="Sprite2D" parent="Dressing" unique_id=2051025392 groups=["generated"]]
+position = Vector2(640, 148)
+scale = Vector2(0.52452815, 0.52452815)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_067" type="Sprite2D" parent="Dressing" unique_id=2069615788 groups=["generated"]]
+position = Vector2(656.72577, 150.72176)
+scale = Vector2(0.2523264, 0.2523264)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="plant_068" type="Sprite2D" parent="Dressing" unique_id=893438577 groups=["generated"]]
+position = Vector2(585.6066, 160.50896)
+scale = Vector2(0.20935228, 0.20935228)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="tree_035" type="Sprite2D" parent="Dressing" unique_id=21147854 groups=["generated"]]
+position = Vector2(768, 148)
+scale = Vector2(0.39779478, 0.39779478)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_069" type="Sprite2D" parent="Dressing" unique_id=735441426 groups=["generated"]]
+position = Vector2(824.38727, 145.07396)
+scale = Vector2(0.26284996, 0.26284996)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="plant_070" type="Sprite2D" parent="Dressing" unique_id=1003149034 groups=["generated"]]
+position = Vector2(722.0464, 160.4605)
+scale = Vector2(0.36745963, 0.36745963)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="tree_036" type="Sprite2D" parent="Dressing" unique_id=158468862 groups=["generated"]]
+position = Vector2(896, 148)
+scale = Vector2(0.7628677, 0.7628677)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_071" type="Sprite2D" parent="Dressing" unique_id=409627148 groups=["generated"]]
+position = Vector2(958.2797, 147.37482)
+scale = Vector2(0.16603765, 0.16603765)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="plant_072" type="Sprite2D" parent="Dressing" unique_id=430298425 groups=["generated"]]
+position = Vector2(825.0233, 154.0952)
+scale = Vector2(0.19223015, 0.19223015)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="tree_037" type="Sprite2D" parent="Dressing" unique_id=175789611 groups=["generated"]]
+position = Vector2(1024, 148)
+scale = Vector2(0.30994585, 0.30994585)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_073" type="Sprite2D" parent="Dressing" unique_id=942852455 groups=["generated"]]
+position = Vector2(960.0804, 150.48885)
+scale = Vector2(0.19337447, 0.19337447)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+
+[node name="plant_074" type="Sprite2D" parent="Dressing" unique_id=1467543965 groups=["generated"]]
+position = Vector2(1034.8373, 147.96759)
+scale = Vector2(0.2610199, 0.2610199)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="tree_038" type="Sprite2D" parent="Dressing" unique_id=1705620707 groups=["generated"]]
+position = Vector2(1152, 148)
+scale = Vector2(0.4940138, 0.4940138)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+flip_h = true
+
+[node name="plant_075" type="Sprite2D" parent="Dressing" unique_id=749365685 groups=["generated"]]
+position = Vector2(1159.8463, 152.14378)
+scale = Vector2(0.28356943, 0.28356943)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="plant_076" type="Sprite2D" parent="Dressing" unique_id=767163538 groups=["generated"]]
+position = Vector2(1183.174, 157.41881)
+scale = Vector2(0.20024128, 0.20024128)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+
+[node name="tree_039" type="Sprite2D" parent="Dressing" unique_id=1205710965 groups=["generated"]]
+position = Vector2(64, 180)
+scale = Vector2(0.29076874, 0.29076874)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_077" type="Sprite2D" parent="Dressing" unique_id=900337121 groups=["generated"]]
+position = Vector2(47.050804, 176.78447)
+scale = Vector2(0.31273565, 0.31273565)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="plant_078" type="Sprite2D" parent="Dressing" unique_id=1770615508 groups=["generated"]]
+position = Vector2(44.766026, 186.84814)
+scale = Vector2(0.24838796, 0.24838796)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="tree_040" type="Sprite2D" parent="Dressing" unique_id=785670004 groups=["generated"]]
+position = Vector2(192, 180)
+scale = Vector2(0.48597997, 0.48597997)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_079" type="Sprite2D" parent="Dressing" unique_id=1222491142 groups=["generated"]]
+position = Vector2(275.57495, 181.54854)
+scale = Vector2(0.2035878, 0.2035878)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="plant_080" type="Sprite2D" parent="Dressing" unique_id=1163061037 groups=["generated"]]
+position = Vector2(253.68901, 182.32542)
+scale = Vector2(0.2933939, 0.2933939)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="tree_041" type="Sprite2D" parent="Dressing" unique_id=285027288 groups=["generated"]]
+position = Vector2(320, 180)
+scale = Vector2(0.44432795, 0.44432795)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_081" type="Sprite2D" parent="Dressing" unique_id=1056711235 groups=["generated"]]
+position = Vector2(366.78384, 186.30334)
+scale = Vector2(0.18818535, 0.18818535)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="plant_082" type="Sprite2D" parent="Dressing" unique_id=1606707077 groups=["generated"]]
+position = Vector2(287.72012, 178.86945)
+scale = Vector2(0.22852339, 0.22852339)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="tree_042" type="Sprite2D" parent="Dressing" unique_id=432705446 groups=["generated"]]
+position = Vector2(960, 180)
+scale = Vector2(0.43198052, 0.43198052)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_083" type="Sprite2D" parent="Dressing" unique_id=976208596 groups=["generated"]]
+position = Vector2(878.80634, 191.47473)
+scale = Vector2(0.351117, 0.351117)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="plant_084" type="Sprite2D" parent="Dressing" unique_id=2078908842 groups=["generated"]]
+position = Vector2(1000.2604, 192.84633)
+scale = Vector2(0.25666273, 0.25666273)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="tree_043" type="Sprite2D" parent="Dressing" unique_id=1287406909 groups=["generated"]]
+position = Vector2(1088, 180)
+scale = Vector2(0.28868878, 0.28868878)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_085" type="Sprite2D" parent="Dressing" unique_id=1557846845 groups=["generated"]]
+position = Vector2(1133.2338, 178.16524)
+scale = Vector2(0.20298962, 0.20298962)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="plant_086" type="Sprite2D" parent="Dressing" unique_id=289951402 groups=["generated"]]
+position = Vector2(1121.219, 178.4264)
+scale = Vector2(0.23730636, 0.23730636)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="tree_044" type="Sprite2D" parent="Dressing" unique_id=1689633549 groups=["generated"]]
+position = Vector2(1216, 180)
+scale = Vector2(0.35863587, 0.35863587)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_087" type="Sprite2D" parent="Dressing" unique_id=1087329387 groups=["generated"]]
+position = Vector2(1256.3076, 191.21295)
+scale = Vector2(0.17496237, 0.17496237)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_088" type="Sprite2D" parent="Dressing" unique_id=1589533382 groups=["generated"]]
+position = Vector2(1221.6229, 191.44968)
+scale = Vector2(0.18567094, 0.18567094)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="tree_045" type="Sprite2D" parent="Dressing" unique_id=993068560 groups=["generated"]]
+position = Vector2(128, 212)
+scale = Vector2(0.36084676, 0.36084676)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_089" type="Sprite2D" parent="Dressing" unique_id=142373141 groups=["generated"]]
+position = Vector2(194.1935, 213.6933)
+scale = Vector2(0.3219494, 0.3219494)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="plant_090" type="Sprite2D" parent="Dressing" unique_id=133907241 groups=["generated"]]
+position = Vector2(68.66313, 208.63646)
+scale = Vector2(0.19931796, 0.19931796)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="tree_046" type="Sprite2D" parent="Dressing" unique_id=1806316580 groups=["generated"]]
+position = Vector2(256, 212)
+scale = Vector2(0.41927364, 0.41927364)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_091" type="Sprite2D" parent="Dressing" unique_id=454878183 groups=["generated"]]
+position = Vector2(218.68701, 217.69449)
+scale = Vector2(0.13111727, 0.13111727)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+
+[node name="plant_092" type="Sprite2D" parent="Dressing" unique_id=1847808650 groups=["generated"]]
+position = Vector2(244.17267, 223.75693)
+scale = Vector2(0.1854008, 0.1854008)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="tree_047" type="Sprite2D" parent="Dressing" unique_id=593097465 groups=["generated"]]
+position = Vector2(1024, 212)
+scale = Vector2(0.48468912, 0.48468912)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_093" type="Sprite2D" parent="Dressing" unique_id=1941757975 groups=["generated"]]
+position = Vector2(1092.7048, 223.91394)
+scale = Vector2(0.3331152, 0.3331152)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="plant_094" type="Sprite2D" parent="Dressing" unique_id=1326697094 groups=["generated"]]
+position = Vector2(1046.42, 211.52722)
+scale = Vector2(0.21171074, 0.21171074)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="tree_048" type="Sprite2D" parent="Dressing" unique_id=848001913 groups=["generated"]]
+position = Vector2(1152, 212)
+scale = Vector2(0.73095816, 0.73095816)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+flip_h = true
+
+[node name="plant_095" type="Sprite2D" parent="Dressing" unique_id=278925434 groups=["generated"]]
+position = Vector2(1250.3479, 223.1853)
+scale = Vector2(0.20030409, 0.20030409)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="plant_096" type="Sprite2D" parent="Dressing" unique_id=93086237 groups=["generated"]]
+position = Vector2(1175.2076, 213.81772)
+scale = Vector2(0.200881, 0.200881)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="tree_049" type="Sprite2D" parent="Dressing" unique_id=1158753228 groups=["generated"]]
+position = Vector2(64, 244)
+scale = Vector2(0.530486, 0.530486)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_097" type="Sprite2D" parent="Dressing" unique_id=1502520335 groups=["generated"]]
+position = Vector2(15.311642, 247.4111)
+scale = Vector2(0.18070388, 0.18070388)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="plant_098" type="Sprite2D" parent="Dressing" unique_id=271450798 groups=["generated"]]
+position = Vector2(-11.170471, 240.52296)
+scale = Vector2(0.24073918, 0.24073918)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+flip_h = true
+
+[node name="tree_050" type="Sprite2D" parent="Dressing" unique_id=824537310 groups=["generated"]]
+position = Vector2(1088, 244)
+scale = Vector2(0.3754978, 0.3754978)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_099" type="Sprite2D" parent="Dressing" unique_id=271251958 groups=["generated"]]
+position = Vector2(1117.5681, 244.65001)
+scale = Vector2(0.095995545, 0.095995545)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="plant_100" type="Sprite2D" parent="Dressing" unique_id=530376413 groups=["generated"]]
+position = Vector2(1039.4016, 247.54608)
+scale = Vector2(0.2471625, 0.2471625)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="tree_051" type="Sprite2D" parent="Dressing" unique_id=125489128 groups=["generated"]]
+position = Vector2(1216, 244)
+scale = Vector2(0.47359926, 0.47359926)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_101" type="Sprite2D" parent="Dressing" unique_id=905558293 groups=["generated"]]
+position = Vector2(1243.543, 242.26869)
+scale = Vector2(0.27278924, 0.27278924)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="plant_102" type="Sprite2D" parent="Dressing" unique_id=533966752 groups=["generated"]]
+position = Vector2(1137.2212, 251.93304)
+scale = Vector2(0.20222984, 0.20222984)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="tree_052" type="Sprite2D" parent="Dressing" unique_id=801002099 groups=["generated"]]
+position = Vector2(128, 276)
+scale = Vector2(0.321634, 0.321634)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_103" type="Sprite2D" parent="Dressing" unique_id=1167054602 groups=["generated"]]
+position = Vector2(155.06268, 286.91904)
+scale = Vector2(0.28500906, 0.28500906)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="plant_104" type="Sprite2D" parent="Dressing" unique_id=1116992684 groups=["generated"]]
+position = Vector2(85.60164, 278.98865)
+scale = Vector2(0.19667745, 0.19667745)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="rock_001" type="Sprite2D" parent="Dressing" unique_id=151205016 groups=["generated"]]
+position = Vector2(384, 271)
+scale = Vector2(0.36033294, 0.36033294)
+texture = ExtResource("37_jnao7")
+centered = false
+offset = Vector2(-197, -294.3)
+
+[node name="rock_002" type="Sprite2D" parent="Dressing" unique_id=1376170676 groups=["generated"]]
+position = Vector2(896, 271)
+scale = Vector2(0.32509384, 0.32509384)
+texture = ExtResource("38_bkqac")
+centered = false
+offset = Vector2(-243, -312.3)
+
+[node name="tree_053" type="Sprite2D" parent="Dressing" unique_id=1505059075 groups=["generated"]]
+position = Vector2(1152, 276)
+scale = Vector2(0.41401008, 0.41401008)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_105" type="Sprite2D" parent="Dressing" unique_id=2050085401 groups=["generated"]]
+position = Vector2(1113.0933, 284.57526)
+scale = Vector2(0.3228167, 0.3228167)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="plant_106" type="Sprite2D" parent="Dressing" unique_id=2108694579 groups=["generated"]]
+position = Vector2(1125.7263, 274.77637)
+scale = Vector2(0.26440924, 0.26440924)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="tree_054" type="Sprite2D" parent="Dressing" unique_id=2126719275 groups=["generated"]]
+position = Vector2(64, 308)
+scale = Vector2(0.5288724, 0.5288724)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_107" type="Sprite2D" parent="Dressing" unique_id=272908381 groups=["generated"]]
+position = Vector2(115.88643, 318.05588)
+scale = Vector2(0.30359676, 0.30359676)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+flip_h = true
+
+[node name="plant_108" type="Sprite2D" parent="Dressing" unique_id=12190326 groups=["generated"]]
+position = Vector2(-27.144028, 318.81415)
+scale = Vector2(0.17848104, 0.17848104)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+flip_h = true
+
+[node name="tree_055" type="Sprite2D" parent="Dressing" unique_id=1583671984 groups=["generated"]]
+position = Vector2(1216, 308)
+scale = Vector2(0.39168492, 0.39168492)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_109" type="Sprite2D" parent="Dressing" unique_id=122332742 groups=["generated"]]
+position = Vector2(1165.7562, 307.3584)
+scale = Vector2(0.25128174, 0.25128174)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+flip_h = true
+
+[node name="plant_110" type="Sprite2D" parent="Dressing" unique_id=1356209016 groups=["generated"]]
+position = Vector2(1167.4794, 317.74857)
+scale = Vector2(0.294048, 0.294048)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="tree_056" type="Sprite2D" parent="Dressing" unique_id=2057666203 groups=["generated"]]
+position = Vector2(1152, 340)
+scale = Vector2(0.46874967, 0.46874967)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_111" type="Sprite2D" parent="Dressing" unique_id=1721412801 groups=["generated"]]
+position = Vector2(1211.0234, 352.3396)
+scale = Vector2(0.13438608, 0.13438608)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+
+[node name="plant_112" type="Sprite2D" parent="Dressing" unique_id=112021197 groups=["generated"]]
+position = Vector2(1108.849, 340.73212)
+scale = Vector2(0.06691118, 0.06691118)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="tree_057" type="Sprite2D" parent="Dressing" unique_id=3055737 groups=["generated"]]
+position = Vector2(64, 436)
+scale = Vector2(0.42894346, 0.42894346)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_113" type="Sprite2D" parent="Dressing" unique_id=2107873399 groups=["generated"]]
+position = Vector2(40.53329, 443.912)
+scale = Vector2(0.19839098, 0.19839098)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="plant_114" type="Sprite2D" parent="Dressing" unique_id=430285804 groups=["generated"]]
+position = Vector2(88.771835, 439.3188)
+scale = Vector2(0.16823888, 0.16823888)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="tree_058" type="Sprite2D" parent="Dressing" unique_id=607352419 groups=["generated"]]
+position = Vector2(1216, 436)
+scale = Vector2(0.5176545, 0.5176545)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_115" type="Sprite2D" parent="Dressing" unique_id=889738550 groups=["generated"]]
+position = Vector2(1194.2395, 444.56375)
+scale = Vector2(0.27357534, 0.27357534)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="plant_116" type="Sprite2D" parent="Dressing" unique_id=931651945 groups=["generated"]]
+position = Vector2(1154.1168, 435.76694)
+scale = Vector2(0.29993698, 0.29993698)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="tree_059" type="Sprite2D" parent="Dressing" unique_id=72717371 groups=["generated"]]
+position = Vector2(128, 468)
+scale = Vector2(0.42559487, 0.42559487)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+flip_h = true
+
+[node name="plant_117" type="Sprite2D" parent="Dressing" unique_id=273984466 groups=["generated"]]
+position = Vector2(208.29301, 478.8446)
+scale = Vector2(0.19905429, 0.19905429)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="plant_118" type="Sprite2D" parent="Dressing" unique_id=1473130405 groups=["generated"]]
+position = Vector2(143.73024, 475.34302)
+scale = Vector2(0.14776576, 0.14776576)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+
+[node name="tree_060" type="Sprite2D" parent="Dressing" unique_id=41954449 groups=["generated"]]
+position = Vector2(1152, 468)
+scale = Vector2(0.5714027, 0.5714027)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_119" type="Sprite2D" parent="Dressing" unique_id=556663868 groups=["generated"]]
+position = Vector2(1175.9636, 469.2988)
+scale = Vector2(0.35391337, 0.35391337)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="plant_120" type="Sprite2D" parent="Dressing" unique_id=1375219949 groups=["generated"]]
+position = Vector2(1079.3021, 468.17578)
+scale = Vector2(0.22188057, 0.22188057)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="tree_061" type="Sprite2D" parent="Dressing" unique_id=326753103 groups=["generated"]]
+position = Vector2(64, 500)
+scale = Vector2(0.53436494, 0.53436494)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_121" type="Sprite2D" parent="Dressing" unique_id=719882497 groups=["generated"]]
+position = Vector2(-30.37561, 499.40912)
+scale = Vector2(0.12384768, 0.12384768)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+flip_h = true
+
+[node name="plant_122" type="Sprite2D" parent="Dressing" unique_id=1773283811 groups=["generated"]]
+position = Vector2(-16.056335, 508.92883)
+scale = Vector2(0.19679707, 0.19679707)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+
+[node name="tree_062" type="Sprite2D" parent="Dressing" unique_id=1845216899 groups=["generated"]]
+position = Vector2(1216, 500)
+scale = Vector2(0.7300116, 0.7300116)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_123" type="Sprite2D" parent="Dressing" unique_id=684252973 groups=["generated"]]
+position = Vector2(1300.5763, 502.9348)
+scale = Vector2(0.3050995, 0.3050995)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+flip_h = true
+
+[node name="plant_124" type="Sprite2D" parent="Dressing" unique_id=2030914709 groups=["generated"]]
+position = Vector2(1314.1824, 502.7723)
+scale = Vector2(0.22651961, 0.22651961)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+flip_h = true
+
+[node name="tree_063" type="Sprite2D" parent="Dressing" unique_id=929313809 groups=["generated"]]
+position = Vector2(128, 532)
+scale = Vector2(0.60122937, 0.60122937)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_125" type="Sprite2D" parent="Dressing" unique_id=1470661308 groups=["generated"]]
+position = Vector2(62.498566, 535.4147)
+scale = Vector2(0.2636304, 0.2636304)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="plant_126" type="Sprite2D" parent="Dressing" unique_id=1364417550 groups=["generated"]]
+position = Vector2(137.07684, 529.2955)
+scale = Vector2(0.17313685, 0.17313685)
+texture = ExtResource("31_ayq2m")
+centered = false
+offset = Vector2(-169.5, -451)
+
+[node name="tree_064" type="Sprite2D" parent="Dressing" unique_id=1918237092 groups=["generated"]]
+position = Vector2(1152, 532)
+scale = Vector2(0.33043233, 0.33043233)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_127" type="Sprite2D" parent="Dressing" unique_id=1042951538 groups=["generated"]]
+position = Vector2(1181.6825, 541.61255)
+scale = Vector2(0.12530765, 0.12530765)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="plant_128" type="Sprite2D" parent="Dressing" unique_id=126369906 groups=["generated"]]
+position = Vector2(1125.3439, 532.3071)
+scale = Vector2(0.32145968, 0.32145968)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="tree_065" type="Sprite2D" parent="Dressing" unique_id=1430930030 groups=["generated"]]
+position = Vector2(64, 564)
+scale = Vector2(0.46574977, 0.46574977)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_129" type="Sprite2D" parent="Dressing" unique_id=60534617 groups=["generated"]]
+position = Vector2(45.067596, 562.37537)
+scale = Vector2(0.23547144, 0.23547144)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="plant_130" type="Sprite2D" parent="Dressing" unique_id=840280743 groups=["generated"]]
+position = Vector2(79.31672, 569.7621)
+scale = Vector2(0.20321222, 0.20321222)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+flip_h = true
+
+[node name="tree_066" type="Sprite2D" parent="Dressing" unique_id=1926458527 groups=["generated"]]
+position = Vector2(1216, 564)
+scale = Vector2(0.33700344, 0.33700344)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_131" type="Sprite2D" parent="Dressing" unique_id=1276694995 groups=["generated"]]
+position = Vector2(1255.4851, 560.7396)
+scale = Vector2(0.0647211, 0.0647211)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+
+[node name="plant_132" type="Sprite2D" parent="Dressing" unique_id=1897137814 groups=["generated"]]
+position = Vector2(1196.2948, 567.79785)
+scale = Vector2(0.12644947, 0.12644947)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+
+[node name="tree_067" type="Sprite2D" parent="Dressing" unique_id=1989355590 groups=["generated"]]
+position = Vector2(128, 596)
+scale = Vector2(0.41837877, 0.41837877)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_133" type="Sprite2D" parent="Dressing" unique_id=789692709 groups=["generated"]]
+position = Vector2(181.4282, 601.09656)
+scale = Vector2(0.27485353, 0.27485353)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_134" type="Sprite2D" parent="Dressing" unique_id=1749002456 groups=["generated"]]
+position = Vector2(102.28569, 593.8681)
+scale = Vector2(0.25743118, 0.25743118)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="tree_068" type="Sprite2D" parent="Dressing" unique_id=405775413 groups=["generated"]]
+position = Vector2(1152, 596)
+scale = Vector2(0.47236544, 0.47236544)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_135" type="Sprite2D" parent="Dressing" unique_id=40350011 groups=["generated"]]
+position = Vector2(1216.9022, 594.1386)
+scale = Vector2(0.21822448, 0.21822448)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+
+[node name="plant_136" type="Sprite2D" parent="Dressing" unique_id=604982278 groups=["generated"]]
+position = Vector2(1120.6262, 596.5775)
+scale = Vector2(0.25323275, 0.25323275)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="tree_069" type="Sprite2D" parent="Dressing" unique_id=2138544187 groups=["generated"]]
+position = Vector2(64, 628)
+scale = Vector2(0.30001712, 0.30001712)
+texture = ExtResource("25_apjrl")
+centered = false
+offset = Vector2(-294, -837)
+
+[node name="plant_137" type="Sprite2D" parent="Dressing" unique_id=60215368 groups=["generated"]]
+position = Vector2(80.31032, 632.3742)
+scale = Vector2(0.11997355, 0.11997355)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+flip_h = true
+
+[node name="plant_138" type="Sprite2D" parent="Dressing" unique_id=864317334 groups=["generated"]]
+position = Vector2(63.672966, 627.4618)
+scale = Vector2(0.081995204, 0.081995204)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+
+[node name="tree_070" type="Sprite2D" parent="Dressing" unique_id=1719906007 groups=["generated"]]
+position = Vector2(192, 628)
+scale = Vector2(0.38564348, 0.38564348)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_139" type="Sprite2D" parent="Dressing" unique_id=1476687392 groups=["generated"]]
+position = Vector2(164.2973, 627.67883)
+scale = Vector2(0.20825031, 0.20825031)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="plant_140" type="Sprite2D" parent="Dressing" unique_id=169697383 groups=["generated"]]
+position = Vector2(185.9111, 624.8422)
+scale = Vector2(0.163482, 0.163482)
+texture = ExtResource("36_o533l")
+centered = false
+offset = Vector2(-237, -516)
+flip_h = true
+
+[node name="tree_071" type="Sprite2D" parent="Dressing" unique_id=1335581762 groups=["generated"]]
+position = Vector2(1088, 628)
+scale = Vector2(0.48201308, 0.48201308)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_141" type="Sprite2D" parent="Dressing" unique_id=709411956 groups=["generated"]]
+position = Vector2(1050.8975, 639.3262)
+scale = Vector2(0.2607355, 0.2607355)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="plant_142" type="Sprite2D" parent="Dressing" unique_id=1950283625 groups=["generated"]]
+position = Vector2(1106.9935, 628.4541)
+scale = Vector2(0.35030422, 0.35030422)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+
+[node name="tree_072" type="Sprite2D" parent="Dressing" unique_id=547869688 groups=["generated"]]
+position = Vector2(1216, 628)
+scale = Vector2(0.47370955, 0.47370955)
+texture = ExtResource("22_6qkqi")
+centered = false
+offset = Vector2(-172.5, -482)
+
+[node name="plant_143" type="Sprite2D" parent="Dressing" unique_id=1264208271 groups=["generated"]]
+position = Vector2(1196.4235, 629.22986)
+scale = Vector2(0.26206, 0.26206)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="plant_144" type="Sprite2D" parent="Dressing" unique_id=1704629366 groups=["generated"]]
+position = Vector2(1153.5104, 635.9697)
+scale = Vector2(0.19480889, 0.19480889)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="tree_073" type="Sprite2D" parent="Dressing" unique_id=373335328 groups=["generated"]]
+position = Vector2(128, 660)
+scale = Vector2(0.35951042, 0.35951042)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_145" type="Sprite2D" parent="Dressing" unique_id=392328843 groups=["generated"]]
+position = Vector2(104.87523, 670.7681)
+scale = Vector2(0.13847362, 0.13847362)
+texture = ExtResource("33_6sc2o")
+centered = false
+offset = Vector2(-194.5, -187)
+flip_h = true
+
+[node name="plant_146" type="Sprite2D" parent="Dressing" unique_id=800489292 groups=["generated"]]
+position = Vector2(159.22742, 671.9421)
+scale = Vector2(0.25478637, 0.25478637)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+flip_h = true
+
+[node name="tree_074" type="Sprite2D" parent="Dressing" unique_id=1775432415 groups=["generated"]]
+position = Vector2(256, 660)
+scale = Vector2(0.3882108, 0.3882108)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_147" type="Sprite2D" parent="Dressing" unique_id=1041947616 groups=["generated"]]
+position = Vector2(311.88608, 660.8258)
+scale = Vector2(0.21244234, 0.21244234)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+flip_h = true
+
+[node name="plant_148" type="Sprite2D" parent="Dressing" unique_id=1555175744 groups=["generated"]]
+position = Vector2(213.40662, 656.0352)
+scale = Vector2(0.34806108, 0.34806108)
+texture = ExtResource("26_2mc50")
+centered = false
+offset = Vector2(-121.5, -183)
+
+[node name="tree_075" type="Sprite2D" parent="Dressing" unique_id=1454292435 groups=["generated"]]
+position = Vector2(384, 660)
+scale = Vector2(0.34593454, 0.34593454)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_149" type="Sprite2D" parent="Dressing" unique_id=375074236 groups=["generated"]]
+position = Vector2(330.68884, 669.44183)
+scale = Vector2(0.26062632, 0.26062632)
+texture = ExtResource("32_myn4y")
+centered = false
+offset = Vector2(-150, -190)
+
+[node name="plant_150" type="Sprite2D" parent="Dressing" unique_id=1325489235 groups=["generated"]]
+position = Vector2(372.69928, 665.7375)
+scale = Vector2(0.28779098, 0.28779098)
+texture = ExtResource("35_lrr11")
+centered = false
+offset = Vector2(-135, -209)
+
+[node name="tree_076" type="Sprite2D" parent="Dressing" unique_id=1170814434 groups=["generated"]]
+position = Vector2(896, 660)
+scale = Vector2(0.44567707, 0.44567707)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_151" type="Sprite2D" parent="Dressing" unique_id=924130700 groups=["generated"]]
+position = Vector2(842.0802, 661.14526)
+scale = Vector2(0.20951207, 0.20951207)
+texture = ExtResource("29_qgwf7")
+centered = false
+offset = Vector2(-131, -170)
+flip_h = true
+
+[node name="plant_152" type="Sprite2D" parent="Dressing" unique_id=83316079 groups=["generated"]]
+position = Vector2(852.8725, 667.27716)
+scale = Vector2(0.3435694, 0.3435694)
+texture = ExtResource("34_4hffc")
+centered = false
+offset = Vector2(-120, -183)
+flip_h = true
+
+[node name="tree_077" type="Sprite2D" parent="Dressing" unique_id=1096222755 groups=["generated"]]
+position = Vector2(1024, 660)
+scale = Vector2(0.48555478, 0.48555478)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+flip_h = true
+
+[node name="plant_153" type="Sprite2D" parent="Dressing" unique_id=1909202556 groups=["generated"]]
+position = Vector2(1098.9069, 658.02563)
+scale = Vector2(0.16377665, 0.16377665)
+texture = ExtResource("27_uknk8")
+centered = false
+offset = Vector2(-188, -203)
+
+[node name="plant_154" type="Sprite2D" parent="Dressing" unique_id=1583121801 groups=["generated"]]
+position = Vector2(1072.1406, 669.5347)
+scale = Vector2(0.29891995, 0.29891995)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+flip_h = true
+
+[node name="tree_078" type="Sprite2D" parent="Dressing" unique_id=582116456 groups=["generated"]]
+position = Vector2(1152, 660)
+scale = Vector2(0.35169366, 0.35169366)
+texture = ExtResource("30_wayee")
+centered = false
+offset = Vector2(-239, -665)
+
+[node name="plant_155" type="Sprite2D" parent="Dressing" unique_id=175150513 groups=["generated"]]
+position = Vector2(1202.8539, 658.06934)
+scale = Vector2(0.24000497, 0.24000497)
+texture = ExtResource("24_e6252")
+centered = false
+offset = Vector2(-151.5, -194)
+
+[node name="plant_156" type="Sprite2D" parent="Dressing" unique_id=1058637590 groups=["generated"]]
+position = Vector2(1206.2231, 661.34485)
+scale = Vector2(0.22252458, 0.22252458)
+texture = ExtResource("23_idugf")
+centered = false
+offset = Vector2(-114, -178)
+
+[node name="plant_157" type="Sprite2D" parent="Dressing" unique_id=1784806616 groups=["generated"]]
+position = Vector2(649.0906, 229.54527)
+scale = Vector2(0.0645488, 0.0645488)
+texture = ExtResource("28_cnw2x")
+centered = false
+offset = Vector2(-352, -451)
+
+[node name="building_001" type="Sprite2D" parent="Dressing" unique_id=897924317 groups=["generated"]]
+position = Vector2(224, 224.5)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -843.2031)
+region_enabled = true
+region_rect = Rect2(0, 0, 143, 914)
+
+[node name="building_002" type="Sprite2D" parent="Dressing" unique_id=847359160 groups=["generated"]]
+position = Vector2(287.85117, 256)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -913.75)
+region_enabled = true
+region_rect = Rect2(143, 0, 144, 914)
+
+[node name="building_003" type="Sprite2D" parent="Dressing" unique_id=1153310012 groups=["generated"]]
+position = Vector2(352.14883, 224.03722)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -842.1667)
+region_enabled = true
+region_rect = Rect2(287, 0, 143, 914)
+
+[node name="building_004" type="Sprite2D" parent="Dressing" unique_id=1009715053 groups=["generated"]]
+position = Vector2(416, 255.96278)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -913.6667)
+region_enabled = true
+region_rect = Rect2(430, 0, 143, 914)
+
+[node name="building_005" type="Sprite2D" parent="Dressing" unique_id=472657383 groups=["generated"]]
+position = Vector2(479.85117, 224)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -842.0833)
+region_enabled = true
+region_rect = Rect2(573, 0, 144, 914)
+
+[node name="building_006" type="Sprite2D" parent="Dressing" unique_id=750114800 groups=["generated"]]
+position = Vector2(544.14886, 192.03722)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -770.5)
+region_enabled = true
+region_rect = Rect2(717, 0, 143, 914)
+
+[node name="building_007" type="Sprite2D" parent="Dressing" unique_id=1329848224 groups=["generated"]]
+position = Vector2(608, 223.96278)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -842)
+region_enabled = true
+region_rect = Rect2(860, 0, 143, 914)
+
+[node name="building_008" type="Sprite2D" parent="Dressing" unique_id=231352428 groups=["generated"]]
+position = Vector2(671.85114, 256)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -913.75)
+region_enabled = true
+region_rect = Rect2(1003, 0, 144, 914)
+
+[node name="building_009" type="Sprite2D" parent="Dressing" unique_id=159244701 groups=["generated"]]
+position = Vector2(736.14886, 224.03722)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -842.1667)
+region_enabled = true
+region_rect = Rect2(1147, 0, 143, 914)
+
+[node name="building_010" type="Sprite2D" parent="Dressing" unique_id=565666341 groups=["generated"]]
+position = Vector2(800, 255.96278)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -913.6667)
+region_enabled = true
+region_rect = Rect2(1290, 0, 143, 914)
+
+[node name="building_011" type="Sprite2D" parent="Dressing" unique_id=1947011815 groups=["generated"]]
+position = Vector2(863.85114, 224)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -842.0833)
+region_enabled = true
+region_rect = Rect2(1433, 0, 144, 914)
+
+[node name="building_012" type="Sprite2D" parent="Dressing" unique_id=300956564 groups=["generated"]]
+position = Vector2(928.14886, 192.5)
+scale = Vector2(0.44651163, 0.44651163)
+texture = ExtResource("39_gsm3b")
+centered = false
+offset = Vector2(0, -771.53644)
+region_enabled = true
+region_rect = Rect2(1577, 0, 143, 914)

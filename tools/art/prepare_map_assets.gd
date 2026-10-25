@@ -3,7 +3,7 @@ extends SceneTree
 ## art_source/maps/<id>/layered/assets_manifest.json (which picture file is the ground, the crypt
 ## and so on), cleans every picture (see SpriteCleanup) and writes:
 ##
-##   assets/art/maps/<id>/ground.png, building_B.png, mist.png, light.png
+##   assets/art/maps/<id>/ground.png, building_B.png, building_B_shadow.png, mist.png, light.png
 ##   content/kits/<region>.tres (a MapKit that lists the kit pieces)
 ##   assets/art/kits/<region>/trees|plants|rocks|patches/<kind>_<nn>.png
 ##
@@ -39,7 +39,9 @@ func _init() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(map_dir))
 	var ok: bool = true
 	ok = ok and _write(_load(source_dir + manifest["ground"]), map_dir + "ground.png")
-	ok = ok and _write(_cleaned(_load(source_dir + manifest["building_B"])), map_dir + "building_B.png")
+	var building: Image = _cleaned(_load(source_dir + manifest["building_B"]))
+	ok = ok and _write(building, map_dir + "building_B.png")
+	ok = ok and _write(SpriteCleanup.make_shadow(building), map_dir + "building_B_shadow.png")
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["mist"]), MIST_TINT), map_dir + "mist.png")
 	ok = ok and _write(SpriteCleanup.luminance_to_alpha(_load(source_dir + manifest["light"]), LIGHT_TINT), map_dir + "light.png")
 	var kit: MapKit = MapKit.new()
@@ -51,7 +53,11 @@ func _init() -> void:
 		var paths: Array[String] = []
 		for index: int in rects.size():
 			var path: String = "%s%s/%s_%02d.png" % [kit_dir, sheet_key, SHEETS[sheet_key], index + 1]
-			ok = ok and _write(sheet.get_region(rects[index]), path)
+			var piece: Image = sheet.get_region(rects[index])
+			ok = ok and _write(piece, path)
+			# Trees and the big rocks cast a shadow on the ground.
+			if sheet_key == "trees" or (sheet_key == "rocks" and index < MapKit.new().cell_rocks):
+				ok = ok and _write(SpriteCleanup.make_shadow(piece), path.trim_suffix(".png") + "_shadow.png")
 			paths.append(path)
 		print("%s: %d pieces" % [sheet_key, rects.size()])
 		kit.set(sheet_key, paths)
